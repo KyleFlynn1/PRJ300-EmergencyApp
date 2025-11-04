@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="section-header">
+    <ion-title>Emergency Alerts</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!--Current Status section -->
+  <div class="section">
+    <h2>Current Status</h2>
+    <ion-card *ngIf="activeAlerts.length === 0" color="success">
+      <ion-card-content class="status-card">
+        <ion-icon name="checkmark-circle" size="large"></ion-icon>
+        <h3>All Clear</h3>
+        <p>No active emergencies in your area</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="activeAlerts.length > 0" color="danger">
+      <ion-card-content class="status-card">
+        <ion-icon name="warning" size="large"></ion-icon>
+        <h3>Active Alert</h3>
+        <p>{{ activeAlerts.length }} emergency alert(s) in your area</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!--Feed section -->
+  <div class="section">
+
+  </div>
+
+  <!-- Report Section -->
+  <div class="section">
+
+  </div>
+
+  <!--Other warnings section -->
+  <div class="section">
+
+  </div>
+</ion-content>
