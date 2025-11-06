@@ -9,7 +9,9 @@ import { IonHeader,
         IonMenuButton,
         IonCard,
         IonCardContent,
-        IonIcon
+        IonIcon,
+        IonBadge,
+        IonButton
       } from '@ionic/angular/standalone';
 
 @Component({
@@ -17,7 +19,7 @@ import { IonHeader,
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonCard, IonCardContent, IonIcon]
+  imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonCard, IonCardContent, IonIcon, IonBadge, IonButton]
 })
 export class HomePage implements OnInit {
 

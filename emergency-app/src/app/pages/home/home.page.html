@@ -11,35 +11,127 @@
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>
-    <ion-card *ngIf="activeAlerts.length === 0" color="success">
-      <ion-card-content class="status-card">
-        <ion-icon name="checkmark-circle" size="large"></ion-icon>
-        <h3>All Clear</h3>
-        <p>No active emergencies in your area</p>
+    <ion-card *ngIf="activeAlerts.length === 0" color="success" class="status-alert-card">
+      <ion-card-content>
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <div>
+          <h3>All Clear</h3>
+          <p>No active emergencies in your area</p>
+        </div>
       </ion-card-content>
     </ion-card>
 
-    <ion-card *ngIf="activeAlerts.length > 0" color="danger">
-      <ion-card-content class="status-card">
-        <ion-icon name="warning" size="large"></ion-icon>
-        <h3>Active Alert</h3>
-        <p>{{ activeAlerts.length }} emergency alert(s) in your area</p>
+    <ion-card *ngIf="activeAlerts.length > 0" color="danger" class="status-alert-card">
+      <ion-card-content>
+        <ion-icon name="warning"></ion-icon>
+        <div>
+          <h3>Active Alert</h3>
+          <p>{{ activeAlerts.length }} emergency alert(s) in your area</p>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>
 
   <!--Feed section -->
   <div class="section">
+    <h2>Your Feed</h2>
 
+    <div class="feed-list">
+      <!-- Low Level Warning Card (Green) -->
+      <ion-card color="success" class="feed-card">
+        <ion-card-content>
+          <ion-icon name="leaf"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>Tree Down</h3>
+              <ion-badge>Low</ion-badge>
+            </div>
+            <p>Minor blockage on Main St - Services Alerted </p>
+            <small>Main St • 12m ago</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Medium Level Warning Card (Orange or Yellow) -->
+      <ion-card color="warning" class="feed-card">
+        <ion-card-content>
+          <ion-icon name="thunderstorm"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>Storm Watch</h3>
+              <ion-badge>Moderate</ion-badge>
+            </div>
+            <p>Severe storms expected this evening</p>
+            <small>County-wide • 30m ago</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- High Level Warning Card (Red) -->
+      <ion-card color="danger" class="feed-card">
+        <ion-card-content>
+          <ion-icon name="water"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>Flooded Road</h3>
+              <ion-badge>High</ion-badge>
+            </div>
+            <p>Severe flooding on Canal Street — road closed</p>
+            <small>Canal St • 1h ago</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- No Level Cards for General Information etc (Neutral Colors) -->
+      <ion-card color="medium" class="feed-card">
+        <ion-card-content>
+          <ion-icon name="alert"></ion-icon>
+          <div class="feed-content">
+            <h3>Power Outage</h3>
+            <p>Power Outage reported at Main St</p>
+            <small>1:20 PM • 3h ago</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
   <!-- Report Section -->
   <div class="section">
-
+    <div class="report-container">
+      <ion-button class="report-button" color="danger" size="large" shape="round" fill="solid">
+        Report Emergency
+      </ion-button>
+      <p class="report-note">
+        Tap to report an incident — responders will be notified
+      </p>
+    </div>
   </div>
 
   <!--Other warnings section -->
-  <div class="section">
+  <div class="section other-warnings">
+    <h2>Other Warnings / Info</h2>
 
+    <div class="warning-list">
+      <ion-card color="danger" class="warning-card">
+        <ion-card-content>
+          <ion-icon name="alert-circle"></ion-icon>
+          <div>
+            <h3>Amber Alert</h3>
+            <p>Missing child reported — check local updates for more details</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card color="warning" class="warning-card">
+        <ion-card-content>
+          <ion-icon name="megaphone"></ion-icon>
+          <div>
+            <h3>Community Notice</h3>
+            <p>Roadworks between Main Road and Side Road 7PM-7AM</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 </ion-content>
