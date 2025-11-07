@@ -25,6 +25,7 @@ export class HomePage implements OnInit {
 
   // Test Data
   activeAlerts: any[] = [];
+  activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
 
   constructor() { }

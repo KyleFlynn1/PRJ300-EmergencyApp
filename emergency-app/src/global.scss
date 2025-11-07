@@ -220,11 +220,11 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   .warning-list {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* smaller gap between warning cards */
+    gap: 8px;
   }
 
   .warning-card {
-    margin: 0; /* remove default ion-card margin */
+    margin: 0; 
 
     ion-card-content {
       display: flex;
@@ -253,7 +253,7 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   }
 }
 
-/* Menu and header styling: modern, simple, and consistent */
+/* Menu and header styling */
 .app-menu {
   --width: 350px;
 
