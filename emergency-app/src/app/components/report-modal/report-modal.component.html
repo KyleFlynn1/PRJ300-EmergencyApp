@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Report Incident</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" class="close-button" (click)="cancelReport()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="floating-card">
+    <ion-list>
+
+      <!-- Category Form Input -->
+      <ion-item>
+        <ion-label position="floating">Category</ion-label>
+        <ion-select [(ngModel)]="formData.category">
+          <ion-select-option *ngFor="let c of categoryOptions" [value]="c">
+            {{c}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- The Danger Level -->
+      <ion-item>
+        <ion-label position="floating">Severity</ion-label>
+        <ion-select [(ngModel)]="formData.severity">
+          <ion-select-option *ngFor="let s of severityOptions" [value]="s.value">
+            {{s.label}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Additional Notes -->
+      <ion-item>
+        <ion-label position="floating">Additional Notes</ion-label>
+        <ion-textarea [(ngModel)]="formData.notes"></ion-textarea>
+      </ion-item>
+
+    </ion-list>
+
+    <div class="modal-actions">
+      <ion-button fill="solid" color="danger" class="submit-button" (click)="submitReport()">
+        Submit Report
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

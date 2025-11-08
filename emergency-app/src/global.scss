@@ -302,3 +302,74 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
     font-size: 24px;
   }
 }
+
+
+.floating-modal {
+  --backdrop-opacity: 0.28;
+}
+
+.floating-modal .modal-wrapper {
+  background: transparent; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px; 
+}
+
+.floating-modal .floating-card {
+  width: 100%;
+  max-width: 560px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius: 14px;
+  padding: 10px 14px 18px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  color: #ffffff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.floating-modal .floating-card ion-toolbar {
+  --background: transparent;
+  --color: #ffffff;
+  box-shadow: none;
+}
+
+.floating-modal .floating-card ion-item {
+  --background: transparent;
+  border-radius: 8px;
+  margin: 6px 0;
+  --min-height: 50px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.floating-modal .floating-card ion-label {
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+}
+
+.floating-modal .floating-card ion-textarea {
+  color: #ffffff;
+}
+
+.floating-modal .close-button {
+  --padding-start: 6px;
+  --padding-end: 6px;
+  color: rgba(255,255,255,0.95);
+}
+
+.floating-modal .modal-actions {
+  margin-top: 10px;
+  display: flex;
+}
+
+.floating-modal .modal-actions ion-button.submit-button {
+  flex: 1;
+  --border-radius: 10px;
+  font-weight: 700;
+}
+
+@media (min-width: 720px) {
+  .floating-modal .modal-wrapper {
+    padding: 32px;
+  }
+}

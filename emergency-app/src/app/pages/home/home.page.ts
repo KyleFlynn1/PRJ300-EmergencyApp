@@ -1,36 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonContent,
-        IonButtons,
-        IonMenuButton,
-        IonCard,
-        IonCardContent,
-        IonIcon,
-        IonBadge,
-        IonButton
-      } from '@ionic/angular/standalone';
+import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
+import { ModalController } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonCard, IonCardContent, IonIcon, IonBadge, IonButton]
+  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent]
 })
 export class HomePage implements OnInit {
-
+  
   // Test Data
   activeAlerts: any[] = [];
   activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
 
-  constructor() { }
+  constructor(private modalController: ModalController) { }
 
   ngOnInit() {
   }
 
+  async openReportModal() {
+    const modal = await this.modalController.create({
+      component: ReportModalComponent,
+      cssClass: 'floating-modal'
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      console.log('Report got succesfully:', data);
+    }
+  }
 }
