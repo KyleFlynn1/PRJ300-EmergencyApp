@@ -32,13 +32,28 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.always.css";
+//@import "@ionic/angular/css/palettes/dark.class.css";
+//@import '@ionic/angular/css/palettes/dark.system.css';
 
 /* Custom Colors */
 $PRIMARY_TITLE_COLOUR: #ffffff;
-$LIGHT_TEXT_COLOUR: #8d8d8d;
+$LIGHT_TEXT_COLOUR: #F5F5F5;
+
+$DARK_BACKGROUND_COLOUR: #252525;
+
+$CARD_COLOUR_GREEN: #3ead44;
+$CARD_COLOUR_ORANGE: #ff8e1d;
+$CARD_COLOUR_RED: #ec0303;
+$CARD_COLOUR_GRAY: #797979;
+
+:root {
+  --ion-text-color: #{$PRIMARY_TITLE_COLOUR};
+  --ion-color-success: #{$CARD_COLOUR_GREEN};
+  --ion-color-warning: #{$CARD_COLOUR_ORANGE};
+  --ion-color-danger: #{$CARD_COLOUR_RED};
+  --ion-color-medium: #{$CARD_COLOUR_GRAY};
+}
 
 
 /* Custom Styling for all pages - simplified & modern */
@@ -63,7 +78,7 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
     gap: 16px;
     padding: 18px 20px;
     color: #ffffff;
-    min-height: 88px; /* make the top card more prominent */
+    min-height: 88px;
 
     ion-icon {
       font-size: 36px;
@@ -90,7 +105,6 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* allow the feed to take more vertical space */
   max-height: 420px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -290,7 +304,7 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   }
 }
 
-/* Page header (used by home toolbar .section-header) */
+/* Page header*/
 .section-header {
   --background: transparent;
   --color: #ffffff;
@@ -303,73 +317,56 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   }
 }
 
-
-.floating-modal {
-  --backdrop-opacity: 0.28;
+/* Modal Styling */
+.report-form-section {
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.floating-modal .modal-wrapper {
-  background: transparent; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px; 
+.form-list {
+  background: transparent;
+  padding: 0px;
+  margin: 20px;
 }
 
-.floating-modal .floating-card {
-  width: 100%;
-  max-width: 560px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  border-radius: 14px;
-  padding: 10px 14px 18px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
-  color: #ffffff;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.floating-modal .floating-card ion-toolbar {
-  --background: transparent;
+.form-item{
+  --background: rgba(255,255,255,0.05);
+  --placeholder-color: rgba(255,255,255,0.6);
   --color: #ffffff;
-  box-shadow: none;
-}
-
-.floating-modal .floating-card ion-item {
-  --background: transparent;
   border-radius: 8px;
-  margin: 6px 0;
-  --min-height: 50px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
 
-.floating-modal .floating-card ion-label {
-  color: rgba(255,255,255,0.95);
-  font-weight: 600;
-}
+  ion-label {
+    font-weight: bolder;
+    font-size: 16px;
+    color: #ffffff;
+  }
 
-.floating-modal .floating-card ion-textarea {
-  color: #ffffff;
-}
+  ion-select, ion-textarea {
+    color: $PRIMARY_TITLE_COLOUR;
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-.floating-modal .close-button {
-  --padding-start: 6px;
-  --padding-end: 6px;
-  color: rgba(255,255,255,0.95);
-}
-
-.floating-modal .modal-actions {
-  margin-top: 10px;
-  display: flex;
-}
-
-.floating-modal .modal-actions ion-button.submit-button {
-  flex: 1;
-  --border-radius: 10px;
-  font-weight: 700;
-}
-
-@media (min-width: 720px) {
-  .floating-modal .modal-wrapper {
-    padding: 32px;
+  ion-textarea {
+    min-height: 100px;
+    margin-top: 12px;
   }
 }
+
+.form-actions {
+  margin-top: 8px;
+  padding: 0px;
+  text-align: center;
+  color: #ffffff;
+
+  .submit-button {
+    --color	: #ffffff;
+    margin-left: 25%;
+    width: 50%;
+    height: 52px;
+    font-weight: bolder;
+  }
+}
+

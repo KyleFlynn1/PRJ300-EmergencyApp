@@ -27,7 +27,9 @@ export class HomePage implements OnInit {
   async openReportModal() {
     const modal = await this.modalController.create({
       component: ReportModalComponent,
-      cssClass: 'floating-modal'
+      cssClass: 'floating-modal',
+      backdropDismiss: true,
+      showBackdrop: true
     });
     await modal.present();
     const { data } = await modal.onDidDismiss();

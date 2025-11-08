@@ -22,6 +22,7 @@ export class ReportModalComponent implements OnInit {
   };
 
   public severityOptions = [
+    { value: 'info', label: 'General' },
     { value: 'low', label: 'Low' },
     { value: 'medium', label: 'Medium' },
     { value: 'high', label: 'High' }
