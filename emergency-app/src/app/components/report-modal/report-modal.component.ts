@@ -3,6 +3,7 @@ import { ModalController, IonicModule } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Alert } from 'src/app/services/alerts/alert';
 
 @Component({
   selector: 'app-report-modal',
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
 export class ReportModalComponent implements OnInit {
 
   public formData: Report = {
-    severity: 'low',
+    severity: 'Info',
     category: 'Other',
     timestamp: new Date().toISOString(),
     location: {},
@@ -22,22 +23,25 @@ export class ReportModalComponent implements OnInit {
   };
 
   public severityOptions = [
-    { value: 'info', label: 'General' },
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' }
+    { value: 'Info', label: 'General' },
+    { value: 'Low', label: 'Low' },
+    { value: 'Moderate', label: 'Moderate' },
+    { value: 'High', label: 'High' }
   ];
 
   public categoryOptions = [
+    'Other',
     'Tree fallen',
     'Power outage',
     'Fire',
     'Flood',
     'Road blockage',
-    'Other'
   ];
 
-  constructor(private modalController: ModalController) {}
+  constructor(
+    private modalController: ModalController,
+    private alertService: Alert
+  ) {}
 
   ngOnInit() {}
 
@@ -49,7 +53,8 @@ export class ReportModalComponent implements OnInit {
     // Get the current time and date
     this.formData.timestamp = new Date().toISOString();
     // Get a temporary location later on try get the users locations from their phone automatically
-    this.formData.location = { lat: 0, lng: 0 }; 
+    this.formData.location = { address: 'Roscommon' }; 
+    this.alertService.addAlert(this.formData);
     this.modalController.dismiss(this.formData, 'confirm');
   }
 }

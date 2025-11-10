@@ -37,6 +37,25 @@
     <h2>Your Feed</h2>
 
     <div class="feed-list">
+
+      <!-- Auto add new alerts from report modal and alert service-->
+      <ion-card
+         *ngFor="let alert of activeAlerts"
+         [color]="getAlertSeverityColor(alert.severity)"
+         class="feed-card">
+        <ion-card-content>
+          <ion-icon [name]="getIcon(alert.category)"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>{{ alert.category }}</h3>
+              <ion-badge>{{ alert.severity }}</ion-badge>
+            </div>
+            <p>{{ alert.notes }}</p>
+            <small>{{ alert.location.address }}, {{ alert.timestamp | date:'HH:mm'}}</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
       <!-- Low Level Warning Card (Green) -->
       <ion-card color="success" class="feed-card">
         <ion-card-content>

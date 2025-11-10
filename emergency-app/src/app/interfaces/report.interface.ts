@@ -1,5 +1,5 @@
 export interface Report {
-  severity: 'low' | 'medium' | 'high';
+  severity: 'Low' | 'Moderate' | 'High' | 'Info';
   category: string;
   notes?: string;
   timestamp: string;
