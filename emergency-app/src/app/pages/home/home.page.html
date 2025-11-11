@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="section-header">
-    <ion-title>Emergency Alerts</ion-title>
+    <ion-title>Alerts</ion-title>
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -37,7 +37,26 @@
     <h2>Your Feed</h2>
 
     <div class="feed-list">
-      <!-- Low Level Warning Card (Green) -->
+
+      <!-- Auto add new alerts from report modal and alert service-->
+      <ion-card
+         *ngFor="let alert of activeAlerts"
+         [color]="getAlertSeverityColor(alert.severity)"
+         class="feed-card">
+        <ion-card-content>
+          <ion-icon [name]="getIcon(alert.category)"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>{{ alert.category }}</h3>
+              <ion-badge>{{ alert.severity }}</ion-badge>
+            </div>
+            <p>{{ alert.notes }}</p>
+            <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+    <!-- 
       <ion-card color="success" class="feed-card">
         <ion-card-content>
           <ion-icon name="leaf"></ion-icon>
@@ -52,7 +71,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- Medium Level Warning Card (Orange or Yellow) -->
       <ion-card color="warning" class="feed-card">
         <ion-card-content>
           <ion-icon name="thunderstorm"></ion-icon>
@@ -67,7 +85,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- High Level Warning Card (Red) -->
       <ion-card color="danger" class="feed-card">
         <ion-card-content>
           <ion-icon name="water"></ion-icon>
@@ -82,7 +99,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- No Level Cards for General Information etc (Neutral Colors) -->
       <ion-card color="medium" class="feed-card">
         <ion-card-content>
           <ion-icon name="alert"></ion-icon>
@@ -92,14 +108,16 @@
             <small>1:20 PM • 3h ago</small>
           </div>
         </ion-card-content>
-      </ion-card>
+      </ion-card> -->
+      
     </div>
   </div>
 
   <!-- Report Section -->
   <div class="section">
     <div class="report-container">
-      <ion-button class="report-button" color="danger" size="large" shape="round" fill="solid">
+      <ion-button class="report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
+        <ion-icon name="paper-plane"></ion-icon>
         Report Emergency
       </ion-button>
       <p class="report-note">

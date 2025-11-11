@@ -32,13 +32,28 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.always.css";
+//@import "@ionic/angular/css/palettes/dark.class.css";
+//@import '@ionic/angular/css/palettes/dark.system.css';
 
 /* Custom Colors */
 $PRIMARY_TITLE_COLOUR: #ffffff;
-$LIGHT_TEXT_COLOUR: #8d8d8d;
+$LIGHT_TEXT_COLOUR: #F5F5F5;
+
+$DARK_BACKGROUND_COLOUR: #252525;
+
+$CARD_COLOUR_GREEN: #3ead44;
+$CARD_COLOUR_ORANGE: #ff8e1d;
+$CARD_COLOUR_RED: #ec0303;
+$CARD_COLOUR_GRAY: #797979;
+
+:root {
+  --ion-text-color: #{$PRIMARY_TITLE_COLOUR};
+  --ion-color-success: #{$CARD_COLOUR_GREEN};
+  --ion-color-warning: #{$CARD_COLOUR_ORANGE};
+  --ion-color-danger: #{$CARD_COLOUR_RED};
+  --ion-color-medium: #{$CARD_COLOUR_GRAY};
+}
 
 
 /* Custom Styling for all pages - simplified & modern */
@@ -63,7 +78,7 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
     gap: 16px;
     padding: 18px 20px;
     color: #ffffff;
-    min-height: 88px; /* make the top card more prominent */
+    min-height: 88px;
 
     ion-icon {
       font-size: 36px;
@@ -90,7 +105,6 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* allow the feed to take more vertical space */
   max-height: 420px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -290,7 +304,7 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
   }
 }
 
-/* Page header (used by home toolbar .section-header) */
+/* Page header*/
 .section-header {
   --background: transparent;
   --color: #ffffff;
@@ -302,3 +316,57 @@ $LIGHT_TEXT_COLOUR: #8d8d8d;
     font-size: 24px;
   }
 }
+
+/* Modal Styling */
+.report-form-section {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-list {
+  background: transparent;
+  padding: 0px;
+  margin: 20px;
+}
+
+.form-item{
+  --background: rgba(255,255,255,0.05);
+  --placeholder-color: rgba(255,255,255,0.6);
+  --color: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+
+  ion-label {
+    font-weight: bolder;
+    font-size: 16px;
+    color: #ffffff;
+  }
+
+  ion-select, ion-textarea {
+    color: $PRIMARY_TITLE_COLOUR;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  ion-textarea {
+    min-height: 100px;
+    margin-top: 12px;
+  }
+}
+
+.form-actions {
+  margin-top: 8px;
+  padding: 0px;
+  text-align: center;
+  color: #ffffff;
+
+  .submit-button {
+    --color	: #ffffff;
+    margin-left: 25%;
+    width: 50%;
+    height: 52px;
+    font-weight: bolder;
+  }
+}
+
