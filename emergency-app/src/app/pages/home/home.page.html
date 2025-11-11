@@ -51,12 +51,12 @@
               <ion-badge>{{ alert.severity }}</ion-badge>
             </div>
             <p>{{ alert.notes }}</p>
-            <small>{{ alert.location.address }}, {{ alert.timestamp | date:'HH:mm'}}</small>
+            <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
           </div>
         </ion-card-content>
       </ion-card>
 
-      <!-- Low Level Warning Card (Green) -->
+    <!-- 
       <ion-card color="success" class="feed-card">
         <ion-card-content>
           <ion-icon name="leaf"></ion-icon>
@@ -71,7 +71,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- Medium Level Warning Card (Orange or Yellow) -->
       <ion-card color="warning" class="feed-card">
         <ion-card-content>
           <ion-icon name="thunderstorm"></ion-icon>
@@ -86,7 +85,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- High Level Warning Card (Red) -->
       <ion-card color="danger" class="feed-card">
         <ion-card-content>
           <ion-icon name="water"></ion-icon>
@@ -101,7 +99,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- No Level Cards for General Information etc (Neutral Colors) -->
       <ion-card color="medium" class="feed-card">
         <ion-card-content>
           <ion-icon name="alert"></ion-icon>
@@ -111,7 +108,8 @@
             <small>1:20 PM • 3h ago</small>
           </div>
         </ion-card-content>
-      </ion-card>
+      </ion-card> -->
+      
     </div>
   </div>
 
