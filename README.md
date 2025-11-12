@@ -1,6 +1,16 @@
 # PR300
 
 ## Emergency App
+### Group
+- Adam Hoban
+- Adam Fay
+- Kyle Flynn
+
+# Current Tech Used
+Database : MongoDB
+API : Express Rest API
+Front-end Framework : Ionic Framework using Angular
+
 
 ### Ionic Framework
 Documentation: https://ionicframework.com/docs/
