@@ -33,11 +33,14 @@ export class ReportModalComponent implements OnInit {
     { value: 'Info', label: 'General' },
     { value: 'Low', label: 'Low' },
     { value: 'Moderate', label: 'Moderate' },
-    { value: 'High', label: 'High' }
+    { value: 'High', label: 'High' },
+    { value: 'Urgent', label: 'Urgent' }
   ];
 
   public categoryOptions = [
     'Other',
+    'Missing Person',
+    'Injury',
     'Tree fallen',
     'Power outage',
     'Fire',

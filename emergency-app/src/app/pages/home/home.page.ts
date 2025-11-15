@@ -11,7 +11,7 @@ import { Alert } from 'src/app/services/alerts/alert';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent]
+  imports: [CommonModule, FormsModule, IonicModule]
 })
 export class HomePage implements OnInit {
   
@@ -56,6 +56,8 @@ export class HomePage implements OnInit {
         return 'warning';
       case 'high':
         return 'danger';
+      case 'urgent':
+        return 'urgent';
       default:
         return 'medium';
     }
@@ -68,6 +70,8 @@ export class HomePage implements OnInit {
     const c = category.toLowerCase();
     
     if (c.includes('tree') || c.includes('fallen')) return 'leaf';
+    if (c.includes('injury')) return 'medkit';
+    if (c.includes('person') || c.includes('missing')) return 'people';
     if (c.includes('power') || c.includes('outage')) return 'flash';
     if (c.includes('fire')) return 'flame';
     if (c.includes('flood') || c.includes('water')) return 'water';

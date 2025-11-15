@@ -46,6 +46,7 @@ $CARD_COLOUR_GREEN: #3ead44;
 $CARD_COLOUR_ORANGE: #ff8e1d;
 $CARD_COLOUR_RED: #ec0303;
 $CARD_COLOUR_GRAY: #797979;
+$CARD_COLOUR_PURPLE: #f200ff;
 
 :root {
   --ion-text-color: #{$PRIMARY_TITLE_COLOUR};
@@ -53,8 +54,13 @@ $CARD_COLOUR_GRAY: #797979;
   --ion-color-warning: #{$CARD_COLOUR_ORANGE};
   --ion-color-danger: #{$CARD_COLOUR_RED};
   --ion-color-medium: #{$CARD_COLOUR_GRAY};
+  --ion-color-urgent: #{$CARD_COLOUR_PURPLE};
 }
 
+.ion-color-urgent {
+  --ion-color-base: #{$CARD_COLOUR_PURPLE};
+  --ion-color-contrast: #000000;
+}
 
 /* Custom Styling for all pages - simplified & modern */
 .section {
