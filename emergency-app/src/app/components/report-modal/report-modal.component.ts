@@ -14,6 +14,8 @@ import { Alert } from 'src/app/services/alerts/alert';
 })
 export class ReportModalComponent implements OnInit {
 
+  showAlert = false;
+
   public formData: Report = {
     severity: 'Info',
     category: 'Other',
@@ -43,7 +45,9 @@ export class ReportModalComponent implements OnInit {
     private alertService: Alert
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.showAlert = true;
+  }
 
   cancelReport() {
     this.modalController.dismiss(null, 'cancel');

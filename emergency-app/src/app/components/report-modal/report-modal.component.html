@@ -10,6 +10,16 @@
 </ion-header>
 
 <ion-content>
+  <ion-alert
+    [isOpen]="showAlert"
+    (didDismiss)="showAlert = false"
+    cssClass="emergency-alert"
+    header="⚠️ Emergency Warning ⚠️"
+    message="For real emergencies, call 999 instead of using the app."
+    [buttons]="['Acknowledge']"
+    animated="true"
+  ></ion-alert>
+
   <div class="section report-form-section">
     
     <ion-list class="form-list">
