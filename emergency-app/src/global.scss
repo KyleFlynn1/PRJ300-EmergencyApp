@@ -370,3 +370,25 @@ $CARD_COLOUR_GRAY: #797979;
   }
 }
 
+.emergency-alert {
+  --width: 90%;
+  --max-width: 350px;
+  
+  .alert-message {
+    padding: 20px 10px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .alert-button-group button {
+    height: 50px;
+    font-size: 16px;
+  }
+}
+
+.error-message {
+  text-align: center;
+  color: #ff6b6b;
+  font-weight: 600;
+  margin-top: 12px;
+}
