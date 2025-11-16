@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
+import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { ModalController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
@@ -43,6 +44,20 @@ export class HomePage implements OnInit {
     const { data } = await modal.onDidDismiss();
     if (data) {
       console.log('Report got succesfully:', data);
+    }
+  }
+
+  async openAlertDetailModal() {
+    const modal = await this.modalController.create({
+      component: AlertDetailModalComponent,
+      cssClass: 'floating-modal',
+      backdropDismiss: true,
+      showBackdrop: true
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      console.log('Alert detail modal dismissed with data:', data);
     }
   }
 

@@ -1,3 +1,16 @@
-<p>
-  alert-detail-modal works!
-</p>
+<ion-header [translucent]="true">
+  <ion-toolbar class="section-header">
+    <ion-buttons slot="start">
+      <ion-button (click)="closeDetailedView()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Detailed View</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h2>Details of Alert here</h2>
+  <h2>Map view with ping here</h2>
+  <h2>Similar alerts here</h2>
+</ion-content>
