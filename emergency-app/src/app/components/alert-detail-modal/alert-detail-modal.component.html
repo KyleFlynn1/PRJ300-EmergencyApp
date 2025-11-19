@@ -9,22 +9,56 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="detail-card">
-    <div class="detail-header">
-      <h2>{{ alert?.category || 'Alert' }}</h2>
-      <ion-badge [color]="alert ? (alert.severity) : 'medium'">{{ alert?.severity }}</ion-badge>
-    </div>
+<ion-content [fullscreen]="true">
+  <ion-card [color]="getAlertSeverityColor(alert?.severity)" class="detail-card">
+    <ion-card-content>
+      <!-- Icon and Title -->
+      <div class="detail-header">
+        <ion-icon [name]="getIcon(alert?.category)" class="main-icon"></ion-icon>
+        <h1>{{ alert?.category || 'Alert' }}</h1>
+        <ion-badge color="light" class="severity-badge">{{ alert?.severity }}</ion-badge>
+      </div>
 
-    <p class="detail-notes">{{ alert?.notes || 'No additional details provided.' }}</p>
+      <!-- Description -->
+      <div class="detail-section">
+        <p class="description">{{ alert?.notes || 'No additional details provided.' }}</p>
+      </div>
 
-    <div class="detail-meta">
-      <div><strong>Location:</strong> {{ alert?.location?.address || 'Unknown' }}</div>
-      <div><strong>Time:</strong> {{ alert?.timestamp }}</div>
-    </div>
+      <!-- Location -->
+      <div class="detail-section">
+        <div class="info-row">
+          <ion-icon name="location"></ion-icon>
+          <div class="info-content">
+            <p class="label">Location</p>
+            <p class="value">{{ alert?.location?.address || 'Unknown' }}</p>
+          </div>
+        </div>
+      </div>
 
-    <div class="detail-actions">
-      <ion-button fill="clear" (click)="closeDetailedView()">Close</ion-button>
-    </div>
-  </div>
+      <!-- Time -->
+      <div class="detail-section">
+        <div class="info-row">
+          <ion-icon name="time"></ion-icon>
+          <div class="info-content">
+            <p class="label">Time Reported</p>
+            <p class="value">{{ alert?.timestamp | date:'MMM dd, yyyy HH:mm' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="detail-section">
+        <div class="map-header">
+          <ion-icon name="map"></ion-icon>
+          <p>Location Map</p>
+        </div>
+        <div class="map-container">
+          <div id="map" style="width: 100%; height: 100%;position: absolute;"></div>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <ion-button expand="block" fill="fill" color="light" (click)="closeDetailedView()">Close</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
+import { Icon } from 'ionicons/dist/types/components/icon/icon';
 import { Report } from 'src/app/interfaces/report.interface';
+import Map from 'ol/Map';
 
 @Component({
   selector: 'app-alert-detail-modal',
@@ -11,6 +13,7 @@ import { Report } from 'src/app/interfaces/report.interface';
   standalone: true,
 })
 export class AlertDetailModalComponent  implements OnInit {
+  map!: Map;
 
   @Input() alert?: Report;
 
@@ -24,5 +27,38 @@ export class AlertDetailModalComponent  implements OnInit {
 
   closeDetailedView() {
     this.modalController.dismiss(null, 'cancel');
+  }
+
+  getAlertSeverityColor(severity?: string) : string {
+    switch (severity?.toLowerCase()) {
+      case 'info':
+        return 'medium';
+      case 'low':
+        return 'success';
+      case 'moderate':
+        return 'warning';
+      case 'high':
+        return 'danger';
+      case 'urgent':
+        return 'urgent';
+      default:
+        return 'medium';
+    }
+  }
+
+  getIcon(category?: string) {
+    if (!category) return 'alert-circle';
+    
+    const c = category.toLowerCase();
+    
+    if (c.includes('tree') || c.includes('fallen')) return 'leaf';
+    if (c.includes('injury')) return 'medkit';
+    if (c.includes('person') || c.includes('missing')) return 'people';
+    if (c.includes('power') || c.includes('outage')) return 'flash';
+    if (c.includes('fire')) return 'flame';
+    if (c.includes('flood') || c.includes('water')) return 'water';
+    if (c.includes('road') || c.includes('blockage')) return 'car';
+    if (c.includes('amber') || c.includes('missing')) return 'people';
+    return 'alert-circle';
   }
 }
