@@ -26,7 +26,7 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.alertService.alerts$.subscribe(alerts => {
+    this.alertService.getAlerts().subscribe(alerts => {
       this.activeAlerts = alerts;
       this.activeAlertsCount = alerts.length;
     });

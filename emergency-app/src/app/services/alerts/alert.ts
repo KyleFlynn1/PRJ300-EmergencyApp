@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Report } from 'src/app/interfaces/report.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -7,20 +8,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class Alert {
 
-  private alerts: Report[] = [];
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3000/api/v1/alert';
 
-  private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
-  alerts$ = this.alertsSubject.asObservable();
-
-  constructor() {}
-
-  addAlert(alert: Report): void {
-    this.alerts.unshift(alert);
-    this.alertsSubject.next(this.alerts);
+  getAlerts(): Observable<Report[]> {
+    return this.http.get<Report[]>(this.apiUrl);
   }
-
-  getAlerts(): Report[] {
-    return this.alerts;
+  addAlert(report: Report): Observable<Report> {
+    return this.http.post<Report>(this.apiUrl, report);
   }
 }
