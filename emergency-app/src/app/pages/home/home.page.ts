@@ -47,12 +47,15 @@ export class HomePage implements OnInit {
     }
   }
 
-  async openAlertDetailModal() {
+  async openAlertDetailModal(alert?: any) {
     const modal = await this.modalController.create({
       component: AlertDetailModalComponent,
       cssClass: 'floating-modal',
       backdropDismiss: true,
-      showBackdrop: true
+      showBackdrop: true,
+      componentProps: {
+        alert
+      }
     });
     await modal.present();
     const { data } = await modal.onDidDismiss();

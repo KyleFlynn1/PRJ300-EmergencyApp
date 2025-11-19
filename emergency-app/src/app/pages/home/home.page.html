@@ -42,7 +42,7 @@
       <ion-card
          *ngFor="let alert of activeAlerts"
          [color]="getAlertSeverityColor(alert.severity)"
-         class="feed-card" (click)="openAlertDetailModal()">
+         class="feed-card" (click)="openAlertDetailModal(alert)">
         <ion-card-content>
           <ion-icon [name]="getIcon(alert.category)"></ion-icon>
           <div class="feed-content">

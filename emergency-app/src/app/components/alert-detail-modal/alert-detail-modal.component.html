@@ -10,7 +10,21 @@
 </ion-header>
 
 <ion-content>
-  <h2>Details of Alert here</h2>
-  <h2>Map view with ping here</h2>
-  <h2>Similar alerts here</h2>
+  <div class="detail-card">
+    <div class="detail-header">
+      <h2>{{ alert?.category || 'Alert' }}</h2>
+      <ion-badge [color]="alert ? (alert.severity) : 'medium'">{{ alert?.severity }}</ion-badge>
+    </div>
+
+    <p class="detail-notes">{{ alert?.notes || 'No additional details provided.' }}</p>
+
+    <div class="detail-meta">
+      <div><strong>Location:</strong> {{ alert?.location?.address || 'Unknown' }}</div>
+      <div><strong>Time:</strong> {{ alert?.timestamp }}</div>
+    </div>
+
+    <div class="detail-actions">
+      <ion-button fill="clear" (click)="closeDetailedView()">Close</ion-button>
+    </div>
+  </div>
 </ion-content>
