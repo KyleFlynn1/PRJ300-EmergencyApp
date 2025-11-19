@@ -11,7 +11,7 @@ import { Alert } from 'src/app/services/alerts/alert';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent]
+  imports: [CommonModule, FormsModule, IonicModule]
 })
 export class HomePage implements OnInit {
   
