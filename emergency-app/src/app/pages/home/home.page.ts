@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
+import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { ModalController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
@@ -11,7 +12,7 @@ import { Alert } from 'src/app/services/alerts/alert';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent]
+  imports: [CommonModule, FormsModule, IonicModule]
 })
 export class HomePage implements OnInit {
   
@@ -46,6 +47,23 @@ export class HomePage implements OnInit {
     }
   }
 
+  async openAlertDetailModal(alert?: any) {
+    const modal = await this.modalController.create({
+      component: AlertDetailModalComponent,
+      cssClass: 'floating-modal',
+      backdropDismiss: true,
+      showBackdrop: true,
+      componentProps: {
+        alert
+      }
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      console.log('Alert detail modal dismissed with data:', data);
+    }
+  }
+
   getAlertSeverityColor(severity: string) {
     switch (severity.toLowerCase()) {
       case 'info':
@@ -56,6 +74,8 @@ export class HomePage implements OnInit {
         return 'warning';
       case 'high':
         return 'danger';
+      case 'urgent':
+        return 'urgent';
       default:
         return 'medium';
     }
@@ -68,6 +88,8 @@ export class HomePage implements OnInit {
     const c = category.toLowerCase();
     
     if (c.includes('tree') || c.includes('fallen')) return 'leaf';
+    if (c.includes('injury')) return 'medkit';
+    if (c.includes('person') || c.includes('missing')) return 'people';
     if (c.includes('power') || c.includes('outage')) return 'flash';
     if (c.includes('fire')) return 'flame';
     if (c.includes('flood') || c.includes('water')) return 'water';
