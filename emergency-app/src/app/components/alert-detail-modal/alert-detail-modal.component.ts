@@ -3,7 +3,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Icon } from 'ionicons/dist/types/components/icon/icon';
 import { Report } from 'src/app/interfaces/report.interface';
-import Map from 'ol/Map';
 
 @Component({
   selector: 'app-alert-detail-modal',
@@ -13,7 +12,6 @@ import Map from 'ol/Map';
   standalone: true,
 })
 export class AlertDetailModalComponent  implements OnInit {
-  map!: Map;
 
   @Input() alert?: Report;
 
