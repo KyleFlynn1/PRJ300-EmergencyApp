@@ -85,7 +85,15 @@ export class ReportModalComponent implements OnInit {
     formData.timestamp = new Date().toISOString();
     formData.location = { address: 'Roscommon' }; // Temporary location
 
-    this.alertService.addAlert(formData);
+    this.alertService.addAlert(formData).subscribe({
+  next: (response) => {
+    console.log("✔ POST sent successfully:", response);
+    this.modalController.dismiss(response, 'confirm');
+  },
+  error: (err) => {
+    console.error("❌ Error sending POST:", err);
+  }
+});
     this.modalController.dismiss(formData, 'confirm');
   }
 

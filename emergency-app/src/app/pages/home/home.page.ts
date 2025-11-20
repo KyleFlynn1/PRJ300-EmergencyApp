@@ -27,25 +27,37 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.alertService.alerts$.subscribe(alerts => {
+    this.alertService.getAlerts().subscribe(alerts => {
       this.activeAlerts = alerts;
       this.activeAlertsCount = alerts.length;
     });
   }
 
-  async openReportModal() {
-    const modal = await this.modalController.create({
-      component: ReportModalComponent,
-      cssClass: 'floating-modal',
-      backdropDismiss: true,
-      showBackdrop: true
+async openReportModal() {
+  const modal = await this.modalController.create({
+    component: ReportModalComponent,
+    cssClass: 'floating-modal',
+    backdropDismiss: true,
+    showBackdrop: true
+  });
+  await modal.present();
+
+  const { data } = await modal.onDidDismiss();
+
+  // When modal sends back the new alert, refresh the list
+  if (data) {
+    console.log('Report received successfully:', data);
+
+    // 🔄 Refresh list from API immediately
+    this.alertService.getAlerts().subscribe({
+      next: (alerts) => {
+        this.activeAlerts = alerts;
+        this.activeAlertsCount = alerts.length;
+      },
+      error: (err) => console.error('Failed to refresh alerts:', err)
     });
-    await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data) {
-      console.log('Report got succesfully:', data);
-    }
   }
+}
 
   async openAlertDetailModal(alert?: any) {
     const modal = await this.modalController.create({
