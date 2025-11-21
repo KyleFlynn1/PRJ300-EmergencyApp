@@ -48,7 +48,7 @@ async openReportModal() {
   if (data) {
     console.log('Report received successfully:', data);
 
-    // 🔄 Refresh list from API immediately
+    // Refresh list from API immediately
     this.alertService.getAlerts().subscribe({
       next: (alerts) => {
         this.activeAlerts = alerts;

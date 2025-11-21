@@ -1,13 +1,59 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>alerts</ion-title>
+  <ion-toolbar class="section-header">
+    <ion-title>All Alerts</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">alerts</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <div class="section">
+    <ion-searchbar animated="true" placeholder="Search for Alert"></ion-searchbar>
+    <ion-segment value="default">
+      <ion-segment-button value="default" aria-label="General">
+        <ion-icon name="information-circle-outline" color="medium"></ion-icon>
+      </ion-segment-button>
+
+      <ion-segment-button value="low" aria-label="Low">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+      </ion-segment-button>
+
+      <ion-segment-button value="moderate" aria-label="Moderate">
+        <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
+      </ion-segment-button>
+
+      <ion-segment-button value="severe" aria-label="Severe">
+        <ion-icon name="warning-outline" color="danger"></ion-icon>
+      </ion-segment-button>
+
+      <ion-segment-button value="urgent" aria-label="Urgent">
+        <ion-icon name="alarm-outline" color="urgent"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+    <ion-list>
+      @for (alert of Alerts; track alert; let index = $index) {
+      <ion-item>
+        <ion-card
+          *ngFor="let alert of activeAlerts"
+          [color]="getAlertSeverityColor(alert.severity)"
+          class="feed-card" (click)="openAlertDetailModal(alert)">
+          <ion-card-content>
+            <ion-icon [name]="getIcon(alert.category)"></ion-icon>
+            <div class="feed-content">
+              <div class="feed-header">
+                <h3>{{ alert.category }}</h3>
+                <ion-badge>{{ alert.severity }}</ion-badge>
+              </div>
+              <p>{{ alert.notes }}</p>
+              <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+      }
+    </ion-list>
+    <ion-infinite-scroll>
+      <ion-infinite-scroll-content loadingText="Please wait..." loadingSpinner="bubbles"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
