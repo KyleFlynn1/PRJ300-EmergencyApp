@@ -6,6 +6,7 @@ import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal
 import { ModalController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
+import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,10 @@ import { Alert } from 'src/app/services/alerts/alert';
   imports: [CommonModule, FormsModule, IonicModule]
 })
 export class HomePage implements OnInit {
-  
+  // Call utility functions
+  getAlertSeverityColor = getAlertSeverityColor;
+  getIcon = getIcon;
+
   // Test Data
   activeAlerts: any[] = [];
   activeAlertsCount: number = 5;
@@ -62,40 +66,6 @@ export class HomePage implements OnInit {
     if (data) {
       console.log('Alert detail modal dismissed with data:', data);
     }
-  }
-
-  getAlertSeverityColor(severity: string) {
-    switch (severity.toLowerCase()) {
-      case 'info':
-        return 'medium';
-      case 'low':
-        return 'success';
-      case 'moderate':
-        return 'warning';
-      case 'high':
-        return 'danger';
-      case 'urgent':
-        return 'urgent';
-      default:
-        return 'medium';
-    }
-  }
-
-  // Using Ionic icons for the premade categories get a matching icon to display on card with simple method
-  getIcon(category?: string) {
-    if (!category) return 'alert-circle';
-    
-    const c = category.toLowerCase();
-    
-    if (c.includes('tree') || c.includes('fallen')) return 'leaf';
-    if (c.includes('injury')) return 'medkit';
-    if (c.includes('person') || c.includes('missing')) return 'people';
-    if (c.includes('power') || c.includes('outage')) return 'flash';
-    if (c.includes('fire')) return 'flame';
-    if (c.includes('flood') || c.includes('water')) return 'water';
-    if (c.includes('road') || c.includes('blockage')) return 'car';
-    if (c.includes('amber') || c.includes('missing')) return 'people';
-    return 'alert-circle';
   }
 
 }
