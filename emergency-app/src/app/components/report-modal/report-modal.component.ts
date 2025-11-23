@@ -62,7 +62,7 @@ export class ReportModalComponent implements OnInit {
     this.reportForm = this.fb.group({
       category: ['', Validators.required],  // Category is required
       severity: ['', Validators.required], // Severity is required
-      notes: [''] // Additional notes are optional
+      notes: ['', Validators.maxLength(200)] // Additional notes are optional
     });
   }
 
