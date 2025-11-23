@@ -9,9 +9,47 @@
 
 <ion-content [fullscreen]="true">
   <div class="section">
-    <ion-searchbar animated="true" placeholder="Search for Alert"></ion-searchbar>
-    <ion-segment value="default">
-      <ion-segment-button value="default" aria-label="General">
+
+    <!--Search bar with date picker-->
+    <div class="search-container">
+      <ion-searchbar 
+        animated="true" 
+        placeholder="Search for Alert"
+        [(ngModel)]="searchTerm"
+        (ionInput)="onSearchChange($event)"
+        (ionClear)="clearSearch()">
+      </ion-searchbar>
+      
+      <ion-button 
+        id="date-trigger" 
+        fill="clear" 
+        class="date-picker-button">
+        <ion-icon 
+          slot="icon-only" 
+          name="calendar-outline"
+          [color]="selectedDateFilter ? 'primary' : 'medium'">
+        </ion-icon>
+      </ion-button>
+    </div>
+    <div class="active-filters" *ngIf="selectedDateFilter">
+      <ion-chip color="primary">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-icon name="close-circle"></ion-icon>
+      </ion-chip>
+    </div>
+
+
+
+    <!--Filter Buttons section for severity filter options-->
+    <ion-segment 
+      [(ngModel)]="selectedSeverityFilter"
+      (ionChange)="onFilterChange($event)">
+
+      <ion-segment-button value="all" aria-label="All">
+        <ion-icon name="alert-circle-outline" color="white"></ion-icon>
+      </ion-segment-button>
+
+      <ion-segment-button value="info" aria-label="General">
         <ion-icon name="information-circle-outline" color="medium"></ion-icon>
       </ion-segment-button>
 
@@ -23,7 +61,7 @@
         <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
       </ion-segment-button>
 
-      <ion-segment-button value="severe" aria-label="Severe">
+      <ion-segment-button value="high" aria-label="high">
         <ion-icon name="warning-outline" color="danger"></ion-icon>
       </ion-segment-button>
 
@@ -31,29 +69,47 @@
         <ion-icon name="alarm-outline" color="urgent"></ion-icon>
       </ion-segment-button>
     </ion-segment>
-    <ion-list>
-      @for (alert of Alerts; track alert; let index = $index) {
-      <ion-item>
-        <ion-card
-          *ngFor="let alert of activeAlerts"
-          [color]="getAlertSeverityColor(alert.severity)"
-          class="feed-card" (click)="openAlertDetailModal(alert)">
-          <ion-card-content>
-            <ion-icon [name]="getIcon(alert.category)"></ion-icon>
-            <div class="feed-content">
-              <div class="feed-header">
-                <h3>{{ alert.category }}</h3>
-                <ion-badge>{{ alert.severity }}</ion-badge>
-              </div>
-              <p>{{ alert.notes }}</p>
-              <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
+  
+    <div class="alerts-list">
+      <ion-card
+        *ngFor="let alert of alerts"
+        [color]="getAlertSeverityColor(alert.severity)"
+        class="feed-card" 
+        (click)="openAlertDetailModal(alert)">
+        <ion-card-content>
+          <ion-icon [name]="getIcon(alert.category)"></ion-icon>
+          <div class="feed-content">
+            <div class="feed-header">
+              <h3>{{ alert.category }}</h3>
+              <ion-badge>{{ alert.severity }}</ion-badge>
             </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-item>
-      }
-    </ion-list>
-    <ion-infinite-scroll>
-      <ion-infinite-scroll-content loadingText="Please wait..." loadingSpinner="bubbles"></ion-infinite-scroll-content>
+            <p>{{ alert.notes }}</p>
+            <small>{{ alert.location.address }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-infinite-scroll 
+      threshold="100px" 
+      (ionInfinite)="loadMoreAlerts($event)"
+      [disabled]="infiniteScrollDisabled">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more alerts...">
+      </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
+
+  <ion-modal trigger="date-trigger" #dateModal>
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        [(ngModel)]="selectedDateFilter">
+        <ion-buttons slot="buttons">
+
+        </ion-buttons>
+      </ion-datetime>
+    </ng-template>
+  </ion-modal>
+</ion-content>

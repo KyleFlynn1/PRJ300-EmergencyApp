@@ -28,7 +28,10 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.alertService.getAlerts().subscribe(alerts => {
-      this.activeAlerts = alerts;
+      // Sort by timestamp descending (newest first)
+      this.activeAlerts = alerts.sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
       this.activeAlertsCount = alerts.length;
     });
   }
@@ -51,7 +54,10 @@ async openReportModal() {
     // Refresh list from API immediately
     this.alertService.getAlerts().subscribe({
       next: (alerts) => {
-        this.activeAlerts = alerts;
+        // Sort by timestamp descending (newest first)
+        this.activeAlerts = alerts.sort((a, b) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
         this.activeAlertsCount = alerts.length;
       },
       error: (err) => console.error('Failed to refresh alerts:', err)
@@ -108,6 +114,23 @@ async openReportModal() {
     if (c.includes('road') || c.includes('blockage')) return 'car';
     if (c.includes('amber') || c.includes('missing')) return 'people';
     return 'alert-circle';
+  }
+
+  getFormattedTimestamp(timestamp: string): string {
+    const alertDate = new Date(timestamp);
+    const today = new Date();
+    
+    // Check if it's today by comparing date strings
+    const isToday = alertDate.toDateString() === today.toDateString();
+    
+    if (isToday) {
+      // Show only time if today
+      return alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    } else {
+      // Show date and time if not today
+      return alertDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' ' + 
+             alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
   }
 
 }

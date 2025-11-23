@@ -51,7 +51,7 @@
               <ion-badge>{{ alert.severity }}</ion-badge>
             </div>
             <p>{{ alert.notes }}</p>
-            <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
+            <small>{{ alert.location.address }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
           </div>
         </ion-card-content>
       </ion-card>
