@@ -46,6 +46,7 @@ $CARD_COLOUR_GREEN: #3ead44;
 $CARD_COLOUR_ORANGE: #ff8e1d;
 $CARD_COLOUR_RED: #ec0303;
 $CARD_COLOUR_GRAY: #797979;
+$CARD_COLOUR_PURPLE: #f200ff;
 
 :root {
   --ion-text-color: #{$PRIMARY_TITLE_COLOUR};
@@ -53,8 +54,13 @@ $CARD_COLOUR_GRAY: #797979;
   --ion-color-warning: #{$CARD_COLOUR_ORANGE};
   --ion-color-danger: #{$CARD_COLOUR_RED};
   --ion-color-medium: #{$CARD_COLOUR_GRAY};
+  --ion-color-urgent: #{$CARD_COLOUR_PURPLE};
 }
 
+.ion-color-urgent {
+  --ion-color-base: #{$CARD_COLOUR_PURPLE};
+  --ion-color-contrast: #000000;
+}
 
 /* Custom Styling for all pages - simplified & modern */
 .section {
@@ -370,3 +376,146 @@ $CARD_COLOUR_GRAY: #797979;
   }
 }
 
+.emergency-alert {
+  --width: 90%;
+  --max-width: 350px;
+  
+  .alert-message {
+    padding: 20px 10px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .alert-button-group button {
+    height: 50px;
+    font-size: 16px;
+  }
+}
+
+.error-message {
+  text-align: center;
+  color: #ff6b6b;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.detail-card {
+  margin: 0;
+  border-radius: 12px;
+}
+
+ion-card-content {
+  padding: 32px 24px;
+}
+
+.detail-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.main-icon {
+  font-size: 72px;
+  color: white;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.detail-header h1 {
+  margin: 0 0 12px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+}
+
+.severity-badge {
+  font-weight: 600;
+  padding: 6px 16px;
+  font-size: 14px;
+}
+
+/* Sections */
+.detail-section {
+  margin-bottom: 28px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: white;
+  text-align: center;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  ion-icon {
+    font-size: 28px;
+    color: white;
+    margin-top: 4px;
+  }
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.value {
+  font-size: 16px;
+  color: white;
+  font-weight: 500;
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.map-container {
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.map-icon {
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 8px;
+}

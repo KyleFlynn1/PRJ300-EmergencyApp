@@ -1,26 +1,30 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Report } from 'src/app/interfaces/report.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Alert {
 
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3000/api/v1/alert';
   private alerts: Report[] = [];
-
   private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
-  alerts$ = this.alertsSubject.asObservable();
 
-  constructor() {}
-
-  addAlert(alert: Report): void {
-    this.alerts.unshift(alert);
-    this.alertsSubject.next(this.alerts);
+  getAlerts(): Observable<Report[]> {
+    return this.http.get<Report[]>(this.apiUrl);
   }
 
-  getAlerts(): Report[] {
-    return this.alerts;
+  addAlert(report: Report): Observable<Report> {
+  return this.http.post<Report>(this.apiUrl, report).pipe(
+    tap((newAlert) => {
+      this.alerts = [newAlert, ...this.alerts];
+      this.alertsSubject.next(this.alerts);
+      })
+    );
   }
 }
