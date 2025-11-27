@@ -2,7 +2,9 @@
   <ion-toolbar class="section-header">
     <ion-title>Alerts</ion-title>
     <ion-buttons slot="end">
-      <ion-menu-button></ion-menu-button>
+      <button class="native-menu-button" (click)="openMenu()" (touchstart)="openMenu()">
+        Menu
+      </button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -11,25 +13,21 @@
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>
-    <ion-card *ngIf="activeAlerts.length === 0" color="success" class="status-alert-card">
-      <ion-card-content>
-        <ion-icon name="checkmark-circle"></ion-icon>
-        <div>
-          <h3>All Clear</h3>
-          <p>No active emergencies in your area</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <div *ngIf="activeAlerts.length === 0" class="status-card status-success">
+      <ion-icon name="checkmark-circle" class="status-icon"></ion-icon>
+      <div class="status-content">
+        <h3>All Clear</h3>
+        <p>No active emergencies in your area</p>
+      </div>
+    </div>
 
-    <ion-card *ngIf="activeAlerts.length > 0" color="danger" class="status-alert-card">
-      <ion-card-content>
-        <ion-icon name="warning"></ion-icon>
-        <div>
-          <h3>Active Alert</h3>
-          <p>{{ activeAlertsCount }} emergency alert(s) in your area</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <div *ngIf="activeAlerts.length > 0" class="status-card status-danger">
+      <ion-icon name="warning" class="status-icon"></ion-icon>
+      <div class="status-content">
+        <h3>Active Alert</h3>
+        <p>{{ activeAlertsCount }} emergency alert(s) in your area</p>
+      </div>
+    </div>
   </div>
 
   <!--Feed section -->
@@ -39,76 +37,78 @@
     <div class="feed-list">
 
       <!-- Auto add new alerts from report modal and alert service-->
-      <ion-card
+      <div
          *ngFor="let alert of activeAlerts"
-         [color]="getAlertSeverityColor(alert.severity)"
-         class="feed-card" (click)="openAlertDetailModal(alert)">
-        <ion-card-content> 
-          <ion-icon [name]="getIcon(alert.category)"></ion-icon>
-          <div class="feed-content">
-            <div class="feed-header">
+         class="native-feed-card feed-card" (click)="openAlertDetailModal(alert)" [style.background]="getAlertSeverityColor(alert.severity)">
+        <div class="card-iinner"> 
+          <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
               <h3>{{ alert.category }}</h3>
-              <ion-badge>{{ alert.severity }}</ion-badge>
+              <span class="severity-badge">{{ alert.severity }}</span>
             </div>
             <p>{{ alert.notes }}</p>
             <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-    <!-- 
-      <ion-card color="success" class="feed-card">
-        <ion-card-content>
-          <ion-icon name="leaf"></ion-icon>
-          <div class="feed-content">
-            <div class="feed-header">
+      <!-- Static test cards -->
+      <div class="native-feed-card" (click)="openAlertDetailModal()" style="background: #3ead44">
+        <div class="card-iinner"> 
+          <ion-icon name="leaf" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
               <h3>Tree Down</h3>
-              <ion-badge>Low</ion-badge>
+              <span class="severity-badge">Low</span>
             </div>
-            <p>Minor blockage on Main St - Services Alerted </p>
+            <p>Minor blockage on Main St - Services Alerted</p>
             <small>Main St • 12m ago</small>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-      <ion-card color="warning" class="feed-card">
-        <ion-card-content>
-          <ion-icon name="thunderstorm"></ion-icon>
-          <div class="feed-content">
-            <div class="feed-header">
+      <div class="native-feed-card" (click)="openAlertDetailModal()" style="background: #ff8e1d">
+        <div class="card-iinner"> 
+          <ion-icon name="thunderstorm" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
               <h3>Storm Watch</h3>
-              <ion-badge>Moderate</ion-badge>
+              <span class="severity-badge">Moderate</span>
             </div>
             <p>Severe storms expected this evening</p>
             <small>County-wide • 30m ago</small>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-      <ion-card color="danger" class="feed-card">
-        <ion-card-content>
-          <ion-icon name="water"></ion-icon>
-          <div class="feed-content">
-            <div class="feed-header">
+      <div class="native-feed-card" (click)="openAlertDetailModal()" style="background: #ec0303">
+        <div class="card-iinner"> 
+          <ion-icon name="water" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
               <h3>Flooded Road</h3>
-              <ion-badge>High</ion-badge>
+              <span class="severity-badge">High</span>
             </div>
             <p>Severe flooding on Canal Street — road closed</p>
             <small>Canal St • 1h ago</small>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-      <ion-card color="medium" class="feed-card">
-        <ion-card-content>
-          <ion-icon name="alert"></ion-icon>
-          <div class="feed-content">
-            <h3>Power Outage</h3>
+      <div class="native-feed-card" (click)="openAlertDetailModal()" style="background: #797979">
+        <div class="card-iinner"> 
+          <ion-icon name="flash" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
+              <h3>Power Outage</h3>
+              <span class="severity-badge">Info</span>
+            </div>
             <p>Power Outage reported at Main St</p>
             <small>1:20 PM • 3h ago</small>
           </div>
-        </ion-card-content>
-      </ion-card> -->
+        </div>
+      </div>
       
     </div>
   </div>
@@ -116,10 +116,10 @@
   <!-- Report Section -->
   <div class="section">
     <div class="report-container">
-      <ion-button class="report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
+      <button class="native-report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
         <ion-icon name="paper-plane"></ion-icon>
         Report Emergency
-      </ion-button>
+      </button>
       <p class="report-note">
         Tap to report an incident — responders will be notified
       </p>
@@ -131,26 +131,56 @@
     <h2>Other Warnings / Info</h2>
 
     <div class="warning-list">
-      <ion-card color="urgent" class="warning-card">
-        <ion-card-content>
+      <div class="native-warning-card" style="background: #f200ff">
+        <div>
           <ion-icon name="alert-circle"></ion-icon>
           <div>
             <h3>Amber Alert</h3>
             <p>Missing child reported — check local updates for more details</p>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-      <ion-card color="warning" class="warning-card">
-        <ion-card-content>
+      <div class="native-warning-card" style="background: #ff8e1d">
+        <div>
           <ion-icon name="megaphone"></ion-icon>
           <div>
             <h3>Community Notice</h3>
             <p>Roadworks between Main Road and Side Road 7PM-7AM</p>
           </div>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
     </div>
   </div>
 </ion-content>
+
+<!-- Report Modal -->
+<div class="native-modal-overlay" *ngIf="showReportModal">
+  <div class="native-modal-content">
+    <div class="modal-header">
+      <h2>Report Emergency</h2>
+      <button class="close-button" (click)="closeReportModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-report-modal [isNativeModal]="true" (closeModal)="handleReportClose($event)"></app-report-modal>
+    </div>
+  </div>
+</div>
+
+<!-- Alert Detail Modal -->
+<div class="native-modal-overlay" *ngIf="showAlertDetailModal">
+  <div class="native-modal-content" [style.background]="getAlertSeverityColor(selectedAlert?.severity)">
+    <div class="modal-header">
+      <h2>{{selectedAlert?.category || 'Alert Details'}}</h2>
+      <button class="close-button" (click)="closeAlertDetailModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-alert-detail-modal [alert]="selectedAlert" [isNativeModal]="true"></app-alert-detail-modal>
+    </div>
+  </div>
+</div>

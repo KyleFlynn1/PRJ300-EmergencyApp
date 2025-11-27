@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, MenuController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
@@ -13,7 +13,7 @@ import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent]
 })
 export class HomePage implements OnInit {
   // Call utility functions
@@ -25,9 +25,13 @@ export class HomePage implements OnInit {
   activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
 
+  showReportModal: boolean = false;
+  showAlertDetailModal: boolean = false;
+  selectedAlert: any = null;
+
   constructor(
-    private modalController: ModalController,
-    private alertService: Alert
+    private alertService: Alert,
+    private menuController: MenuController
   ) { }
 
   ngOnInit() {
@@ -37,47 +41,41 @@ export class HomePage implements OnInit {
     });
   }
 
-async openReportModal() {
-  const modal = await this.modalController.create({
-    component: ReportModalComponent,
-    cssClass: 'floating-modal',
-    backdropDismiss: true,
-    showBackdrop: true
-  });
-  await modal.present();
-
-  const { data } = await modal.onDidDismiss();
-
-  // When modal sends back the new alert, refresh the list
-  if (data) {
-    console.log('Report received successfully:', data);
-
-    // 🔄 Refresh list from API immediately
-    this.alertService.getAlerts().subscribe({
-      next: (alerts) => {
-        this.activeAlerts = alerts;
-        this.activeAlertsCount = alerts.length;
-      },
-      error: (err) => console.error('Failed to refresh alerts:', err)
-    });
+  openReportModal() {
+    this.showReportModal = true;
   }
-}
 
-  async openAlertDetailModal(alert?: any) {
-    const modal = await this.modalController.create({
-      component: AlertDetailModalComponent,
-      cssClass: 'floating-modal',
-      backdropDismiss: true,
-      showBackdrop: true,
-      componentProps: {
-        alert
+  closeReportModal(){
+    this.showReportModal = false;
+  }
+
+  handleReportClose(date: any) {
+    this.closeReportModal();
+    if (date) {
+      console.log('Report submitted with date:', date);
+      this.alertService.getAlerts().subscribe({
+        next: (alerts) => {
+          this.activeAlerts = alerts.sort((a, b) => 
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        this.activeAlertsCount = this.activeAlerts.length;
       }
     });
-    await modal.present();
-    const { data } = await modal.onDidDismiss();
-    if (data) {
-      console.log('Alert detail modal dismissed with data:', data);
     }
+  }
+
+  openAlertDetailModal(alert?: any) {
+    this.selectedAlert = alert;
+    this.showAlertDetailModal = true;
+  }
+
+  closeAlertDetailModal(){
+    this.showAlertDetailModal = false;
+    this.selectedAlert = null;
+  }
+
+  openMenu() {
+    this.menuController.open();
   }
 
 }

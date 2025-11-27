@@ -10,7 +10,7 @@ import { tap } from 'rxjs/operators';
 export class Alert {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/v1/alert';
+  private apiUrl = 'http://192.168.5.75:3000/api/v1/alert';
   private alerts: Report[] = [];
   private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
