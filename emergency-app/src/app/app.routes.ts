@@ -18,4 +18,8 @@ export const routes: Routes = [
     path: 'map',
     loadComponent: () => import('./pages/map/map.page').then( m => m.MapPage)
   },
+  {
+    path: 'defibilators',
+    loadComponent: () => import('./pages/defibilators/defibilators.page').then( m => m.DefibilatorsPage)
+  },
 ];

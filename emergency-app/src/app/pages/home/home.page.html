@@ -3,7 +3,7 @@
     <ion-title>Alerts</ion-title>
     <ion-buttons slot="end">
       <button class="native-menu-button" (click)="openMenu()" (touchstart)="openMenu()">
-        Menu
+        <ion-icon name="menu"></ion-icon>
       </button>
     </ion-buttons>
   </ion-toolbar>
@@ -48,12 +48,13 @@
               <span class="severity-badge">{{ alert.severity }}</span>
             </div>
             <p>{{ alert.notes }}</p>
-            <small>{{ alert.location.address }} • {{ alert.timestamp | date:'HH:mm'}}</small>
+            <small>{{ alert.location.address }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
           </div>
         </div>
       </div>
 
       <!-- Static test cards -->
+       <!-- 
       <div class="native-feed-card" (click)="openAlertDetailModal()" style="background: #3ead44">
         <div class="card-iinner"> 
           <ion-icon name="leaf" class="card-icon"></ion-icon>
@@ -109,12 +110,21 @@
           </div>
         </div>
       </div>
-      
+      -->
+
+    </div>
+
+    <!-- View All Alerts Button -->
+    <div style="text-align: center; margin-top: 16px;">
+      <button class="view-all-alerts-button" routerLink="/alerts">
+        View All Alerts
+        <ion-icon name="chevron-forward"></ion-icon>
+      </button>
     </div>
   </div>
 
   <!-- Report Section -->
-  <div class="section">
+  <div class="section action-buttons-section">
     <div class="report-container">
       <button class="native-report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
         <ion-icon name="paper-plane"></ion-icon>
@@ -122,6 +132,17 @@
       </button>
       <p class="report-note">
         Tap to report an incident — responders will be notified
+      </p>
+    </div>
+
+    <!-- Defibrillator Map Button -->
+    <div class="report-container defib-container">
+      <button class="native-defib-button" routerLink="/defibilators">
+        <ion-icon name="heart-outline"></ion-icon>
+        Defibrillator Map
+      </button>
+      <p class="report-note">
+        Find nearby defibrillators in your area
       </p>
     </div>
   </div>

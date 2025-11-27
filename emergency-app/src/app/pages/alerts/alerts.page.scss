@@ -1,0 +1,38 @@
+/* Alerts page - full height list */
+.alerts-list.feed-list {
+  max-height: calc(100vh - 220px);
+  min-height: calc(100vh - 220px);
+}
+
+/* Filter button colors matching severity levels */
+.filter-buttons {
+  .native-menu-button {
+    ion-icon {
+      font-size: 24px;
+    }
+
+    &.filter-all {
+      color: #ffffff;
+    }
+
+    &.filter-info {
+      color: #0aede9;
+    }
+
+    &.filter-low {
+      color: #3ead44; 
+    }
+
+    &.filter-moderate {
+      color: #ff8e1d; 
+    }
+
+    &.filter-high {
+      color: #ec0303; 
+    }
+
+    &.filter-urgent {
+      color: #f200ff;
+    }
+  }
+}
