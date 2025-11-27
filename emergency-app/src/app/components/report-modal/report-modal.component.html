@@ -41,7 +41,28 @@
         <textarea formControlName="notes" class="native-textarea" rows="5" placeholder="Describe the incident..."></textarea>
       </div>
 
+      <!-- Override Location Checkbox -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="overrideLocation" class="native-checkbox" />
+          Override Location (Manually enter address)
+        </label>
+      </div>
+
+      <!-- Custom Address Input (shown only if override is checked) -->
+      <div class="form-group" *ngIf="overrideLocation?.value">
+        <label>Custom Address</label>
+        <input 
+          type="text" 
+          formControlName="customAddress"
+          class="native-select"
+          placeholder="Enter custom address" />
+      </div>
+
       <div class="form-actions">
+        <button type="button" class="cancel-button" (click)="cancelReport()">
+          Cancel
+        </button>
         <button type="button" class="native-submit-button" (click)="submitReport()" [disabled]="reportForm.invalid">
           <ion-icon name="paper-plane"></ion-icon>
           Submit Report

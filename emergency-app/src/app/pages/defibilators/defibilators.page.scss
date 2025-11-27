@@ -1,0 +1,49 @@
+.add-defib-section {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.add-defib-top-button {
+  width: 100%;
+  padding: 14px;
+  background: #00c6ff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+  transition: transform 0.2s;
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.defib-map-container {
+  width: 100%;
+  height: calc(100vh - 120px);
+  position: relative;
+
+  // Hide OpenLayers controls
+  ::ng-deep .ol-attribution {
+    display: none !important;
+  }
+
+  ::ng-deep .ol-zoom {
+    display: none !important;
+  }
+
+  ::ng-deep .ol-rotate {
+    display: none !important;
+  }
+}

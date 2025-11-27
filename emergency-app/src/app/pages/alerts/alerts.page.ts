@@ -1,36 +1,46 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, MenuController } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
+import { getAlertSeverityColor, getIcon, getFormattedTimestamp} from 'src/app/utils/modalUtil';
 
 @Component({
   selector: 'app-alerts',
   templateUrl: './alerts.page.html',
   styleUrls: ['./alerts.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, AlertDetailModalComponent]
 })
 export class AlertsPage implements OnInit {
+  // Call utility functions
+  getAlertSeverityColor = getAlertSeverityColor;
+  getIcon = getIcon;
+  getFormattedTimestamp = getFormattedTimestamp;
 
-  allAlerts: any[] = [];  // All alerts from database
-  filteredAlerts: any[] = []; // Filtered alerts based on search/filter
-  alerts: any[] = []; // Alerts to display (paginated)
+  // Alert data and filtering state to store alerts and manage filters
+  allAlerts: any[] = []; 
+  filteredAlerts: any[] = []; 
+  alerts: any[] = []; 
 
-  selectedSeverityFilter: string = 'all'; // Filter via buttons and by severity
-  searchTerm: string = '';  // Search for alert by category or type
-  selectedDateFilter: string = ''; // Date and Time filter for alerts
+  // Filtering state stored here
+  selectedSeverityFilter: string = 'all'; 
+  searchTerm: string = ''; 
 
-  // Pagination
-  pageSize: number = 7; // Load 7 alerts at a time and load more when scrolling using ion infinite scroll
+  // Native alert detail modal state
+  showAlertDetailModal: boolean = false;
+  selectedAlert: any = null;
+
+  // Pagination using infinite scroll ionic component
+  pageSize: number = 20;
   currentPage: number = 0;
   infiniteScrollDisabled: boolean = false;
 
   constructor(
     private alertService: Alert,
-    private modalController: ModalController
+    private menuController: MenuController
   ) { }
 
   ngOnInit() {
@@ -54,12 +64,13 @@ export class AlertsPage implements OnInit {
   }
 
   onFilterChange(event: any) {
-    this.selectedSeverityFilter = event.detail.value;
+    this.selectedSeverityFilter = typeof event === 'string' ? event : event?.detail?.value;
     this.applyFilters();
   }
 
   onSearchChange(event: any) {
-    this.searchTerm = event.detail.value.toLowerCase();
+    const val = event?.target?.value ?? event?.detail?.value ?? '';
+    this.searchTerm = String(val).toLowerCase();
     this.applyFilters();
   }
 
@@ -96,6 +107,7 @@ export class AlertsPage implements OnInit {
     this.loadMoreAlerts(); // Load first batch of filtered results
   }
 
+  // load more alerts for infinite scroll implementation
   loadMoreAlerts(event?: any) {
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
@@ -114,73 +126,34 @@ export class AlertsPage implements OnInit {
     }
   }
 
-  // Get color for severity badge on alert card
-
-  getAlertSeverityColor(severity: string) {
-    switch (severity.toLowerCase()) {
-      case 'info':
-        return 'medium';
-      case 'low':
-        return 'success';
-      case 'moderate':
-        return 'warning';
-      case 'high':
-        return 'danger';
-      case 'urgent':
-        return 'urgent';
-      default:
-        return 'medium';
-    }
+  // Open native alert detail modal
+  openAlertDetailModal(alert?: any) {
+    this.selectedAlert = alert ?? null;
+    this.showAlertDetailModal = true;
   }
 
-  // Using Ionic icons for the premade categories get a matching icon to display on card with simple method
-  getIcon(category?: string) {
-    if (!category) return 'alert-circle';
-    
-    const c = category.toLowerCase();
-    
-    if (c.includes('tree') || c.includes('fallen')) return 'leaf';
-    if (c.includes('injury')) return 'medkit';
-    if (c.includes('person') || c.includes('missing')) return 'people';
-    if (c.includes('power') || c.includes('outage')) return 'flash';
-    if (c.includes('fire')) return 'flame';
-    if (c.includes('flood') || c.includes('water')) return 'water';
-    if (c.includes('road') || c.includes('blockage')) return 'car';
-    if (c.includes('amber') || c.includes('missing')) return 'people';
-    return 'alert-circle';
+
+  // Close native alert detail modal
+  closeAlertDetailModal() {
+    this.showAlertDetailModal = false;
+    this.selectedAlert = null;
   }
 
-  getFormattedTimestamp(timestamp: string): string {
-    const alertDate = new Date(timestamp);
-    const today = new Date();
-    
-    // Check if it's today by comparing date strings
-    const isToday = alertDate.toDateString() === today.toDateString();
-    
-    if (isToday) {
-      // Show only time if today
-      return alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-    } else {
-      // Show date and time if not today
-      return alertDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' ' + 
-             alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-  }
 
-  async openAlertDetailModal(alert?: any) {
-      const modal = await this.modalController.create({
-        component: AlertDetailModalComponent,
-        cssClass: 'floating-modal',
-        backdropDismiss: true,
-        showBackdrop: true,
-        componentProps: {
-          alert
-        }
-      });
-      await modal.present();
-      const { data } = await modal.onDidDismiss();
-      if (data) {
-        console.log('Alert detail modal dismissed with data:', data);
+  // Handle scroll event for infinite scroll
+  onScroll(event: any) {
+    const element = event.target;
+    const threshold = 100; // Load more when 100px from bottom
+    
+    if (element.scrollHeight - element.scrollTop - element.clientHeight < threshold) {
+      if (!this.infiniteScrollDisabled) {
+        this.loadMoreAlerts();
       }
     }
+  }
+
+  // Open side menu for navigation
+  openMenu() {
+    this.menuController.open();
+  }
 }

@@ -1,0 +1,61 @@
+<div class="report-modal-container">
+  <!-- Native Alert Overlay -->
+  <div class="native-alert-overlay" *ngIf="showAlert" (click)="showAlert = false">
+    <div class="native-alert-box" (click)="$event.stopPropagation()">
+      <div class="alert-header">⚠️ Emergency Warning ⚠️</div>
+      <div class="alert-body">For real emergencies, call 999 instead of using the app.</div>
+      <button class="alert-button" (click)="showAlert = false">Acknowledge</button>
+    </div>
+  </div>
+
+  <div class="section report-form-section">
+    <form [formGroup]="defibForm">
+      
+      <!-- Working Status -->
+      <div class="form-group">
+        <label>Status *</label>
+        <select formControlName="working" class="native-select">
+          <option [value]="true">Working</option>
+          <option [value]="false">Not Working</option>
+        </select>
+        <div class="error-message" *ngIf="working?.invalid && working?.touched">
+          Status is required
+        </div>
+      </div>
+
+      <!-- Photo URL (optional) -->
+      <div class="form-group">
+        <label>Photo URL (Optional)</label>
+        <input 
+          type="text" 
+          formControlName="photoUrl"
+          class="native-select"
+          placeholder="Attach photo for easier recognition" />
+      </div>
+
+      <!-- Access Instructions -->
+      <div class="form-group">
+        <label>Access Instructions</label>
+        <textarea 
+          formControlName="accessInstructions"
+          class="native-textarea" 
+          rows="4" 
+          placeholder="Give easy instructions to access the defibrillator"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-button" (click)="cancel()">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="native-submit-button" 
+          (click)="submitDefib()" 
+          [disabled]="defibForm.invalid">
+          <ion-icon name="add-circle"></ion-icon>
+          Add Defibrillator
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

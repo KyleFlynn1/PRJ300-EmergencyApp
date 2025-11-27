@@ -6,25 +6,27 @@ import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal
 import { ModalController, MenuController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
-import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
-
+import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
+import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent]
+  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, RouterLink]
 })
 export class HomePage implements OnInit {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+  getFormattedTimestamp = getFormattedTimestamp;
 
   // Test Data
   activeAlerts: any[] = [];
   activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
 
+  // Modal state if they are opened or closed
   showReportModal: boolean = false;
   showAlertDetailModal: boolean = false;
   selectedAlert: any = null;
@@ -44,6 +46,7 @@ export class HomePage implements OnInit {
     });
   }
 
+  // Open and close report modal methods
   openReportModal() {
     this.showReportModal = true;
   }
@@ -52,6 +55,7 @@ export class HomePage implements OnInit {
     this.showReportModal = false;
   }
 
+  // Handle report modal close event
   handleReportClose(date: any) {
     this.closeReportModal();
     if (date) {
@@ -67,6 +71,7 @@ export class HomePage implements OnInit {
     }
   }
 
+  // Open and close alert detail modal methods
   openAlertDetailModal(alert?: any) {
     this.selectedAlert = alert;
     this.showAlertDetailModal = true;
@@ -77,25 +82,8 @@ export class HomePage implements OnInit {
     this.selectedAlert = null;
   }
 
+  // Open side menu for navigation
   openMenu() {
     this.menuController.open();
   }
-
-  getFormattedTimestamp(timestamp: string): string {
-    const alertDate = new Date(timestamp);
-    const today = new Date();
-    
-    // Check if it's today by comparing date strings
-    const isToday = alertDate.toDateString() === today.toDateString();
-    
-    if (isToday) {
-      // Show only time if today
-      return alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-    } else {
-      // Show date and time if not today
-      return alertDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' ' + 
-             alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-  }
-
 }

@@ -47,7 +47,7 @@ $CARD_COLOUR_PURPLE: #f200ff;
 
 /* Shared Layout Styles */
 .section {
-  margin: 16px 0;
+  margin: 8px 0;
   padding: 0 16px;
 
   h2 {
@@ -61,12 +61,12 @@ $CARD_COLOUR_PURPLE: #f200ff;
 .section-header {
   --background: transparent;
   --color: #ffffff;
-  padding: 6px 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.04);
 
   ion-title {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
@@ -279,6 +279,89 @@ $CARD_COLOUR_PURPLE: #f200ff;
   }
 }
 
+/* Defibrillator Button */
+.native-defib-button {
+  background: #00c6ff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  width: 75%;
+  min-width: 220px;
+  max-width: 360px;
+  height: 56px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  touch-action: manipulation;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 114, 255, 0.4);
+  }
+}
+
+/* View All Alerts Button */
+.view-all-alerts-button {
+  background: #ff8e1d;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  touch-action: manipulation;
+  transition: background 0.2s, transform 0.2s;
+
+  ion-icon {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: #e67e1a;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Action Buttons Section - Reduced spacing */
+.action-buttons-section {
+  margin: 4px 0 !important;
+  
+  .report-container {
+    margin-bottom: 0;
+    
+    .report-note {
+      margin-bottom: 4px;
+    }
+  }
+  
+  .defib-container {
+    margin-top: 0;
+    
+    .report-note {
+      margin-top: 4px;
+    }
+  }
+}
+
 /* Menu */
 .app-menu {
   --width: 350px;
@@ -320,10 +403,66 @@ $CARD_COLOUR_PURPLE: #f200ff;
   background: transparent;
   border: none;
   color: white;
-  font-size: 16px;
-  padding: 8px 16px;
+  font-size: 24px;
+  padding: 10px;
   cursor: pointer;
   touch-action: manipulation;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  ion-icon {
+    font-size: 28px;
+    color: white !important;
+  }
+}
+
+/* Filter Buttons */
+.filter-button {
+  background: transparent;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  
+  ion-icon {
+    font-size: 28px;
+  }
+
+  &.filter-all ion-icon {
+    color: #ffffff;
+  }
+
+  &.filter-info ion-icon {
+    color: $CARD_COLOUR_GRAY;
+  }
+
+  &.filter-low ion-icon {
+    color: $CARD_COLOUR_GREEN;
+  }
+
+  &.filter-moderate ion-icon {
+    color: $CARD_COLOUR_ORANGE;
+  }
+
+  &.filter-high ion-icon {
+    color: $CARD_COLOUR_RED;
+  }
+
+  &.filter-urgent ion-icon {
+    color: $CARD_COLOUR_PURPLE;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 /* Native Modal */

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons } from '@ionic/angular'
-import { IonicModule } from "@ionic/angular";
+import { IonicModule, MenuController } from "@ionic/angular";
 import { MapComponent } from 'src/app/components/map/map.component';
 
 @Component({
@@ -14,9 +14,12 @@ import { MapComponent } from 'src/app/components/map/map.component';
 })
 export class MapPage implements OnInit {
 
-  constructor() { }
+  constructor(private menuController: MenuController) { }
 
   ngOnInit() {
   }
 
+  openMenu() {
+    this.menuController.open();
+  }
 }
