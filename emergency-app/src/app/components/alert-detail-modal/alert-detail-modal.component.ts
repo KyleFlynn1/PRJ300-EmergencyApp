@@ -17,6 +17,7 @@ export class AlertDetailModalComponent  implements OnInit {
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
   
+  @Input() isNativeModal : boolean = false;
   @Input() alert?: Report;
 
   constructor(
@@ -28,6 +29,8 @@ export class AlertDetailModalComponent  implements OnInit {
   }
 
   closeDetailedView() {
-    this.modalController.dismiss(null, 'cancel');
+    if (!this.isNativeModal) {
+      this.modalController.dismiss();
+    }
   }
 }

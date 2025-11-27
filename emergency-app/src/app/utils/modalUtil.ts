@@ -4,17 +4,17 @@
 export const getAlertSeverityColor = (severity?: string) : string => {
     switch (severity?.toLowerCase()) {
       case 'info':
-        return 'medium';
+        return '#797979';
       case 'low':
-        return 'success';
+        return '#3ead44';
       case 'moderate':
-        return 'warning';
+        return '#ff8e1d';
       case 'high':
-        return 'danger';
+        return '#ec0303';
       case 'urgent':
-        return 'urgent';
+        return '#f200ff';
       default:
-        return 'medium';
+        return '#797979'; // Default to 'info' color
     }
   }
 

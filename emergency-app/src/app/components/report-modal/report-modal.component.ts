@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ModalController, IonicModule, AlertController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -14,6 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [IonicModule, FormsModule, CommonModule , ReactiveFormsModule],
 })
 export class ReportModalComponent implements OnInit {
+  @Input() isNativeModal : boolean = false;
+  @Output() closeModal = new EventEmitter<any>();
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -67,7 +69,11 @@ export class ReportModalComponent implements OnInit {
   }
 
   cancelReport() {
-    this.modalController.dismiss(null, 'cancel');
+    if (this.isNativeModal) {
+      this.closeModal.emit(null);
+    } else {
+      this.modalController.dismiss(null, 'cancel');
+    }
   }
 
   async submitReport() {
@@ -86,15 +92,18 @@ export class ReportModalComponent implements OnInit {
     formData.location = { address: 'Roscommon' }; // Temporary location
 
     this.alertService.addAlert(formData).subscribe({
-  next: (response) => {
-    console.log("✔ POST sent successfully:", response);
-    this.modalController.dismiss(response, 'confirm');
-  },
-  error: (err) => {
-    console.error("❌ Error sending POST:", err);
-  }
-});
-    this.modalController.dismiss(formData, 'confirm');
+      next: (response) => {
+        console.log("POST sent successfully:", response);
+        if (this.isNativeModal) {
+          this.closeModal.emit(response);
+        } else {
+          this.modalController.dismiss(response, 'confirm');
+        }
+      },
+      error: (err) => {
+        console.error("Error sending POST:", err);
+      }
+    });
   }
 
 
