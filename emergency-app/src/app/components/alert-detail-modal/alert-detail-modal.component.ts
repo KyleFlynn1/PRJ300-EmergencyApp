@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Icon } from 'ionicons/dist/types/components/icon/icon';
@@ -15,18 +15,21 @@ import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
+import { RouterModule } from '@angular/router';
+import {ReportModalComponent} from '../report-modal/report-modal.component';
 
 @Component({
   selector: 'app-alert-detail-modal',
   templateUrl: './alert-detail-modal.component.html',
   styleUrls: ['./alert-detail-modal.component.scss'],
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, RouterModule, AsyncPipe, ReportModalComponent],
   standalone: true,
 })
 export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+  showform: boolean = false;
   
   
   @Input() isNativeModal : boolean = false;
@@ -102,7 +105,7 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
     }
   }
   updateAlert() {
-    
+    this.showform = true;
   }
   deleteAlert() {
     if (this.alert && this.alert._id) {

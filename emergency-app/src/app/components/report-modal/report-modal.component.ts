@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, input, effect } from '@angular/core';
 import { ModalController, IonicModule, AlertController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -16,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class ReportModalComponent implements OnInit {
   @Input() isNativeModal : boolean = false;
   @Output() closeModal = new EventEmitter<any>();
+  @Input() alert?: Report;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -70,6 +71,15 @@ export class ReportModalComponent implements OnInit {
       overrideLocation: [false], // Checkbox for custom location
       customAddress: [''] // Custom address input
     });
+
+    if (this.alert) {
+      this.reportForm.patchValue({
+        category: this.alert.category,
+        severity: this.alert.severity,
+        notes: this.alert.notes,
+        customAddress: this.alert.location?.address
+      });
+    }
   }
 
   // Close modal
@@ -79,6 +89,17 @@ export class ReportModalComponent implements OnInit {
     } else {
       this.modalController.dismiss(null, 'cancel');
     }
+  }
+  updateAlert(id: string, updatedData: Report) {
+    this.alertService.updateAlert(id, updatedData).subscribe({
+      next: (response) => {
+        console.log("Alert updated successfully:", response);
+        window.location.href = '/home';
+      },
+      error: (err) => {
+        console.error("Error updating alert:", err);
+      }
+    });
   }
   
   // Submit report
@@ -92,6 +113,11 @@ export class ReportModalComponent implements OnInit {
       await alert.present();
       return;
     }
+    const currentAlert = this.alert;
+    if (this.alert && this.alert._id) {
+      this.updateAlert(this.alert._id, this.reportForm.value);
+      return;
+}
     
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
