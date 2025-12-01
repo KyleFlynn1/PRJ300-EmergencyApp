@@ -5,15 +5,8 @@ const config: CapacitorConfig = {
   appName: 'Emergency App',
   webDir: 'www',
   server: {
-    cleartext: true,
-    allowNavigation: ['*']
-  },
-  ios: {
-    contentInset: 'always',
-    allowsLinkPreview: false
-  },
-  android: {
-    allowMixedContent: true
+    androidScheme: 'http',
+    cleartext: true
   }
 };
 
