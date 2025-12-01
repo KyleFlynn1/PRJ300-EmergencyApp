@@ -4,17 +4,17 @@
 export const getAlertSeverityColor = (severity?: string) : string => {
     switch (severity?.toLowerCase()) {
       case 'info':
-        return 'medium';
+        return '#797979';
       case 'low':
-        return 'success';
+        return '#3ead44';
       case 'moderate':
-        return 'warning';
+        return '#ff8e1d';
       case 'high':
-        return 'danger';
+        return '#ec0303';
       case 'urgent':
-        return 'urgent';
+        return '#f200ff';
       default:
-        return 'medium';
+        return '#797979'; // Default to 'info' color
     }
   }
 
@@ -33,4 +33,21 @@ export const getIcon = (category?: string) => {
     if (c.includes('road') || c.includes('blockage')) return 'car';
     if (c.includes('amber') || c.includes('missing')) return 'people';
     return 'alert-circle';
+  }
+
+export const getFormattedTimestamp = (timestamp: string): string => {
+    const alertDate = new Date(timestamp);
+    const today = new Date();
+    
+    // Check if it's today by comparing date strings
+    const isToday = alertDate.toDateString() === today.toDateString();
+    
+    if (isToday) {
+      // Show only time if today
+      return alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    } else {
+      // Show date and time if not today
+      return alertDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' ' + 
+             alertDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
   }

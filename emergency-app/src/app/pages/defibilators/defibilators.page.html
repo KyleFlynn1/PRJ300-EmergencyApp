@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="section-header">
+    <ion-title>Defibrillators</ion-title>
+    <ion-buttons slot="end">
+      <button class="native-menu-button" (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Add Defibrillator Button -->
+  <div class="add-defib-section">
+    <button class="add-defib-top-button" (click)="openAddDefibModal()">
+      <ion-icon name="add-circle"></ion-icon>
+      Add Defibrillator Location
+    </button>
+  </div>
+
+  <!-- Map Container -->
+  <div class="defib-map-container">
+    <div id="defib-map" style="width: 100%; height: 100%;"></div>
+  </div>
+</ion-content>
+
+<!-- Add Defibrillator Modal -->
+<div class="native-modal-overlay" *ngIf="showAddDefibModal">
+  <div class="native-modal-content">
+    <div class="modal-header">
+      <h2>Add Defibrillator</h2>
+      <button class="close-button" (click)="closeAddDefibModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-add-defib-modal [isNativeModal]="true" (closeModal)="handleDefibSubmit($event)"></app-add-defib-modal>
+    </div>
+  </div>
+</div>

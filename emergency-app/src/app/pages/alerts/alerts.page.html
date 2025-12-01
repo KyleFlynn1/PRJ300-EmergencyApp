@@ -1,13 +1,71 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>alerts</ion-title>
+  <ion-toolbar class="section-header">
+    <ion-title>All Alerts</ion-title>
+    <ion-buttons slot="end">
+      <button class="native-menu-button" (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">alerts</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<div class="section">
+  <!--Search bar with date icon-->
+  <div class="search-container">
+    <input 
+      type="search" 
+      class="native-select" 
+      placeholder="Search for Alert"
+      [value]="searchTerm"
+      (input)="onSearchChange($event)" />
+
+  </div>
+  
+  <!--Filter Buttons-->
+  <div class="filter-buttons" style="display:flex;justify-content:center;gap:8px;margin:12px 0;">
+    <button class="filter-button filter-all" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-info" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-low" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-moderate" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-high" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
+    <button class="filter-button filter-urgent" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
+  </div>
+
+  <!-- Alerts list -->
+  <div class="alerts-list feed-list" (scroll)="onScroll($event)">
+    <div 
+      *ngFor="let alert of alerts" 
+      class="native-feed-card" 
+      [style.background]="getAlertSeverityColor(alert.severity)"
+      (click)="openAlertDetailModal(alert)">
+      <div class="card-iinner">
+        <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>
+        <div class="card-content">
+          <div class="card-header">
+            <h3>{{ alert.category }}</h3>
+            <span class="severity-badge">{{ alert.severity }}</span>
+          </div>
+          <p>{{ alert.notes }}</p>
+          <small>{{ alert.location.address }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </ion-content>
+
+<!-- Alert Detail Modal (native overlay) -->
+<div class="native-modal-overlay" *ngIf="showAlertDetailModal">
+  <div class="native-modal-content" [style.background]="getAlertSeverityColor(selectedAlert?.severity)">
+    <div class="modal-header">
+      <h2>{{selectedAlert?.category || 'Alert Details'}}</h2>
+      <button class="close-button" (click)="closeAlertDetailModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-alert-detail-modal [alert]="selectedAlert" [isNativeModal]="true"></app-alert-detail-modal>
+    </div>
+  </div>
+</div>

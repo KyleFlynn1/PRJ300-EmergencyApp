@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ModalController, IonicModule, AlertController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -14,9 +14,12 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [IonicModule, FormsModule, CommonModule , ReactiveFormsModule],
 })
 export class ReportModalComponent implements OnInit {
+  @Input() isNativeModal : boolean = false;
+  @Output() closeModal = new EventEmitter<any>();
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
+
   // FormGroup for the report form
   reportForm!: FormGroup;
 
@@ -56,20 +59,29 @@ export class ReportModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Show emergency warning alert on modal open
     this.showAlert = true;
 
     // Report form initialization with validation
     this.reportForm = this.fb.group({
       category: ['', Validators.required],  // Category is required
       severity: ['', Validators.required], // Severity is required
-      notes: ['', Validators.maxLength(200)] // Additional notes are optional
+      notes: ['', Validators.maxLength(200)], // Additional notes are optional
+      overrideLocation: [false], // Checkbox for custom location
+      customAddress: [''] // Custom address input
     });
   }
 
+  // Close modal
   cancelReport() {
-    this.modalController.dismiss(null, 'cancel');
+    if (this.isNativeModal) {
+      this.closeModal.emit(null);
+    } else {
+      this.modalController.dismiss(null, 'cancel');
+    }
   }
-
+  
+  // Submit report
   async submitReport() {
     if (this.reportForm.invalid) {
       const alert = await this.alertController.create({
@@ -83,20 +95,30 @@ export class ReportModalComponent implements OnInit {
     
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
-    formData.location = { address: 'Roscommon' }; // Temporary location
+    
+    // Use custom address if override is checked, otherwise use default
+    if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
+      formData.location = { address: this.reportForm.value.customAddress };
+    } else {
+      formData.location = { address: 'Roscommon' }; // Default temporary location
+    }
 
     this.alertService.addAlert(formData).subscribe({
-  next: (response) => {
-    console.log("✔ POST sent successfully:", response);
-    this.modalController.dismiss(response, 'confirm');
-  },
-  error: (err) => {
-    console.error("❌ Error sending POST:", err);
-  }
-});
-    this.modalController.dismiss(formData, 'confirm');
+      next: (response) => {
+        console.log("POST sent successfully:", response);
+        if (this.isNativeModal) {
+          this.closeModal.emit(response);
+        } else {
+          this.modalController.dismiss(response, 'confirm');
+        }
+      },
+      error: (err) => {
+        console.error("Error sending POST:", err);
+      }
+    });
   }
 
+  //Getters for form controls
 
   get category() {
     return this.reportForm.get('category');
@@ -108,5 +130,13 @@ export class ReportModalComponent implements OnInit {
 
   get notes() {
     return this.reportForm.get('notes');
+  }
+
+  get overrideLocation() {
+    return this.reportForm.get('overrideLocation');
+  }
+
+  get customAddress() {
+    return this.reportForm.get('customAddress');
   }
 }
