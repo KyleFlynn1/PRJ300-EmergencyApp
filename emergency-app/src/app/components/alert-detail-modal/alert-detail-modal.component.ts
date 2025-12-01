@@ -101,6 +101,9 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
       window.location.href = '/home';
     }
   }
+  updateAlert() {
+    
+  }
   deleteAlert() {
     if (this.alert && this.alert._id) {
       this.alertService.deleteAlert(this.alert._id).subscribe({
