@@ -4,17 +4,17 @@
   <!-- Nav at Bottom -->
   <ion-footer class="native-bottom-nav">
     <ion-toolbar>
-      <ion-segment value="home" class="native-bottom-segment">
-        <ion-segment-button routerLink="/home" value="home">
+      <ion-segment [value]="activeTab" class="native-bottom-segment">
+        <ion-segment-button routerLink="/home" value="home" [class.segment-button-checked]="activeTab === 'home'">
           <ion-icon name="home"></ion-icon>
         </ion-segment-button>
-        <ion-segment-button routerLink="/alerts" value="alerts">
+        <ion-segment-button routerLink="/alerts" value="alerts" [class.segment-button-checked]="activeTab === 'alerts'">
           <ion-icon name="alert-circle-outline"></ion-icon>
         </ion-segment-button>
-        <ion-segment-button routerLink="/map" value="map">
+        <ion-segment-button routerLink="/map" value="map" [class.segment-button-checked]="activeTab === 'map'">
           <ion-icon name="map-outline"></ion-icon>
         </ion-segment-button>
-        <ion-segment-button routerLink="/defibilators" value="defib">
+        <ion-segment-button routerLink="/defibilators" value="defib" [class.segment-button-checked]="activeTab === 'defib'">
           <ion-icon name="heart-outline"></ion-icon>
         </ion-segment-button>
       </ion-segment>

@@ -4,4 +4,52 @@
   left: 0;
   right: 0;
   z-index: 1000;
+
+  ion-toolbar {
+    --background: #1a1a1a;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+
+  .native-bottom-segment {
+    --background: transparent;
+    width: 100%;
+  }
+
+  ion-segment-button {
+    --color: rgba(255, 255, 255, 0.6);
+    --color-checked: #00c6ff;
+    --indicator-color: #00c6ff;
+    --indicator-height: 4px;
+    --padding-start: 0;
+    --padding-end: 0;
+    min-height: 56px;
+    font-size: 12px;
+    max-width: none;
+    flex: 1;
+
+    &.segment-button-checked {
+      --color: #00c6ff;
+      --indicator-color: #00c6ff;
+      
+      ion-icon {
+        color: #00c6ff;
+      }
+
+      &::part(indicator) {
+        width: 100%;
+      }
+
+      &::part(indicator-background) {
+        width: 100%;
+        background: #00c6ff;
+      }
+    }
+
+    ion-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+  }
 }

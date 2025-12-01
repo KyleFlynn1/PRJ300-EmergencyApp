@@ -19,12 +19,12 @@
   
   <!--Filter Buttons-->
   <div class="filter-buttons" style="display:flex;justify-content:center;gap:8px;margin:12px 0;">
-    <button class="filter-button filter-all" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-info" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-low" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-moderate" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-high" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
-    <button class="filter-button filter-urgent" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
+    <button class="filter-button filter-all" [class.selected]="selectedSeverityFilter === 'all'" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-info" [class.selected]="selectedSeverityFilter === 'info'" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-low" [class.selected]="selectedSeverityFilter === 'low'" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-moderate" [class.selected]="selectedSeverityFilter === 'moderate'" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+    <button class="filter-button filter-high" [class.selected]="selectedSeverityFilter === 'high'" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
+    <button class="filter-button filter-urgent" [class.selected]="selectedSeverityFilter === 'urgent'" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
   </div>
 
   <!-- Alerts list -->
