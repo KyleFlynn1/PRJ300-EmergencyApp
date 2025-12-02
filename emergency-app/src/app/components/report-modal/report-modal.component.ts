@@ -18,6 +18,10 @@ export class ReportModalComponent implements OnInit {
   @Output() closeModal = new EventEmitter<any>();
   @Input() alert?: Report;
 
+  // User location hard coded for sligo for testing later got from phone gps
+  userLat: number = 54.272470; 
+  userLng: number = -8.473997;
+
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
 
@@ -115,18 +119,31 @@ export class ReportModalComponent implements OnInit {
     }
     const currentAlert = this.alert;
     if (this.alert && this.alert._id) {
-      this.updateAlert(this.alert._id, this.reportForm.value);
+      const updatedData: Report = {
+        category: this.reportForm.value.category,
+        severity: this.reportForm.value.severity,
+        notes: this.reportForm.value.notes,
+        timestamp: this.alert.timestamp, // Keep original timestamp
+        location: this.reportForm.value.overrideLocation && this.reportForm.value.customAddress
+          ? { address: this.reportForm.value.customAddress }
+          : this.alert.location // Keep original location or use custom
+      };
+      this.updateAlert(this.alert._id, updatedData);
       return;
 }
     
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
     
-    // Use custom address if override is checked, otherwise use default
+    // Use custom address if override is checked, otherwise use default user location
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       formData.location = { address: this.reportForm.value.customAddress };
     } else {
-      formData.location = { address: 'Roscommon' }; // Default temporary location
+      formData.location = { 
+        lat: this.userLat, 
+        lng: this.userLng, 
+        address: 'Sligo' 
+      };
     }
 
     this.alertService.addAlert(formData).subscribe({

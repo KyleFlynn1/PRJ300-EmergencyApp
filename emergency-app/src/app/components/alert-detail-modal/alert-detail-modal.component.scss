@@ -114,3 +114,54 @@
     }
   }
 }
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+
+  button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .delete-button {
+    background: #ff3b30;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+
+    &:hover {
+      background: #ff2d1f;
+      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
+    }
+  }
+
+  .update-button {
+    background: #00c6ff;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
+
+    &:hover {
+      background: #00b4e6;
+      box-shadow: 0 6px 16px rgba(0, 198, 255, 0.4);
+    }
+  }
+}

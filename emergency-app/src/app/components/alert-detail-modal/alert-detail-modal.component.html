@@ -61,5 +61,5 @@
     </div>
   </div>
 } @else {
-  <app-report-modal [alert]="alert"></app-report-modal>
+  <app-report-modal [alert]="alert" [isNativeModal]="true" (closeModal)="handleFormClose($event)"></app-report-modal>
 }

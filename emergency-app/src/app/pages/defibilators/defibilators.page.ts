@@ -25,6 +25,10 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
   map?: Map;
   markerSource?: VectorSource;
   showAddDefibModal: boolean = false;
+
+  // Hardcoded user location for testing
+  userLat: number = 54.272470; 
+  userLng: number = -8.473997;
   
   // Sample defibrillator locations in Ireland
   defibLocations = [
@@ -33,8 +37,14 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
     { lon: -8.1, lat: 53.5, title: 'Blackpool Community Center', address: 'Blackpool, Cork' },
     { lon: -6.26, lat: 53.35, title: 'Dublin City Hall', address: "O'Connell St, Dublin" },
     { lon: -9.05, lat: 53.27, title: 'Galway City Center', address: 'Shop St, Galway' },
-    { lon: -8.47, lat: 51.90, title: 'Limerick City', address: 'O\'Connell St, Limerick' }
-  ];
+    { lon: -8.47, lat: 51.90, title: 'Limerick City', address: 'O\'Connell St, Limerick' },
+    { lon: -8.47, lat: 54.27, title: 'Sligo Town Center', address: 'O\'Connell St, Sligo' },
+    { lon: -8.48, lat: 54.26, title: 'Sligo University Hospital', address: 'The Mall, Sligo' },
+    { lon: -8.46, lat: 54.28, title: 'Sligo ATU Campus', address: 'Ash Lane, Sligo' },
+    { lon: -8.49, lat: 54.27, title: 'Sligo Train Station', address: 'Lord Edward St, Sligo' },
+    { lon: -8.47, lat: 54.29, title: 'Sligo Sports Complex', address: 'Cleveragh Rd, Sligo' },
+    { lon: -8.45, lat: 54.27, title: 'Sligo Library', address: 'Stephen St, Sligo' }
+];
 
   constructor(private menuController: MenuController) {}
 
@@ -72,6 +82,21 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
       return feature;
     });
 
+    // Add user location marker
+    const userMarker = new Feature({
+      geometry: new Point(fromLonLat([this.userLng, this.userLat]))
+    });
+    userMarker.setStyle(
+      new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: 'assets/userMarker.png',
+          scale: 0.09
+        })
+      })
+    );
+    features.push(userMarker);
+
     // Store the vector source so we can add markers later
     this.markerSource = new VectorSource({ features });
 
@@ -83,8 +108,8 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
       target: mapElement,
       layers: [tileLayer, markerLayer],
       view: new View({
-        center: fromLonLat([-8.0, 53.4]),
-        zoom: 7
+        center: fromLonLat([this.userLng, this.userLat]), //center on user location
+        zoom: 13 //zoom in on user location
       })
     });
   }

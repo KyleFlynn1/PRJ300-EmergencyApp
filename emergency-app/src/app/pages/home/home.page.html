@@ -9,7 +9,7 @@
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>
-    <div *ngIf="activeAlerts.length === 0" class="status-card status-success">
+    <div *ngIf="activeAlertsInArea.length === 0" class="status-card status-success">
       <ion-icon name="checkmark-circle" class="status-icon"></ion-icon>
       <div class="status-content">
         <h3>All Clear</h3>
@@ -17,11 +17,11 @@
       </div>
     </div>
 
-    <div *ngIf="activeAlerts.length > 0" class="status-card status-danger">
+    <div *ngIf="activeAlertsInArea.length > 0" class="status-card status-danger">
       <ion-icon name="warning" class="status-icon"></ion-icon>
       <div class="status-content">
         <h3>Active Alert</h3>
-        <p>{{ activeAlertsCount }} emergency alert(s) in your area</p>
+        <p>{{ activeAlertsInArea.length }} emergency alert(s) in your area</p>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@
 
       <!-- Auto add new alerts from report modal and alert service-->
       <div
-         *ngFor="let alert of activeAlerts"
+         *ngFor="let alert of activeAlertsInArea"
          class="native-feed-card feed-card" (click)="openAlertDetailModal(alert)" [style.background]="getAlertSeverityColor(alert.severity)">
         <div class="card-iinner"> 
           <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>

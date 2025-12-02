@@ -1,0 +1,30 @@
+.add-defib-section {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.add-defib-top-button {
+  width: 100%;
+  padding: 14px;
+  background: #ff3b30;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+  transition: transform 0.2s;
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

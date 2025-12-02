@@ -10,6 +10,8 @@ import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon, Style } from 'ol/style';
+import { Alert } from 'src/app/services/alerts/alert';
+import { Report } from 'src/app/interfaces/report.interface';
 
 @Component({
   selector: 'app-map-component',
@@ -20,11 +22,33 @@ import { Icon, Style } from 'ol/style';
 
 export class MapComponent  implements OnInit {
   map!: Map;
-  pins = [
-    { lon: -8.0, lat: 53.4, title: 'Unknown' }
-    //{ lon: -8.0, lat: 53.4, title: 'Unknown' }
-  ];
+
+  // Hardcoded user location for testing
+  userLat: number = 54.272470; 
+  userLng: number = -8.473997;
+
+  pins: { lon: number; lat: number; title: string }[] = [];
+
+  constructor(private alertService: Alert) {}
+
   ngOnInit() {
+    // Fetch alerts and initialize map
+    this.alertService.getAlerts().subscribe(alerts => {
+      // Convert alerts to pins
+      this.pins = alerts
+        .filter(alert => alert.location?.lng && alert.location?.lat)
+        .map(alert => ({
+          lon: alert.location.lng!,
+          lat: alert.location.lat!,
+          title: alert.category || 'Alert'
+        }));
+      
+      // Initialize map after we have the data
+      this.initMap();
+    });
+  }
+
+  initMap() {
     const mapElement = document.getElementById('map');
     if (!mapElement) {
       console.error("map not found, likely internet related on error in code");
@@ -48,6 +72,22 @@ export class MapComponent  implements OnInit {
       );
       return feature;
     });
+
+    // Add user location marker
+    const userMarker = new Feature({
+      geometry: new Point(fromLonLat([this.userLng, this.userLat]))
+    });
+    userMarker.setStyle(
+      new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: 'assets/userMarker.png',
+          scale: 0.09
+        })
+      })
+    );
+    features.push(userMarker);
+
     //below adds a layer onto of the map for markers (stored in features)
     const markerLayer = new VectorLayer({
       source: new VectorSource({ features })
@@ -57,8 +97,8 @@ export class MapComponent  implements OnInit {
       target: mapElement, 
       layers: [tileLayer, markerLayer],
       view: new View({
-        center: fromLonLat([-8.0, 53.4]), //this is the loaction of ireland approx
-        zoom: 7 //this coom makes ireland take up the whole map
+        center: fromLonLat([this.userLng, this.userLat]), //center on user location
+        zoom: 13 //zoom in on user location
       })
     });
   }

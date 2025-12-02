@@ -4,10 +4,29 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">map</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Report Button -->
+  <div class="add-defib-section">
+    <button class="add-defib-top-button" (click)="openReportModal()">
+      <ion-icon name="add-circle"></ion-icon>
+      Report Emergency
+    </button>
+  </div>
+
+  <!-- Map Component -->
   <app-map-component></app-map-component>
 </ion-content>
+
+<!-- Report Modal -->
+<div class="native-modal-overlay" *ngIf="showReportModal">
+  <div class="native-modal-content">
+    <div class="modal-header">
+      <h2>Report Emergency</h2>
+      <button class="close-button" (click)="closeReportModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-report-modal [isNativeModal]="true" (closeModal)="handleReportClose($event)"></app-report-modal>
+    </div>
+  </div>
+</div>
