@@ -45,7 +45,7 @@ $CARD_COLOUR_RED: #ec0303;
 $CARD_COLOUR_GRAY: #797979;
 $CARD_COLOUR_PURPLE: #f200ff;
 
-/* Add padding to all content to account for fixed bottom nav */
+/* Add padding to content for bottom nav */
 ion-content {
   --padding-bottom: 70px;
 }

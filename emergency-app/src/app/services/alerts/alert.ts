@@ -11,8 +11,8 @@ export class Alert {
 
   private http = inject(HttpClient);
   private readonly apiUrls = [
-    'http://localhost:3000/api/v1/alert',
-    'http://localhost:3001/api/v1/alert', // fallback
+    'http://192.168.5.75:3000/api/v1/alert',
+    'http://192.168.5.75:3001/api/v1/alert', // fallback
   ];
   private apiUrl = this.apiUrls[0];
 

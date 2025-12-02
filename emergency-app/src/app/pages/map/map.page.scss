@@ -6,7 +6,7 @@
 .add-defib-top-button {
   width: 100%;
   padding: 14px;
-  background: #ff3b30;
+  background: #ec0303;
   border: none;
   border-radius: 12px;
   color: white;
@@ -17,7 +17,7 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+  box-shadow: 0 4px 12px rgba(236, 3, 3, 0.3);
   transition: transform 0.2s;
 
   ion-icon {
@@ -26,5 +26,24 @@
 
   &:active {
     transform: scale(0.98);
+  }
+}
+
+.emergency-map-container {
+  width: 100%;
+  height: calc(100vh - 120px);
+  position: relative;
+
+  // Hide OpenLayers controls
+  ::ng-deep .ol-attribution {
+    display: none !important;
+  }
+
+  ::ng-deep .ol-zoom {
+    display: none !important;
+  }
+
+  ::ng-deep .ol-rotate {
+    display: none !important;
   }
 }
