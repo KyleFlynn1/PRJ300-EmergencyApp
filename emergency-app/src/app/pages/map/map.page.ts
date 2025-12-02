@@ -17,8 +17,6 @@ import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal
   imports: [CommonModule, FormsModule, IonicModule, MapComponent, ReportModalComponent, AlertDetailModalComponent]
 })
 export class MapPage implements OnInit {
-  showReportModal: boolean = false;
-
   openMenu() {
     this.menuController.open();
   }
