@@ -18,6 +18,10 @@ export class AddDefibModalComponent implements OnInit {
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
 
+  // Hardcoded user location for testing
+  userLat: number = 54.272470; 
+  userLng: number = -8.473997;
+  
   // Using Angular forms for form handling and validation
   defibForm!: FormGroup;
 
@@ -43,16 +47,12 @@ export class AddDefibModalComponent implements OnInit {
       return;
     }
 
-    // Auto-generate fake location like report form
-    const fakeLat = 53.4 + (Math.random() - 0.5) * 0.5;
-    const fakeLng = -8.0 + (Math.random() - 0.5) * 0.5;
-
     const defibData: Defib = {
       working: this.defibForm.value.working,
       timestamp: new Date().toISOString(),
       location: { 
-        lat: fakeLat,
-        lng: fakeLng,
+        lat: this.userLat,
+        lng: this.userLng,
         address: 'Auto-generated location' 
       },
       photoUrl: this.defibForm.value.photoUrl || undefined,

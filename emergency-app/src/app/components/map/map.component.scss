@@ -1,0 +1,18 @@
+.map-container {
+  width: 100%;
+  height: calc(100vh - 200px);
+  position: relative;
+}
+
+// Hide OpenLayers controls
+::ng-deep .ol-attribution {
+  display: none !important;
+}
+
+::ng-deep .ol-zoom {
+  display: none !important;
+}
+
+::ng-deep .ol-rotate {
+  display: none !important;
+}

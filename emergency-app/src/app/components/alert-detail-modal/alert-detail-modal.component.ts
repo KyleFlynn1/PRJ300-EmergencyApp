@@ -107,6 +107,17 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   updateAlert() {
     this.showform = true;
   }
+
+  handleFormClose(data: any) {
+    if (data) {
+      // Form was submitted, close the detail modal
+      this.closeDetailedView();
+    } else {
+      // Form was cancelled, go back to detail view
+      this.showform = false;
+    }
+  }
+
   deleteAlert() {
     if (this.alert && this.alert._id) {
       this.alertService.deleteAlert(this.alert._id).subscribe({

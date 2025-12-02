@@ -23,8 +23,16 @@ export class HomePage implements OnInit {
 
   // Test Data
   activeAlerts: any[] = [];
+  // Alerts filtered in a 10km radius
+  activeAlertsInArea: any[] = [];
   activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
+
+  // User location hard coded for sligo for testing later got from phone gps
+  userLat: number = 54.272470; 
+  userLng: number = -8.473997;
+  // Radius around user location to show alerts on home page
+  userRadiusDistance : number = 20; // in km
 
   // Modal state if they are opened or closed
   showReportModal: boolean = false;
@@ -43,6 +51,40 @@ export class HomePage implements OnInit {
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
       this.activeAlertsCount = alerts.length;
+      
+      // Filter alerts within 10km radius
+      this.filterAlertsInRadius();
+    });
+  }
+
+  // Calculate distance between two coordinates using Haversine formula
+  // Copilot maths for getting lon and lat distance in km to be used in filtering
+  private getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }
+
+  // Filter alerts within 10km radius
+  private filterAlertsInRadius() {
+    this.activeAlertsInArea = this.activeAlerts.filter(alert => {
+      if (!alert.location?.lat || !alert.location?.lng) {
+        return false; // Skip alerts without coordinates
+      }
+      const distance = this.getDistance(
+        this.userLat,
+        this.userLng,
+        alert.location.lat,
+        alert.location.lng
+      );
+      return distance <= this.userRadiusDistance; // Within 10km from the variable
     });
   }
 
@@ -66,6 +108,7 @@ export class HomePage implements OnInit {
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         this.activeAlertsCount = this.activeAlerts.length;
+        this.filterAlertsInRadius(); // Update filtered alerts
       }
     });
     }
