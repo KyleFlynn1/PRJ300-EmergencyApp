@@ -1,4 +1,5 @@
 export interface Report {
+  _id?: string;
   severity: 'Low' | 'Moderate' | 'High' | 'Info' | 'Urgent';
   category: string;
   notes?: string;

@@ -1,4 +1,5 @@
 export interface Defib {
+  _id?: string;
   working: boolean;
   timestamp: string;
   photoUrl?: string;

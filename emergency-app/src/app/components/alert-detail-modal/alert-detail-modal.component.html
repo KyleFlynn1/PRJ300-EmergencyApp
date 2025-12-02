@@ -1,50 +1,65 @@
-<div>
-  <div class="alert-detail-container detail-card">
-    <div>
-      <!-- Icon and Title -->
-      <div class="detail-header">
-        <ion-icon [name]="getIcon(alert?.category)" class="main-icon"></ion-icon>
-        <h1>{{ alert?.category || 'Alert' }}</h1>
-        <ion-badge color="light" class="severity-badge">{{ alert?.severity }}</ion-badge>
-      </div>
 
-      <!-- Description -->
-      <div class="detail-section">
-        <p class="description">{{ alert?.notes || 'No additional details provided.' }}</p>
-      </div>
+@if (!showform){
+  <div>
+    <div class="alert-detail-container detail-card">
+      <div>
+        <!-- Icon and Title -->
+        <div class="detail-header">
+          <ion-icon [name]="getIcon(alert?.category)" class="main-icon"></ion-icon>
+          <h1>{{ alert?.category || 'Alert' }}</h1>
+          <ion-badge color="light" class="severity-badge">{{ alert?.severity }}</ion-badge>
+        </div>
 
-      <!-- Location -->
-      <div class="detail-section">
-        <div class="info-row">
-          <ion-icon name="location"></ion-icon>
-          <div class="info-content">
-            <p class="label">Location</p>
-            <p class="value">{{ alert?.location?.address || 'Unknown' }}</p>
+        <!-- Description -->
+        <div class="detail-section">
+          <p class="description">{{ alert?.notes || 'No additional details provided.' }}</p>
+        </div>
+
+        <!-- Location -->
+        <div class="detail-section">
+          <div class="info-row">
+            <ion-icon name="location"></ion-icon>
+            <div class="info-content">
+              <p class="label">Location</p>
+              <p class="value">{{ alert?.location?.address || 'Unknown' }}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Time -->
-      <div class="detail-section">
-        <div class="info-row">
-          <ion-icon name="time"></ion-icon>
-          <div class="info-content">
-            <p class="label">Time Reported</p>
-            <p class="value">{{ alert?.timestamp | date:'MMM dd, yyyy HH:mm' }}</p>
+        <!-- Time -->
+        <div class="detail-section">
+          <div class="info-row">
+            <ion-icon name="time"></ion-icon>
+            <div class="info-content">
+              <p class="label">Time Reported</p>
+              <p class="value">{{ alert?.timestamp | date:'MMM dd, yyyy HH:mm' }}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Map -->
-      <div class="detail-section">
-        <div class="map-header">
-          <ion-icon name="map"></ion-icon>
-          <p>Location Map</p>
+        <!-- Map -->
+        <div class="detail-section">
+          <div class="map-header">
+            <ion-icon name="map"></ion-icon>
+            <p>Location Map</p>
+          </div>
+          <div class="map-container">
+            <div id="alert-detail-map" style="width: 100%; height: 100%;position: absolute;"></div>
+          </div>
         </div>
-        <div class="map-container">
-          <div id="alert-detail-map" style="width: 100%; height: 100%;position: absolute;"></div>
+        <div class="detail-actions">
+          <button class="delete-button" (click)="deleteAlert()">
+            <ion-icon name="trash"></ion-icon>
+            Delete Alert
+          </button>
+          <button class="update-button" (click)="updateAlert()">
+            <ion-icon name="create"></ion-icon>
+            Update Alert
+          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+} @else {
+  <app-report-modal [alert]="alert"></app-report-modal>
+}

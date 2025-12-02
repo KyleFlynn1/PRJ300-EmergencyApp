@@ -10,7 +10,18 @@ import { tap } from 'rxjs/operators';
 export class Alert {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://192.168.5.75:3000/api/v1/alert';
+  private readonly apiUrls = [
+    'http://localhost:3000/api/v1/alert',
+    'http://localhost:3001/api/v1/alert', // fallback
+  ];
+  private apiUrl = this.apiUrls[0];
+
+  constructor() {
+    // If primary fails, switch to fallback
+    this.http.get(this.apiUrls[0], { observe: 'response' }).subscribe({
+      error: () => (this.apiUrl = this.apiUrls[1]),
+    });
+  }
   private alerts: Report[] = [];
   private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
@@ -18,6 +29,11 @@ export class Alert {
   getAlerts(): Observable<Report[]> {
     return this.http.get<Report[]>(this.apiUrl);
   }
+  getAlertById(id: string): Observable<Report> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<Report>(url);
+  }
+
 
   addAlert(report: Report): Observable<Report> {
   return this.http.post<Report>(this.apiUrl, report).pipe(
@@ -26,5 +42,29 @@ export class Alert {
       this.alertsSubject.next(this.alerts);
       })
     );
+  }
+  updateAlert(id: string, report: Report): Observable<Report> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Report>(url, report).pipe(
+      tap((updatedAlert) => {
+        this.alerts = this.alerts.map(alert =>
+          alert._id === id ? updatedAlert : alert
+        );
+        this.alertsSubject.next(this.alerts);
+      })
+    );
+  }
+  deleteAlert(id: string): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url).pipe(
+      tap(() => {
+        this.alerts = this.alerts.filter(alert => alert._id !== id);
+        this.alertsSubject.next(this.alerts);
+      })
+    );
+  }
+
+  get alerts$(): Observable<Report[]> {
+    return this.alertsSubject.asObservable();
   }
 }
