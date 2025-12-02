@@ -14,10 +14,24 @@
       <!-- Working Status -->
       <div class="form-group">
         <label>Status *</label>
-        <select formControlName="working" class="native-select">
-          <option [value]="true">Working</option>
-          <option [value]="false">Not Working</option>
-        </select>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              formControlName="working" 
+              [value]="true"
+              name="working-status" />
+            <span class="radio-label">Working</span>
+          </label>
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              formControlName="working" 
+              [value]="false"
+              name="working-status" />
+            <span class="radio-label">Not Working</span>
+          </label>
+        </div>
         <div class="error-message" *ngIf="working?.invalid && working?.touched">
           Status is required
         </div>

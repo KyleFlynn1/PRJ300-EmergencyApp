@@ -45,6 +45,11 @@ $CARD_COLOUR_RED: #ec0303;
 $CARD_COLOUR_GRAY: #797979;
 $CARD_COLOUR_PURPLE: #f200ff;
 
+/* Add padding to all content to account for fixed bottom nav */
+ion-content {
+  --padding-bottom: 70px;
+}
+
 /* Shared Layout Styles */
 .section {
   margin: 8px 0;
@@ -258,10 +263,10 @@ $CARD_COLOUR_PURPLE: #f200ff;
   background: $CARD_COLOUR_RED;
   color: #ffffff;
   border: none;
-  border-radius: 28px;
+  border-radius: 16px;
   padding: 16px 32px;
   font-size: 18px;
-  font-weight: bolder;
+  font-weight: 700;
   width: 75%;
   min-width: 220px;
   max-width: 360px;
@@ -273,20 +278,28 @@ $CARD_COLOUR_PURPLE: #f200ff;
   gap: 8px;
   touch-action: manipulation;
   margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(236, 3, 3, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
-    font-size: 20px;
+    font-size: 22px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(236, 3, 3, 0.4);
   }
 }
 
 /* Defibrillator Button */
 .native-defib-button {
   background: #00c6ff;
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  color: white;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 18px;
   font-weight: 700;
-  font-size: 16px;
   width: 75%;
   min-width: 220px;
   max-width: 360px;
@@ -298,46 +311,49 @@ $CARD_COLOUR_PURPLE: #f200ff;
   gap: 8px;
   touch-action: manipulation;
   margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 114, 255, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 198, 255, 0.4);
   }
 }
 
 /* View All Alerts Button */
 .view-all-alerts-button {
   background: #ff8e1d;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 10px 20px;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  width: 75%;
+  min-width: 220px;
+  max-width: 360px;
+  height: 56px;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   touch-action: manipulation;
-  transition: background 0.2s, transform 0.2s;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(255, 142, 29, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
-    font-size: 18px;
-  }
-
-  &:hover {
-    background: #e67e1a;
+    font-size: 22px;
   }
 
   &:active {
     transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(255, 142, 29, 0.4);
   }
 }
 

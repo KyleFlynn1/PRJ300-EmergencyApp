@@ -1,35 +1,23 @@
 <ion-app>
-  <ion-menu contentId="main-content" class="app-menu" side="start">
-    <ion-header>
-      <ion-toolbar class="menu-toolbar">
-        <ion-title>Emergency App</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="menu-content">
-      <ion-list lines="none">
-        <ion-item routerLink="/home" detail="false" class="menu-item">
-          <ion-icon slot="start" name="home-outline"></ion-icon>
-          <ion-label>Home</ion-label>
-        </ion-item>
-
-        <ion-item routerLink="/alerts" detail="false" class="menu-item">
-          <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
-          <ion-label>Alerts</ion-label>
-        </ion-item>
-
-        <ion-item routerLink="/map" detail="false" class="menu-item">
-          <ion-icon slot="start" name="map-outline"></ion-icon>
-          <ion-label>Map</ion-label>
-        </ion-item>
-
-        <ion-item routerLink="/defibilators" detail="false" class="menu-item">
-          <ion-icon slot="start" name="heart-outline"></ion-icon>
-          <ion-label>Defibilators</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
-
-  <ion-router-outlet id="main-content"></ion-router-outlet>
+  <ion-router-outlet></ion-router-outlet>
+  
+  <!-- Nav at Bottom -->
+  <ion-footer class="native-bottom-nav">
+    <ion-toolbar>
+      <ion-segment [value]="activeTab" class="native-bottom-segment">
+        <ion-segment-button routerLink="/home" value="home" [class.segment-button-checked]="activeTab === 'home'">
+          <ion-icon name="home"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button routerLink="/alerts" value="alerts" [class.segment-button-checked]="activeTab === 'alerts'">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button routerLink="/map" value="map" [class.segment-button-checked]="activeTab === 'map'">
+          <ion-icon name="map-outline"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button routerLink="/defibilators" value="defib" [class.segment-button-checked]="activeTab === 'defib'">
+          <ion-icon name="heart-outline"></ion-icon>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ion-footer>
 </ion-app>
