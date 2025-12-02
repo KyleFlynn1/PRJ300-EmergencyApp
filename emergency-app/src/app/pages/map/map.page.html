@@ -9,5 +9,44 @@
       <ion-title size="large">map</ion-title>
     </ion-toolbar>
   </ion-header>
+  <div class="section action-buttons-section">
+    <div class="report-container">
+      <button class="native-report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
+        <ion-icon name="paper-plane"></ion-icon>
+        Report Emergency
+      </button>
+      <p class="report-note">
+        Tap to report an incident — responders will be notified
+      </p>
+    </div>
+  </div>
   <app-map-component></app-map-component>
 </ion-content>
+<div class="native-modal-overlay" *ngIf="showReportModal">
+  <div class="native-modal-content">
+    <div class="modal-header">
+      <h2>Report Emergency</h2>
+      <button class="close-button" (click)="closeReportModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-report-modal [isNativeModal]="true" (closeModal)="handleReportClose($event)"></app-report-modal>
+    </div>
+  </div>
+</div>
+
+<!-- Alert Detail Modal -->
+<div class="native-modal-overlay" *ngIf="showAlertDetailModal">
+  <div class="native-modal-content" [style.background]="getAlertSeverityColor(selectedAlert?.severity)">
+    <div class="modal-header">
+      <h2>{{selectedAlert?.category || 'Alert Details'}}</h2>
+      <button class="close-button" (click)="closeAlertDetailModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-alert-detail-modal [alert]="selectedAlert" [isNativeModal]="true"></app-alert-detail-modal>
+    </div>
+  </div>
+</div>
