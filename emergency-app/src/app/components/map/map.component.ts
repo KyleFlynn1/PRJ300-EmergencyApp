@@ -20,19 +20,20 @@ import { Report } from 'src/app/interfaces/report.interface';
   imports: [IonicModule],
 })
 
-export class MapComponent  implements OnInit {
+export class MapComponent  implements OnInit, AfterViewInit {
   map!: Map;
 
   // Hardcoded user location for testing
   userLat: number = 54.272470; 
   userLng: number = -8.473997;
 
+  //List of pins to show on map got from the alerts service with api
   pins: { lon: number; lat: number; title: string }[] = [];
 
   constructor(private alertService: Alert) {}
 
   ngOnInit() {
-    // Fetch alerts and initialize map
+    // Fetch alerts
     this.alertService.getAlerts().subscribe(alerts => {
       // Convert alerts to pins
       this.pins = alerts
@@ -42,12 +43,15 @@ export class MapComponent  implements OnInit {
           lat: alert.location.lat!,
           title: alert.category || 'Alert'
         }));
-      
-      // Initialize map after we have the data
-      this.initMap();
     });
   }
 
+  // Make sure map is initialized after view is ready to avoid errors or map not showing
+  ngAfterViewInit() {
+    setTimeout(() => this.initMap(), 100);
+  }
+
+  // Initialize the map with OpenLayers
   initMap() {
     const mapElement = document.getElementById('map');
     if (!mapElement) {
@@ -74,6 +78,7 @@ export class MapComponent  implements OnInit {
     });
 
     // Add user location marker
+    // User cordinates hardcoded above for testing purposes to be got from gps on phone later
     const userMarker = new Feature({
       geometry: new Point(fromLonLat([this.userLng, this.userLat]))
     });

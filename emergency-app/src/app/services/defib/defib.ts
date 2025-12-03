@@ -9,5 +9,4 @@ import { tap } from 'rxjs/operators';
 })
 export class Defib {
 
-  
 }

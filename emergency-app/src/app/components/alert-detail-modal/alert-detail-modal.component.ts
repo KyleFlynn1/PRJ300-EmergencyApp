@@ -29,28 +29,33 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+
+  // Control to  show update form or detail view
   showform: boolean = false;
-  
-  
   @Input() isNativeModal : boolean = false;
   @Input() alert?: Report;
   
+  // OpenLayers map instance
   map?: Map;
 
+  //  inject services required
   constructor(
     private modalController: ModalController,
     private alertService: Alert
   ) {}
 
+  // Log the alert recieved and details to make sure its working correct
   ngOnInit() {
     console.log('AlertDetailModal received alert:', this.alert);
   }
 
+  // Initialize map after view is ready to avoid errors or map not showing
   ngAfterViewInit() {
     // Initialize map after view is ready
     setTimeout(() => this.initMap(), 100);
   }
 
+  // Initialize the map with OpenLayers
   initMap() {
     const mapElement = document.getElementById('alert-detail-map');
     if (!mapElement) {
@@ -104,10 +109,13 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
       window.location.href = '/home';
     }
   }
+
+  // Show update form to edit alert with CRUD operations
   updateAlert() {
     this.showform = true;
   }
 
+  // Handle form close event
   handleFormClose(data: any) {
     if (data) {
       // Form was submitted, close the detail modal
@@ -118,6 +126,7 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
     }
   }
 
+  // Delete alert using alert service and close modal on success
   deleteAlert() {
     if (this.alert && this.alert._id) {
       this.alertService.deleteAlert(this.alert._id).subscribe({

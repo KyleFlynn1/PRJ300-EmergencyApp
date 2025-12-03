@@ -1,4 +1,5 @@
 <ion-app>
+  <!--Side Navigation Menu -->
   <ion-menu contentId="main-content" class="app-menu" side="start">
     <ion-header>
       <ion-toolbar class="menu-toolbar">
@@ -31,10 +32,10 @@
     </ion-content>
   </ion-menu>
 
+  <!--Bottom Navigation Bar-->
   <div id="main-content">
     <ion-router-outlet></ion-router-outlet>
     
-    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav-fixed">
       <button class="nav-btn" routerLink="/home" routerLinkActive="active">
         <ion-icon name="home"></ion-icon>

@@ -50,10 +50,12 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
 
   ngOnInit() {}
 
+  // Make sure map is initialized after view is ready to avoid errors or map not showing
   ngAfterViewInit() {
     setTimeout(() => this.initMap(), 100);
   }
 
+  // Initialize the map with OpenLayers
   initMap() {
     const mapElement = document.getElementById('defib-map');
     if (!mapElement) {
@@ -114,6 +116,7 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
     });
   }
 
+  // Open and close add defibrillator modal
   openAddDefibModal() {
     this.showAddDefibModal = true;
   }
@@ -122,6 +125,7 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
     this.showAddDefibModal = false;
   }
 
+  // Handle submission of new defibrillator data
   handleDefibSubmit(data: any) {
     this.closeAddDefibModal();
     if (data && data.location) {
@@ -140,6 +144,7 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
     }
   }
 
+  // Add a new marker to the map for the newly added defibrillator
   addMarkerToMap(lon: number, lat: number, title: string) {
     if (!this.markerSource) {
       console.error('Marker source not initialized');

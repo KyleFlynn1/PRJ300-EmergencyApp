@@ -44,6 +44,7 @@ export class HomePage implements OnInit {
     private menuController: MenuController
   ) { }
 
+  // On component initialization fetch alerts to show active alerts and recent broadcasts
   ngOnInit() {
     this.alertService.getAlerts().subscribe(alerts => {
       // Sort by timestamp descending (newest first)

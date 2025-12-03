@@ -43,6 +43,7 @@ export class AlertsPage implements OnInit {
     private menuController: MenuController
   ) { }
 
+  // Fetch alerts on component initialization to keep data up to date
   ngOnInit() {
     this.alertService.getAlerts().subscribe(alerts => {
       // Sort by timestamp descending (newest first)
@@ -55,6 +56,7 @@ export class AlertsPage implements OnInit {
     });
   }
 
+  // Reset pagination and reload alerts when the view is about to enter
   ionViewWillEnter() {
     // Reset pagination state when returning to the page
     this.infiniteScrollDisabled = false;
@@ -63,6 +65,7 @@ export class AlertsPage implements OnInit {
     this.loadMoreAlerts();
   }
 
+  // Functions for handling filter changes
   onFilterChange(event: any) {
     this.selectedSeverityFilter = typeof event === 'string' ? event : event?.detail?.value;
     this.applyFilters();
@@ -80,6 +83,7 @@ export class AlertsPage implements OnInit {
   }
 
 
+  // Apply filters to alerts based on severity and search term
   applyFilters() {
     let filtered = this.allAlerts;
     console.log('All alerts:', this.allAlerts.map(a => ({ category: a.category, timestamp: a.timestamp })));

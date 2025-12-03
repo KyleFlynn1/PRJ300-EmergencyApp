@@ -1,4 +1,4 @@
-// Utility functions for modals
+// Utility functions for modals to be reused across components
 
 // Get alert severity color based on severity level
 export const getAlertSeverityColor = (severity?: string) : string => {
@@ -35,6 +35,7 @@ export const getIcon = (category?: string) => {
     return 'alert-circle';
   }
 
+// Get a formatted timestamp for display and better readability for users
 export const getFormattedTimestamp = (timestamp: string): string => {
     const alertDate = new Date(timestamp);
     const today = new Date();
