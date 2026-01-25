@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
 import { Router, RouterLink } from '@angular/router';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -28,9 +29,9 @@ export class HomePage implements OnInit {
   activeAlertsCount: number = 5;
   recentBroadcasts: any[] = [];
 
-  // User location hard coded for sligo for testing later got from phone gps
-  userLat: number = 54.272470; 
-  userLng: number = -8.473997;
+  // User location, set from geolocation service
+  userLat?: number;
+  userLng?: number;
   // Radius around user location to show alerts on home page
   userRadiusDistance : number = 20; // in km
 
@@ -41,21 +42,40 @@ export class HomePage implements OnInit {
 
   constructor(
     private alertService: Alert,
-    private menuController: MenuController
+    private menuController: MenuController,
+    private geolocationService: GeolocationService
   ) { }
 
-  // On component initialization fetch alerts to show active alerts and recent broadcasts
-  ngOnInit() {
+  // On component initialization fetch alerts and user location
+  async ngOnInit() {
+    await this.getAndSetUserLocation();
     this.alertService.getAlerts().subscribe(alerts => {
-      // Sort by timestamp descending (newest first)
       this.activeAlerts = alerts.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
       this.activeAlertsCount = alerts.length;
-      
-      // Filter alerts within 10km radius
       this.filterAlertsInRadius();
     });
+  }
+  // Get and set user location, with user-friendly error handling
+  private async getAndSetUserLocation(): Promise<boolean> {
+    try {
+      const position = await this.geolocationService.getCurrentLocation();
+      if (position) {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+        console.log('User location:', this.userLat, this.userLng);
+        return true;
+      } else {
+        this.userLat = undefined;
+        this.userLng = undefined;
+        return false;
+      }
+    } catch (error) {
+      this.userLat = undefined;
+      this.userLng = undefined;
+      return false;
+    }
   }
 
   // Calculate distance between two coordinates using Haversine formula
@@ -75,13 +95,17 @@ export class HomePage implements OnInit {
 
   // Filter alerts within 10km radius
   private filterAlertsInRadius() {
+    if (this.userLat === undefined || this.userLng === undefined) {
+      this.activeAlertsInArea = [];
+      return;
+    }
     this.activeAlertsInArea = this.activeAlerts.filter(alert => {
       if (!alert.location?.lat || !alert.location?.lng) {
         return false; // Skip alerts without coordinates
       }
       const distance = this.getDistance(
-        this.userLat,
-        this.userLng,
+        this.userLat as number,
+        this.userLng as number,
         alert.location.lat,
         alert.location.lng
       );

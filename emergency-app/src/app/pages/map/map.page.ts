@@ -52,7 +52,7 @@ export class MapPage implements OnInit {
   
     // Open and close report modal methods
     openReportModal() {
-      this.showReportModal = true;
+      this.showReportModal = true; 
     }
   
     closeReportModal(){
