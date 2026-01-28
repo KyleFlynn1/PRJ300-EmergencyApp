@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { IonicModule } from "@ionic/angular";
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -23,16 +24,16 @@ import { Report } from 'src/app/interfaces/report.interface';
 export class MapComponent  implements OnInit, AfterViewInit {
   map!: Map;
 
-  // Hardcoded user location for testing
-  userLat: number = 54.272470; 
-  userLng: number = -8.473997;
+  // User location, set from geolocation service
+  userLat?: number;
+  userLng?: number;
 
   //List of pins to show on map got from the alerts service with api
   pins: { lon: number; lat: number; title: string }[] = [];
 
-  constructor(private alertService: Alert) {}
+  constructor(private alertService: Alert, private geolocationService: GeolocationService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // Fetch alerts
     this.alertService.getAlerts().subscribe(alerts => {
       // Convert alerts to pins
@@ -43,12 +44,91 @@ export class MapComponent  implements OnInit, AfterViewInit {
           lat: alert.location.lat!,
           title: alert.category || 'Alert'
         }));
+      
+      // Reinitialize map if already created to update pins
+      if (this.map) {
+        this.updateMapMarkers();
+      }
     });
+  }
+  
+  // Get and set user location, with user-friendly error handling
+  private async getAndSetUserLocation(): Promise<boolean> {
+    try {
+      const position = await this.geolocationService.getCurrentLocation();
+      if (position) {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+        console.log('User location:', this.userLat, this.userLng);
+        return true;
+      } else {
+        this.userLat = undefined;
+        this.userLng = undefined;
+        return false;
+      }
+    } catch (error) {
+      this.userLat = undefined;
+      this.userLng = undefined;
+      return false;
+    }
   }
 
   // Make sure map is initialized after view is ready to avoid errors or map not showing
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    // Get user location first, then initialize map
+    await this.getAndSetUserLocation();
     setTimeout(() => this.initMap(), 100);
+  }
+  
+  // Update map markers without recreating the entire map
+  private updateMapMarkers() {
+    // Remove old marker layer
+    const layers = this.map.getLayers();
+    layers.forEach(layer => {
+      if (layer instanceof VectorLayer) {
+        this.map.removeLayer(layer);
+      }
+    });
+    
+    // Recreate features with updated pins
+    const features = this.pins.map(pin => {
+      const feature = new Feature({
+        geometry: new Point(fromLonLat([pin.lon, pin.lat]))
+      });
+      feature.setStyle(
+        new Style({
+          image: new Icon({
+            anchor: [0.5, 1],
+            src: 'assets/marker.png',
+            scale: 0.1
+          })
+        })
+      );
+      return feature;
+    });
+
+    // Add user location marker if available
+    if (this.userLat !== undefined && this.userLng !== undefined) {
+      const userMarker = new Feature({
+        geometry: new Point(fromLonLat([this.userLng, this.userLat]))
+      });
+      userMarker.setStyle(
+        new Style({
+          image: new Icon({
+            anchor: [0.5, 1],
+            src: 'assets/userMarker.png',
+            scale: 0.09
+          })
+        })
+      );
+      features.push(userMarker);
+    }
+
+    // Add new marker layer
+    const markerLayer = new VectorLayer({
+      source: new VectorSource({ features })
+    });
+    this.map.addLayer(markerLayer);
   }
 
   // Initialize the map with OpenLayers
@@ -77,33 +157,39 @@ export class MapComponent  implements OnInit, AfterViewInit {
       return feature;
     });
 
-    // Add user location marker
-    // User cordinates hardcoded above for testing purposes to be got from gps on phone later
-    const userMarker = new Feature({
-      geometry: new Point(fromLonLat([this.userLng, this.userLat]))
-    });
-    userMarker.setStyle(
-      new Style({
-        image: new Icon({
-          anchor: [0.5, 1],
-          src: 'assets/userMarker.png',
-          scale: 0.09
+    // Add user location marker if available
+    if (this.userLat !== undefined && this.userLng !== undefined) {
+      const userMarker = new Feature({
+        geometry: new Point(fromLonLat([this.userLng, this.userLat]))
+      });
+      userMarker.setStyle(
+        new Style({
+          image: new Icon({
+            anchor: [0.5, 1],
+            src: 'assets/userMarker.png',
+            scale: 0.09
+          })
         })
-      })
-    );
-    features.push(userMarker);
+      );
+      features.push(userMarker);
+    }
 
     //below adds a layer onto of the map for markers (stored in features)
     const markerLayer = new VectorLayer({
       source: new VectorSource({ features })
     });
 
+    // Center map on user location if available, else default to Ireland
+    const center = (this.userLat !== undefined && this.userLng !== undefined)
+      ? fromLonLat([this.userLng, this.userLat])
+      : fromLonLat([-8.473997, 54.272470]);
+
     this.map = new Map({
-      target: mapElement, 
+      target: mapElement,
       layers: [tileLayer, markerLayer],
       view: new View({
-        center: fromLonLat([this.userLng, this.userLat]), //center on user location
-        zoom: 13 //zoom in on user location
+        center,
+        zoom: 13
       })
     });
   }

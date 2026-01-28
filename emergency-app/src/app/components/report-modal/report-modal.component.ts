@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms'
 import { CommonModule } from '@angular/common';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ReactiveFormsModule } from '@angular/forms';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-report-modal',
@@ -18,9 +20,10 @@ export class ReportModalComponent implements OnInit {
   @Output() closeModal = new EventEmitter<any>();
   @Input() alert?: Report;
 
-  // User location hard coded for sligo for testing later got from phone gps
-  userLat: number = 54.272470; 
-  userLng: number = -8.473997;
+  // User location, set from geolocation service
+  userLat?: number;
+  userLng?: number;
+  userAddress?: string;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -60,22 +63,19 @@ export class ReportModalComponent implements OnInit {
     private fb: FormBuilder,
     private modalController: ModalController,
     private alertService: Alert,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private geolocationService: GeolocationService
   ) {}
 
-  ngOnInit() {
-    // Show emergency warning alert on modal open
+  async ngOnInit() {
     this.showAlert = true;
-
-    // Report form initialization with validation
     this.reportForm = this.fb.group({
-      category: ['', Validators.required],  // Category is required
-      severity: ['', Validators.required], // Severity is required
-      notes: ['', Validators.maxLength(200)], // Additional notes are optional
-      overrideLocation: [false], // Checkbox for custom location
-      customAddress: [''] // Custom address input
+      category: ['', Validators.required],
+      severity: ['', Validators.required],
+      notes: ['', Validators.maxLength(200)],
+      overrideLocation: [false],
+      customAddress: ['']
     });
-
     if (this.alert) {
       this.reportForm.patchValue({
         category: this.alert.category,
@@ -83,6 +83,40 @@ export class ReportModalComponent implements OnInit {
         notes: this.alert.notes,
         customAddress: this.alert.location?.address
       });
+    }
+    await this.getAndSetUserLocation();
+  }
+
+  // Get and set user location, with user-friendly error handling
+  private async getAndSetUserLocation(): Promise<boolean> {
+    try {
+      const position = await this.geolocationService.getCurrentLocation();
+      if (position) {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+        console.log('User location:', this.userLat, this.userLng);
+        
+        // Get address from coordinates using reverse geocoding
+        try {
+          this.userAddress = await this.geolocationService.reverseGeoloc(this.userLat, this.userLng);
+          console.log('User address:', this.userAddress);
+        } catch (error) {
+          console.error('Error getting address:', error);
+          this.userAddress = undefined;
+        }
+        
+        return true;
+      } else {
+        this.userLat = undefined;
+        this.userLng = undefined;
+        this.userAddress = undefined;
+        return false;
+      }
+    } catch (error) {
+      this.userLat = undefined;
+      this.userLng = undefined;
+      this.userAddress = undefined;
+      return false;
     }
   }
 
@@ -130,7 +164,7 @@ export class ReportModalComponent implements OnInit {
       };
       this.updateAlert(this.alert._id, updatedData);
       return;
-}
+    }
     
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
@@ -139,11 +173,23 @@ export class ReportModalComponent implements OnInit {
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       formData.location = { address: this.reportForm.value.customAddress };
     } else {
-      formData.location = { 
-        lat: this.userLat, 
-        lng: this.userLng, 
-        address: 'Sligo' 
-      };
+      // Always try to get location before submitting
+      const gotLocation = await this.getAndSetUserLocation();
+      if (gotLocation && this.userLat !== undefined && this.userLng !== undefined) {
+        formData.location = {
+          lat: this.userLat,
+          lng: this.userLng,
+          address: this.userAddress
+        };
+      } else {
+        const alert = await this.alertController.create({
+          header: 'Location Required',
+          message: 'Unable to get your location. Please enable location permissions in your browser or device settings and try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
     }
 
     this.alertService.addAlert(formData).subscribe({

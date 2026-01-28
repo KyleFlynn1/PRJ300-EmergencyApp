@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, MenuController } from '@ionic/angular';
@@ -26,9 +27,9 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
   markerSource?: VectorSource;
   showAddDefibModal: boolean = false;
 
-  // Hardcoded user location for testing
-  userLat: number = 54.272470; 
-  userLng: number = -8.473997;
+  // User location, set from geolocation service
+  userLat?: number;
+  userLng?: number;
   
   // Sample defibrillator locations in Ireland
   defibLocations = [
@@ -46,9 +47,31 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
     { lon: -8.45, lat: 54.27, title: 'Sligo Library', address: 'Stephen St, Sligo' }
 ];
 
-  constructor(private menuController: MenuController) {}
+  constructor(private menuController: MenuController, private geolocationService: GeolocationService) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.getAndSetUserLocation();
+  }
+  // Get and set user location, with user-friendly error handling
+  private async getAndSetUserLocation(): Promise<boolean> {
+    try {
+      const position = await this.geolocationService.getCurrentLocation();
+      if (position) {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+        console.log('User location:', this.userLat, this.userLng);
+        return true;
+      } else {
+        this.userLat = undefined;
+        this.userLng = undefined;
+        return false;
+      }
+    } catch (error) {
+      this.userLat = undefined;
+      this.userLng = undefined;
+      return false;
+    }
+  }
 
   // Make sure map is initialized after view is ready to avoid errors or map not showing
   ngAfterViewInit() {
@@ -84,20 +107,22 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
       return feature;
     });
 
-    // Add user location marker
-    const userMarker = new Feature({
-      geometry: new Point(fromLonLat([this.userLng, this.userLat]))
-    });
-    userMarker.setStyle(
-      new Style({
-        image: new Icon({
-          anchor: [0.5, 1],
-          src: 'assets/userMarker.png',
-          scale: 0.09
+    // Add user location marker if available
+    if (this.userLat !== undefined && this.userLng !== undefined) {
+      const userMarker = new Feature({
+        geometry: new Point(fromLonLat([this.userLng, this.userLat]))
+      });
+      userMarker.setStyle(
+        new Style({
+          image: new Icon({
+            anchor: [0.5, 1],
+            src: 'assets/userMarker.png',
+            scale: 0.09
+          })
         })
-      })
-    );
-    features.push(userMarker);
+      );
+      features.push(userMarker);
+    }
 
     // Store the vector source so we can add markers later
     this.markerSource = new VectorSource({ features });
@@ -106,12 +131,17 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
       source: this.markerSource
     });
 
+    // Center map on user location if available, else default to Ireland
+    const center = (this.userLat !== undefined && this.userLng !== undefined)
+      ? fromLonLat([this.userLng, this.userLat])
+      : fromLonLat([-8.473997, 54.272470]);
+
     this.map = new Map({
       target: mapElement,
       layers: [tileLayer, markerLayer],
       view: new View({
-        center: fromLonLat([this.userLng, this.userLat]), //center on user location
-        zoom: 13 //zoom in on user location
+        center,
+        zoom: 13
       })
     });
   }

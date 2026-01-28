@@ -41,6 +41,14 @@
         <textarea formControlName="notes" class="native-textarea" rows="5" placeholder="Describe the incident..."></textarea>
       </div>
 
+      <!-- Display current location address -->
+      <div class="form-group" *ngIf="userAddress && !overrideLocation?.value">
+        <label>Detected Location</label>
+        <div class="location-display">
+          📍 {{ userAddress }}
+        </div>
+      </div>
+
       <!-- Override Location Checkbox -->
       <div class="form-group">
         <label class="checkbox-label">
