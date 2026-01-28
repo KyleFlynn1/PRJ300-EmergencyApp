@@ -31,6 +31,11 @@
     <h2>Your Feed</h2>
 
     <div class="feed-list">
+      <!-- No alerts message -->
+      <div *ngIf="activeAlertsInArea.length === 0" class="no-alerts-message">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>No alerts in your area</span>
+      </div>
 
       <!-- Auto add new alerts from report modal and alert service-->
       <div

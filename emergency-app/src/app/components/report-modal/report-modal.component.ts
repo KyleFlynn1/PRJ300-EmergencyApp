@@ -23,6 +23,7 @@ export class ReportModalComponent implements OnInit {
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
+  userAddress?: string;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -94,15 +95,27 @@ export class ReportModalComponent implements OnInit {
         this.userLat = position.coords.latitude;
         this.userLng = position.coords.longitude;
         console.log('User location:', this.userLat, this.userLng);
+        
+        // Get address from coordinates using reverse geocoding
+        try {
+          this.userAddress = await this.geolocationService.reverseGeoloc(this.userLat, this.userLng);
+          console.log('User address:', this.userAddress);
+        } catch (error) {
+          console.error('Error getting address:', error);
+          this.userAddress = undefined;
+        }
+        
         return true;
       } else {
         this.userLat = undefined;
         this.userLng = undefined;
+        this.userAddress = undefined;
         return false;
       }
     } catch (error) {
       this.userLat = undefined;
       this.userLng = undefined;
+      this.userAddress = undefined;
       return false;
     }
   }
@@ -151,7 +164,7 @@ export class ReportModalComponent implements OnInit {
       };
       this.updateAlert(this.alert._id, updatedData);
       return;
-}
+    }
     
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
@@ -165,7 +178,8 @@ export class ReportModalComponent implements OnInit {
       if (gotLocation && this.userLat !== undefined && this.userLng !== undefined) {
         formData.location = {
           lat: this.userLat,
-          lng: this.userLng
+          lng: this.userLng,
+          address: this.userAddress
         };
       } else {
         const alert = await this.alertController.create({

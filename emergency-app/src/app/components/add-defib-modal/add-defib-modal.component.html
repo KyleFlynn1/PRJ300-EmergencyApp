@@ -57,6 +57,14 @@
           placeholder="Give easy instructions to access the defibrillator"></textarea>
       </div>
 
+      <!-- Display current location address -->
+      <div class="form-group" *ngIf="userAddress">
+        <label>Defibrillator Location</label>
+        <div class="location-display">
+          📍 {{ userAddress }}
+        </div>
+      </div>
+
       <div class="form-actions">
         <button type="button" class="cancel-button" (click)="cancel()">
           Cancel

@@ -29,6 +29,13 @@
 
   <!-- Alerts list -->
   <div class="alerts-list feed-list" (scroll)="onScroll($event)">
+    <!-- No alerts message -->
+    <div *ngIf="alerts.length === 0" class="no-alerts-message">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>No alerts found</span>
+    </div>
+    
+    <!-- Alerts cards -->
     <div 
       *ngFor="let alert of alerts" 
       class="native-feed-card" 

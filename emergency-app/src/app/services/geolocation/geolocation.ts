@@ -1,14 +1,65 @@
 import { Injectable } from '@angular/core';
 import { Geolocation, Position, PermissionStatus, CallbackID, WatchPositionCallback } from '@capacitor/geolocation';
 import { Capacitor } from '@capacitor/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeolocationService {
+
+  private readonly url = "https://nominatim.openstreetmap.org/reverse";
+
+  constructor(private http: HttpClient) {}
+
+  async reverseGeoloc(lat: number, lng: number): Promise<string> {
+    const headers = new HttpHeaders({
+        'User-Agent': 'PRJ300EmergencyApp/1.0'
+      });
+
+      const params = {
+        format: 'json',
+        lat: lat.toString(),
+        lon: lng.toString()
+      };
+
+      const response: any = await firstValueFrom(
+        this.http.get(this.url, { headers, params })
+      );
+
+      if (!response || !response.address) {
+        return 'Address not found';
+      }
+
+      // Extract key address components in specified order
+      const addr = response.address;
+      const parts: string[] = [];
+
+      if (addr.locality) {
+        parts.push(addr.locality);
+      }
+
+      if (addr.region) {
+        parts.push(addr.region);
+      }
+
+      if (addr.postcode) {
+        parts.push(addr.postcode);
+      }
+
+      if (addr.county) {
+        parts.push(addr.county);
+      }
+
+      const finalAddress = parts.length > 0 ? parts.join(', ') : response.display_name;
+
+      return finalAddress;
+    }
+
   async getCurrentLocation(): Promise<Position | null> {
     try {
-      // On web, just call getCurrentPosition (browser handles permission)
+      //call getCurrentPosition
       if (Capacitor.getPlatform() === 'web') {
         return await Geolocation.getCurrentPosition();
       }
@@ -32,7 +83,7 @@ export class GeolocationService {
   async checkLocationPermission(): Promise<boolean> {
     try {
       if (Capacitor.getPlatform() === 'web') {
-        // On web, permission is handled by browser prompt
+        //permission is handled by browser prompt
         return true;
       }
       const permStatus: PermissionStatus = await Geolocation.checkPermissions();

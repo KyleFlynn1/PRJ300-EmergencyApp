@@ -66,12 +66,18 @@ ion-content {
 .section-header {
   --background: transparent;
   --color: #ffffff;
-  padding: 8px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  --padding-top: 20px;
+  --padding-bottom: 20px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   ion-title {
     font-weight: 700;
-    font-size: 22px;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding: 0;
   }
 }
 
