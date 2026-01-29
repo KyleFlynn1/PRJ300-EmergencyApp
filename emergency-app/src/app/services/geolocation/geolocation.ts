@@ -59,7 +59,6 @@ export class GeolocationService {
 
   async getCurrentLocation(): Promise<Position | null> {
     try {
-      //call getCurrentPosition
       if (Capacitor.getPlatform() === 'web') {
         return await Geolocation.getCurrentPosition();
       }
@@ -72,7 +71,11 @@ export class GeolocationService {
           return null;
         }
       }
-      return await Geolocation.getCurrentPosition();
+      return await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 0
+      });
     } catch (error) {
       console.error('Error getting location:', error);
       return null;

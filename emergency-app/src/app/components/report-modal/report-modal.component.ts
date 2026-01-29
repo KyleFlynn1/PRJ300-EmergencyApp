@@ -87,35 +87,24 @@ export class ReportModalComponent implements OnInit {
     await this.getAndSetUserLocation();
   }
 
-  // Get and set user location, with user-friendly error handling
+  // Get and set user location
   private async getAndSetUserLocation(): Promise<boolean> {
     try {
       const position = await this.geolocationService.getCurrentLocation();
       if (position) {
         this.userLat = position.coords.latitude;
         this.userLng = position.coords.longitude;
-        console.log('User location:', this.userLat, this.userLng);
         
-        // Get address from coordinates using reverse geocoding
+        // Get address from coordinates
         try {
           this.userAddress = await this.geolocationService.reverseGeoloc(this.userLat, this.userLng);
-          console.log('User address:', this.userAddress);
         } catch (error) {
-          console.error('Error getting address:', error);
-          this.userAddress = undefined;
+          this.userAddress = `${this.userLat.toFixed(4)}, ${this.userLng.toFixed(4)}`;
         }
-        
         return true;
-      } else {
-        this.userLat = undefined;
-        this.userLng = undefined;
-        this.userAddress = undefined;
-        return false;
       }
+      return false;
     } catch (error) {
-      this.userLat = undefined;
-      this.userLng = undefined;
-      this.userAddress = undefined;
       return false;
     }
   }
@@ -172,24 +161,14 @@ export class ReportModalComponent implements OnInit {
     // Use custom address if override is checked, otherwise use default user location
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       formData.location = { address: this.reportForm.value.customAddress };
+    } else if (this.userLat && this.userLng) {
+      formData.location = {
+        lat: this.userLat,
+        lng: this.userLng,
+        address: this.userAddress
+      };
     } else {
-      // Always try to get location before submitting
-      const gotLocation = await this.getAndSetUserLocation();
-      if (gotLocation && this.userLat !== undefined && this.userLng !== undefined) {
-        formData.location = {
-          lat: this.userLat,
-          lng: this.userLng,
-          address: this.userAddress
-        };
-      } else {
-        const alert = await this.alertController.create({
-          header: 'Location Required',
-          message: 'Unable to get your location. Please enable location permissions in your browser or device settings and try again.',
-          buttons: ['OK']
-        });
-        await alert.present();
-        return;
-      }
+      formData.location = { address: 'Unknown Location' };
     }
 
     this.alertService.addAlert(formData).subscribe({

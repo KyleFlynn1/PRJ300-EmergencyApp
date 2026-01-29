@@ -49,7 +49,7 @@
               <span class="severity-badge">{{ alert.severity }}</span>
             </div>
             <p>{{ alert.notes }}</p>
-            <small>{{ alert.location.address }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+            <small>{{ getDistanceString(alert) }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
           </div>
         </div>
       </div>
