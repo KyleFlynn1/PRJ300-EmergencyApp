@@ -34,6 +34,8 @@ export class MapPage implements OnInit {
     showReportModal: boolean = false;
     showAlertDetailModal: boolean = false;
     selectedAlert: any = null;
+    reportModalLocation?: { lat: number, lng: number, address: string };
+    currentTimestamp: string = new Date().toISOString();
   
     constructor(
       private alertService: Alert,
@@ -51,8 +53,24 @@ export class MapPage implements OnInit {
     }
   
     // Open and close report modal methods
+
+    // Listen for custom event from map component to open modal with pin location
+    ngAfterViewInit() {
+      window.addEventListener('openReportModalWithLocation', (e: any) => {
+        const { lat, lng, address } = e.detail;
+        this.openReportModalWithLocation(lat, lng, address);
+      });
+    }
+
     openReportModal() {
-      this.showReportModal = true; 
+      this.showReportModal = true;
+      this.reportModalLocation = undefined;
+    }
+
+    // Open modal with pin location (from map)
+    openReportModalWithLocation(lat: number, lng: number, address: string) {
+      this.reportModalLocation = { lat, lng, address };
+      this.showReportModal = true;
     }
   
     closeReportModal(){
@@ -64,14 +82,22 @@ export class MapPage implements OnInit {
       this.closeReportModal();
       if (date) {
         console.log('Report submitted with date:', date);
-        this.alertService.getAlerts().subscribe({
-          next: (alerts) => {
-            this.activeAlerts = alerts.sort((a, b) => 
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-          );
-          this.activeAlertsCount = this.activeAlerts.length;
-        }
-      });
+        // Small delay to ensure report is saved
+        setTimeout(() => {
+          this.alertService.getAlerts().subscribe({
+            next: (alerts) => {
+              this.activeAlerts = alerts.sort((a, b) => 
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+              );
+              this.activeAlertsCount = this.activeAlerts.length;
+              // Dispatch event to refresh map pins
+              window.dispatchEvent(new CustomEvent('refreshMapPins', { 
+                detail: { alerts: this.activeAlerts } 
+              }));
+              console.log('Dispatched refreshMapPins event with', this.activeAlerts.length, 'alerts');
+            }
+          });
+        }, 500);
       }
     }
   

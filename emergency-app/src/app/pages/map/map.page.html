@@ -26,7 +26,9 @@
       </button>
     </div>
     <div class="modal-body">
-      <app-report-modal [isNativeModal]="true" (closeModal)="handleReportClose($event)"></app-report-modal>
+      <app-report-modal [isNativeModal]="true" (closeModal)="handleReportClose($event)"
+        [alert]="reportModalLocation ? { severity: 'Info', category: 'Other', timestamp: currentTimestamp, location: reportModalLocation } : undefined"
+      ></app-report-modal>
     </div>
   </div>
 </div>

@@ -83,8 +83,18 @@ export class ReportModalComponent implements OnInit {
         notes: this.alert.notes,
         customAddress: this.alert.location?.address
       });
+      // If alert has lat/lng/address, override GPS location
+      if (this.alert.location && (this.alert.location.lat || this.alert.location.lng)) {
+        this.userLat = this.alert.location.lat;
+        this.userLng = this.alert.location.lng;
+        this.userAddress = this.alert.location.address;
+        this.reportForm.patchValue({ overrideLocation: true });
+      } else {
+        await this.getAndSetUserLocation();
+      }
+    } else {
+      await this.getAndSetUserLocation();
     }
-    await this.getAndSetUserLocation();
   }
 
   // Get and set user location

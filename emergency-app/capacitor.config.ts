@@ -1,12 +1,16 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.example.emergencyapp',
   appName: 'Emergency App',
   webDir: 'www',
   server: {
-    androidScheme: 'http',
-    cleartext: true
+    androidScheme: 'https'
+  },
+  plugins: {
+    Geolocation: {
+      permissions: ['location']
+    }
   }
 };
 
