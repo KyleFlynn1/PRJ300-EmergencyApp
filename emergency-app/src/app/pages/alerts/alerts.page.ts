@@ -6,6 +6,7 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp} from 'src/app/utils/modalUtil';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 
 @Component({
   selector: 'app-alerts',
@@ -38,13 +39,21 @@ export class AlertsPage implements OnInit {
   currentPage: number = 0;
   infiniteScrollDisabled: boolean = false;
 
+  // User location for distance calculations
+  userLat: number | null = null;
+  userLng: number | null = null;
+
   constructor(
     private alertService: Alert,
-    private menuController: MenuController
+    private menuController: MenuController,
+    private geolocationService: GeolocationService
   ) { }
 
   // Fetch alerts on component initialization to keep data up to date
-  ngOnInit() {
+  async ngOnInit() {
+    // Get user's current location
+    await this.getUserLocation();
+    
     this.alertService.getAlerts().subscribe(alerts => {
       // Sort by timestamp descending (newest first)
       this.alerts = alerts.sort((a, b) => 
@@ -159,5 +168,53 @@ export class AlertsPage implements OnInit {
   // Open side menu for navigation
   openMenu() {
     this.menuController.open();
+  }
+
+  // Get user's current location
+  async getUserLocation() {
+    try {
+      const position = await this.geolocationService.getCurrentLocation();
+      if (position) {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+      }
+    } catch (error) {
+      console.error('Error getting user location:', error);
+    }
+  }
+
+  // Calculate distance between two coordinates in kilometers
+  calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371; // Earth's radius in km
+    const dLat = this.toRad(lat2 - lat1);
+    const dLng = this.toRad(lng2 - lng1);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+  }
+
+  // Convert degrees to radians
+  private toRad(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  }
+
+  // Get formatted distance string
+  getDistanceString(alert: any): string {
+    if (!this.userLat || !this.userLng || !alert.location?.lat || !alert.location?.lng) {
+      return 'Unknown distance';
+    }
+    
+    const distance = this.calculateDistance(
+      this.userLat,
+      this.userLng,
+      alert.location.lat,
+      alert.location.lng
+    );
+    
+    return `${distance.toFixed(1)}km away`;
   }
 }

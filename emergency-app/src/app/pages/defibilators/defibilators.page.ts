@@ -50,7 +50,7 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
   constructor(private menuController: MenuController, private geolocationService: GeolocationService) {}
 
   async ngOnInit() {
-    await this.getAndSetUserLocation();
+    // Don't initialize location here, wait for ngAfterViewInit
   }
   // Get and set user location, with user-friendly error handling
   private async getAndSetUserLocation(): Promise<boolean> {
@@ -59,7 +59,7 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
       if (position) {
         this.userLat = position.coords.latitude;
         this.userLng = position.coords.longitude;
-        console.log('User location:', this.userLat, this.userLng);
+        console.log('Defib page - User location:', this.userLat, this.userLng);
         return true;
       } else {
         this.userLat = undefined;
@@ -74,7 +74,10 @@ export class DefibilatorsPage implements OnInit, AfterViewInit {
   }
 
   // Make sure map is initialized after view is ready to avoid errors or map not showing
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    // Get location first
+    await this.getAndSetUserLocation();
+    // Then initialize map with location
     setTimeout(() => this.initMap(), 100);
   }
 

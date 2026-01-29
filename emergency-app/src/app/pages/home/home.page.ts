@@ -150,6 +150,22 @@ export class HomePage implements OnInit {
     this.selectedAlert = null;
   }
 
+  // Get formatted distance string for alert card
+  getDistanceString(alert: any): string {
+    if (!this.userLat || !this.userLng || !alert.location?.lat || !alert.location?.lng) {
+      return 'Unknown distance';
+    }
+    
+    const distance = this.getDistance(
+      this.userLat,
+      this.userLng,
+      alert.location.lat,
+      alert.location.lng
+    );
+    
+    return `${distance.toFixed(1)}km away`;
+  }
+
   // Open side menu for navigation
   openMenu() {
     this.menuController.open();

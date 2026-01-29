@@ -1,11 +1,11 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
-import { IonicModule } from "@ionic/angular";
+import { IonicModule, ModalController } from "@ionic/angular";
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
@@ -13,6 +13,7 @@ import VectorLayer from 'ol/layer/Vector';
 import { Icon, Style } from 'ol/style';
 import { Alert } from 'src/app/services/alerts/alert';
 import { Report } from 'src/app/interfaces/report.interface';
+import { ReportModalComponent } from '../report-modal/report-modal.component';
 
 @Component({
   selector: 'app-map-component',
@@ -31,7 +32,14 @@ export class MapComponent  implements OnInit, AfterViewInit {
   //List of pins to show on map got from the alerts service with api
   pins: { lon: number; lat: number; title: string }[] = [];
 
-  constructor(private alertService: Alert, private geolocationService: GeolocationService) {}
+  // Pin dropped by user (for reporting)
+  droppedPin?: { lon: number; lat: number; address?: string };
+
+  constructor(
+    private alertService: Alert,
+    private geolocationService: GeolocationService,
+    private modalController: ModalController
+  ) {}
 
   async ngOnInit() {
     // Fetch alerts
@@ -78,6 +86,22 @@ export class MapComponent  implements OnInit, AfterViewInit {
     // Get user location first, then initialize map
     await this.getAndSetUserLocation();
     setTimeout(() => this.initMap(), 100);
+    
+    // Listen for map refresh events
+    window.addEventListener('refreshMapPins', (e: any) => {
+      console.log('refreshMapPins event received with', e.detail.alerts?.length, 'alerts');
+      if (e.detail.alerts && e.detail.alerts.length > 0) {
+        this.pins = e.detail.alerts
+          .filter((alert: any) => alert.location?.lng && alert.location?.lat)
+          .map((alert: any) => ({
+            lon: alert.location.lng!,
+            lat: alert.location.lat!,
+            title: alert.category || 'Alert'
+          }));
+        console.log('Updated pins to', this.pins.length);
+        this.updateMapMarkers();
+      }
+    });
   }
   
   // Update map markers without recreating the entire map
@@ -133,64 +157,37 @@ export class MapComponent  implements OnInit, AfterViewInit {
 
   // Initialize the map with OpenLayers
   initMap() {
-    const mapElement = document.getElementById('map');
-    if (!mapElement) {
-      console.error("map not found, likely internet related on error in code");
-      return;
-    }
-    const tileLayer = new TileLayer({source: new OSM()});
-    const features = this.pins.map(pin => {
-      const feature = new Feature({
-        geometry: new Point(fromLonLat([pin.lon, pin.lat])),
-        //name: pin.title //hoping to use this to make it hoverable
-      });
-      //below style declared there so that anchor can be used
-      feature.setStyle(
-        new Style({
-          image: new Icon({
-            anchor: [0.5, 1],
-            src: 'assets/marker.png',
-            scale: 0.1
-          })
-        })
-      );
-      return feature;
-    });
-
-    // Add user location marker if available
-    if (this.userLat !== undefined && this.userLng !== undefined) {
-      const userMarker = new Feature({
-        geometry: new Point(fromLonLat([this.userLng, this.userLat]))
-      });
-      userMarker.setStyle(
-        new Style({
-          image: new Icon({
-            anchor: [0.5, 1],
-            src: 'assets/userMarker.png',
-            scale: 0.09
-          })
-        })
-      );
-      features.push(userMarker);
-    }
-
-    //below adds a layer onto of the map for markers (stored in features)
-    const markerLayer = new VectorLayer({
-      source: new VectorSource({ features })
-    });
-
-    // Center map on user location if available, else default to Ireland
-    const center = (this.userLat !== undefined && this.userLng !== undefined)
-      ? fromLonLat([this.userLng, this.userLat])
-      : fromLonLat([-8.473997, 54.272470]);
-
     this.map = new Map({
-      target: mapElement,
-      layers: [tileLayer, markerLayer],
+      target: 'map',
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+      ],
       view: new View({
-        center,
-        zoom: 13
-      })
+        center: fromLonLat([this.userLng || 0, this.userLat || 0]),
+        zoom: 13,
+      }),
     });
+
+    // Remove or comment out the longpress event listener
+    // this.map.on('singleclick', (event) => {
+    //   const coordinates = toLonLat(event.coordinate);
+    //   this.handleMapClick(coordinates);
+    // });
+
+    this.updateMapMarkers();
+  }
+
+  // Open the report modal with lat/lng/address, using the same mechanism as the main page button
+  async openReportModal(lat: number, lon: number, address: string) {
+    // Dispatch a custom event to the window so the parent page can open the modal as usual
+    const event = new CustomEvent('openReportModalWithLocation', {
+      detail: { lat, lng: lon, address }
+    });
+    window.dispatchEvent(event);
+    // Optionally, clear dropped pin after dispatch
+    this.droppedPin = undefined;
+    this.updateMapMarkers();
   }
 }
