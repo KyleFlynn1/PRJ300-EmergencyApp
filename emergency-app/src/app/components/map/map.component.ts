@@ -75,20 +75,9 @@ export class MapComponent  implements OnInit, AfterViewInit {
 
   // Make sure map is initialized after view is ready to avoid errors or map not showing
   async ngAfterViewInit() {
-    // Initialize map immediately for faster loading
+    // Get user location first, then initialize map
+    await this.getAndSetUserLocation();
     setTimeout(() => this.initMap(), 100);
-    
-    // Get user location in parallel (don't wait for it)
-    this.getAndSetUserLocation().then(success => {
-      if (success && this.map) {
-        // Update map with user location marker after it's retrieved
-        this.updateMapMarkers();
-        // Re-center map on user location
-        if (this.userLat && this.userLng) {
-          this.map.getView().setCenter(fromLonLat([this.userLng, this.userLat]));
-        }
-      }
-    });
   }
   
   // Update map markers without recreating the entire map
