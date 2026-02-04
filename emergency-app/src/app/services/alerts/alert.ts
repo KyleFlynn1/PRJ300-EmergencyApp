@@ -12,8 +12,8 @@ export class Alert {
   private http = inject(HttpClient);
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
-    'http://10.12.218.154:3000/api/v1/alert',
-    'http://10.12.218.154:3001/api/v1/alert', // fallback
+    'http://localhost:3000/api/v1/alert',
+    'http://localhost:3001/api/v1/alert', // fallback
   ];
   private apiUrl = this.apiUrls[0];
 

@@ -22,4 +22,9 @@ export const routes: Routes = [
     path: 'defibilators',
     loadComponent: () => import('./pages/defibilators/defibilators.page').then( m => m.DefibilatorsPage)
   },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+  },
+
 ];
