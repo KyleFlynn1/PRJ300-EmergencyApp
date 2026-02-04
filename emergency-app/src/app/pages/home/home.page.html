@@ -40,16 +40,29 @@
       <!-- Auto add new alerts from report modal and alert service-->
       <div
          *ngFor="let alert of activeAlertsInArea"
-         class="native-feed-card feed-card" (click)="openAlertDetailModal(alert)" [style.background]="getAlertSeverityColor(alert.severity)">
-        <div class="card-iinner"> 
-          <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>
+         class="native-feed-card"
+         (click)="openAlertDetailModal(alert)"
+         [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+        <div class="card-inner"> 
+          <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
           <div class="card-content">
             <div class="card-header">
               <h3>{{ alert.category }}</h3>
               <span class="severity-badge">{{ alert.severity }}</span>
             </div>
-            <p>{{ alert.notes }}</p>
-            <small>{{ getDistanceString(alert) }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+            <div class="description-text">
+              <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
+            </div>
+            <p class="detail-text">
+              <span class="detail-icon">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ getDistanceString(alert) }}
+              </span>
+              <span class="detail-icon">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ getFormattedTimestamp(alert.timestamp) }}
+              </span>
+            </p>
           </div>
         </div>
       </div>

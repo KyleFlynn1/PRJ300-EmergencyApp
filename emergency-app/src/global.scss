@@ -32,12 +32,15 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-@import "@ionic/angular/css/palettes/dark.always.css";
+//@import "@ionic/angular/css/palettes/dark.always.css";
 //@import "@ionic/angular/css/palettes/dark.class.css";
 //@import '@ionic/angular/css/palettes/dark.system.css';
 
 /* Custom Colors */
-$PRIMARY_TITLE_COLOUR: #ffffff;
+$PRIMARY_TITLE_COLOUR: #000000;
+$PRIMARY_BACKGROUND_COLOUR: #ffffff;
+
+
 $LIGHT_TEXT_COLOUR: #F5F5F5;
 $CARD_COLOUR_GREEN: #3ead44;
 $CARD_COLOUR_ORANGE: #ff8e1d;
@@ -45,9 +48,23 @@ $CARD_COLOUR_RED: #ec0303;
 $CARD_COLOUR_GRAY: #797979;
 $CARD_COLOUR_PURPLE: #f200ff;
 
+/* Card Colors */
+$CARD_BACKGROUND: #ececec;
+$CARD_TITLE_TEXT: #2d2d2d;
+$CARD_DESCRIPTION_TEXT: #6b6b6b;
+$CARD_DETAIL_TEXT: #999;
+$CARD_BADGE_TEXT: #777;
+$CARD_BADGE_BACKGROUND: rgba(0, 0, 0, 0.15);
+
+
 /* Add padding to content for bottom nav */
 ion-content {
+  --background: white;
   --padding-bottom: 70px;
+}
+
+ion-title {
+  color: $PRIMARY_TITLE_COLOUR;
 }
 
 /* Shared Layout Styles */
@@ -73,8 +90,9 @@ ion-content {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   ion-title {
-    font-weight: 700;
-    font-size: 26px;
+    font-weight: 800;
+    font-size: 28px;
+    margin-left: 14px;
     letter-spacing: 0.5px;
     text-align: left;
     padding: 0;
@@ -146,67 +164,150 @@ ion-content {
   &.status-danger { background: $CARD_COLOUR_RED; }  
 }
 
+/* Search */
+.search-container {
+  margin-bottom: 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  ion-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 20px;
+    color: #666666;
+    pointer-events: none;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px 16px 12px 44px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    background: #f8f8f8;
+    color: #333333;
+    font-size: 15px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    
+    &::placeholder {
+      color: #999999;
+    }
+    
+    &:focus {
+      outline: none;
+      background: #ffffff;
+      border-color: #cccccc;
+    }
+  }
+}
+
 /* Feed Card (Native) */
 .native-feed-card {
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: 18px;
+  padding: 12px;
+  margin-bottom: 6px;
   cursor: pointer;
   touch-action: manipulation;
+  background-color: $CARD_BACKGROUND;
+  min-height: 90px;
+  max-height: 90px;
+  border-left: 6px solid;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
-  .card-iinner {
+  .card-inner {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    color: white;
+    gap: 12px;
+    height: 100%;
   }
 
   .card-icon {
+    padding: 10px;
     font-size: 28px;
-    flex-shrink: 0;
-    margin-top: 2px;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 14px;
     color: white;
+    flex-shrink: 0;
   }
 
   .card-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-right: 8px;
+    padding-bottom: 18px;
     
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
 
       .severity-badge {
-        font-size: 10px;
-        padding: 3px 8px;
+        font-size: 9px;
+        padding: 3px 7px;
+        margin: 0 0 0 6px;
         font-weight: 600;
-        background: rgba(0, 0, 0, 0.2);
-        color: #ffffff;
+        background: $CARD_BADGE_BACKGROUND;
+        color: $CARD_BADGE_TEXT;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
       }
     }
 
     h3 {
       margin: 0;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      color: #ffffff;
+      color: $CARD_TITLE_TEXT;
+      letter-spacing: -0.2px;
     }
 
-    p {
-      margin: 4px 0 0 0;
-      font-size: 14px;
-      color: #ffffff;
-      font-weight: 500;
-      line-height: 1.3;
+    .description-text {
+      flex: 0 1 auto;
+      min-height: 0;
+      max-height: 34px;
+      overflow: hidden;
+      
+      p {
+        margin: 0;
+        font-size: 12px;
+        color: $CARD_DESCRIPTION_TEXT;
+        font-weight: 400;
+        line-height: 1.35;
+        overflow: hidden;
+        display: -webkit-box;
+      }
     }
 
-    small {
-      font-size: 12px;
-      color: #ffffff;
-      display: block;
-      margin-top: 6px;
+    p.detail-text {
+      font-size: 11px;
+      color: $CARD_DETAIL_TEXT;
       font-weight: 500;
+      position: absolute;
+      bottom: 10px;
+      left: 68px;
+      right: 20px;
+      margin: 0;
+      overflow: visible;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .detail-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        
+        ion-icon {
+          font-size: 14px;
+          color: $CARD_DETAIL_TEXT;
+        }
+      }
     }
   }
 }
@@ -470,7 +571,7 @@ ion-content {
   }
 
   &.filter-all ion-icon {
-    color: #ffffff;
+    color: #333333;
   }
 
   &.filter-info ion-icon {
