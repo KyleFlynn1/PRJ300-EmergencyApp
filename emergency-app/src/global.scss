@@ -39,7 +39,8 @@
 /* Custom Colors */
 $PRIMARY_TITLE_COLOUR: #000000;
 $PRIMARY_BACKGROUND_COLOUR: #ffffff;
-
+$PRIMARY_TEXT_COLOUR: #333333;
+$PRIMARY_BUTTON_COLOUR: #424242;
 
 $LIGHT_TEXT_COLOUR: #F5F5F5;
 $CARD_COLOUR_GREEN: #3ead44;
@@ -74,9 +75,10 @@ ion-title {
 
   h2 {
     font-size: 20px;
-    font-weight: bolder;
+    font-weight: 800;
     text-align: center;
     color: $PRIMARY_TITLE_COLOUR;
+    margin: 0 0 12px 0;
   }
 }
 
@@ -138,8 +140,12 @@ ion-title {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: white;
-  min-height: 88px;
+  color: $PRIMARY_TITLE_COLOUR;
+  border-left: 6px solid;
+  background-color: $CARD_BACKGROUND;
+  min-height: 90px;
+  max-height: 90px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.315);
 
   .status-icon {
     font-size: 36px;
@@ -151,17 +157,35 @@ ion-title {
       margin: 0 0 4px 0;
       font-size: 18px;
       font-weight: 700;
+      color: $PRIMARY_TEXT_COLOUR;
     }
 
     p {
       margin: 0;
       font-size: 14px;
       opacity: 0.95;
+      color: $PRIMARY_TEXT_COLOUR;
     }
   }
 
-  &.status-success { background: $CARD_COLOUR_GREEN; }
-  &.status-danger { background: $CARD_COLOUR_RED; }  
+  &.status-success {  border-left-color: $CARD_COLOUR_GREEN; }
+  &.status-danger { border-left-color: $CARD_COLOUR_RED; }  
+}
+
+.no-alerts-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  text-align: center;
+  color: $PRIMARY_TEXT_COLOUR;
+  font-size: 15px;
+  
+  ion-icon {
+    font-size: 22px;
+    color: $PRIMARY_TEXT_COLOUR;
+  }
 }
 
 /* Search */
@@ -175,7 +199,7 @@ ion-title {
     position: absolute;
     left: 14px;
     font-size: 20px;
-    color: #666666;
+    color: $PRIMARY_TEXT_COLOUR;
     pointer-events: none;
   }
   
@@ -214,7 +238,7 @@ ion-title {
   max-height: 90px;
   border-left: 6px solid;
   position: relative;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.315);
 
   .card-inner {
     display: flex;
@@ -332,11 +356,17 @@ ion-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: white;
+  color: $CARD_TITLE_TEXT;
+  background-color: $CARD_BACKGROUND;
+  min-height: 90px;
+  max-height: 90px;
+  border-left: 6px solid;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.315);
 
   ion-icon {
     font-size: 26px;
-    color: #ffffff;
+    color: $CARD_TITLE_TEXT;
     flex-shrink: 0;
   }
 
@@ -344,25 +374,26 @@ ion-title {
     margin: 0;
     font-size: 15px;
     font-weight: 700;
-    color: #ffffff;
+    color: $CARD_TITLE_TEXT;
   }
 
   p {
     margin: 2px 0 0 0;
     font-size: 13px;
-    color: rgba(255,255,255,0.9);
+    color: $CARD_DESCRIPTION_TEXT;
   }
 }
 
 /* Report Button */
 .report-container {
   text-align: center;
-  padding: 16px 0;
+  padding-top: 6px;
 
   .report-note {
     margin-top: 8px;
-    color: $LIGHT_TEXT_COLOUR;
+    color: $PRIMARY_TEXT_COLOUR;
     font-size: 0.9rem;
+    min-height: 20px;
   }
 }
 
@@ -385,7 +416,7 @@ ion-title {
   gap: 8px;
   touch-action: manipulation;
   margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(236, 3, 3, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
@@ -394,7 +425,7 @@ ion-title {
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(236, 3, 3, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -405,13 +436,13 @@ ion-title {
 
   .report-note {
     margin-top: 8px;
-    color: $LIGHT_TEXT_COLOUR;
+    color: $PRIMARY_TEXT_COLOUR;
     font-size: 0.9rem;
   }
 }
 
 .native-defib-button {
-  background: #00c6ff;
+  background: $PRIMARY_BUTTON_COLOUR;
   color: #ffffff;
   border: none;
   border-radius: 16px;
@@ -429,7 +460,7 @@ ion-title {
   gap: 8px;
   touch-action: manipulation;
   margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
@@ -438,17 +469,15 @@ ion-title {
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 198, 255, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   }
 }
 
 /* View All Alerts Button */
 .view-all-alerts-button {
-  background: #ff8e1d;
+  background: $PRIMARY_BUTTON_COLOUR;
   color: #ffffff;
-  border: none;
   border-radius: 16px;
-  padding: 16px 32px;
   font-size: 18px;
   font-weight: 700;
   width: 75%;
@@ -462,7 +491,8 @@ ion-title {
   gap: 8px;
   touch-action: manipulation;
   margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(255, 142, 29, 0.3);
+  margin-top: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s, box-shadow 0.2s;
 
   ion-icon {
@@ -471,7 +501,7 @@ ion-title {
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(255, 142, 29, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }
 
