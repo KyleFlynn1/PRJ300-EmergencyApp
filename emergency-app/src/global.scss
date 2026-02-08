@@ -660,11 +660,12 @@ ion-title {
 }
 
 .modal-header {
-  padding: 20px;
+  padding: 5px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  float: right;
 
   h2 {
     margin: 0;
@@ -675,12 +676,8 @@ ion-title {
 
   .close-button {
     background: transparent;
-    border: none;
-    color: white;
-    font-size: 28px;
-    cursor: pointer;
+    color: rgb(0, 0, 0);
     touch-action: manipulation;
-    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -696,9 +693,7 @@ ion-title {
 .modal-body {
   padding: 20px;
   color: white;
-  pointer-events: auto;
-  -webkit-user-select: auto;
-  user-select: auto;
+  background-color: $CARD_BACKGROUND;
 
   p {
     margin: 0 0 16px 0; 
@@ -1014,4 +1009,153 @@ ion-title {
 .date-picker-button {
   --padding-start: 8px;
   --padding-end: 8px;
+}
+
+.alert-detail-container {
+  background-color: $CARD_BACKGROUND;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+
+  .main-icon {
+    font-size: 32px;
+    float: left;
+    margin: 6px;
+    padding: 10px;
+    border-radius: 16px;
+    background-color: #7c7c7c;
+    color: #ffffff !important;
+  }
+
+  h1 {
+    color: $PRIMARY_TITLE_COLOUR;
+    flex: 1;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  .severity-badge {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+
+.detail-section {
+  margin-bottom: 20px;
+
+  .description {
+    color: rgba(26, 26, 26, 0.8);
+    line-height: 1.5;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 24px;
+    margin: 8px 0;
+    max-height: 80px;
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.1);
+
+    ion-icon {
+      font-size: 20px;
+      color: $PRIMARY_TEXT_COLOUR !important;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+      .label {
+        font-size: 10px;
+        color: $PRIMARY_TITLE_COLOUR;
+        margin: 0 0 2px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+
+      .value {
+        font-size: 14px;
+        color: $PRIMARY_TEXT_COLOUR;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .map-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    ion-icon {
+      font-size: 20px;
+      color: $PRIMARY_TEXT_COLOUR !important;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: $PRIMARY_TEXT_COLOUR;
+      font-weight: 600;
+    }
+  }
+
+  .map-container {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.1);
+    overflow: hidden;
+    position: relative;
+    background: #474747;
+  }
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+
+  button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .delete-button {
+    background: #ff3b30;
+    color: white;
+    box-shadow: 0 4px 12px rgba(129, 129, 129, 0.3);
+  }
+
+  .update-button {
+    background: $PRIMARY_BUTTON_COLOUR;
+    color: white;
+    box-shadow: 0 4px 12px rgba(129, 129, 129, 0.3);
+  }
 }

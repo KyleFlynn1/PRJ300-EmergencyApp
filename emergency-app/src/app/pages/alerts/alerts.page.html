@@ -70,9 +70,8 @@
 
 <!-- Alert Detail Modal (native overlay) -->
 <div class="native-modal-overlay" *ngIf="showAlertDetailModal">
-  <div class="native-modal-content" [style.background]="getAlertSeverityColor(selectedAlert?.severity)">
+  <div class="native-modal-content" [style.border-left]="'6px solid ' + getAlertSeverityColor(selectedAlert?.severity)">
     <div class="modal-header">
-      <h2>{{selectedAlert?.category || 'Alert Details'}}</h2>
       <button class="close-button" (click)="closeAlertDetailModal()">
         <ion-icon name="close"></ion-icon>
       </button>
