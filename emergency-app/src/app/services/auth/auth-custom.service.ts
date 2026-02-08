@@ -48,12 +48,18 @@ export class AuthCustomService {
       .post<any>(`${this.Uri}/auth`, { email: email, password: password })
       .pipe(
         map((body) => {
-          const payload = JSON.parse(atob(body.accessToken.split('.')[1]));
-          payloadUser = payload;
-          expires = payload.exp * 1000;
-          localStorage.setItem('token', body.accessToken);
-          return null;
-        }),
+  console.log('LOGIN RESPONSE:', body);
+  console.log('ACCESS TOKEN:', body.accessToken);
+
+  localStorage.setItem('token', body.accessToken);
+  console.log('TOKEN IN STORAGE:', localStorage.getItem('token'));
+
+  const payload = JSON.parse(atob(body.accessToken.split('.')[1]));
+  payloadUser = payload;
+  expires = payload.exp * 1000;
+
+  return null;
+}),
         switchMap(() => this.http.get<User>(`${this.Uri}/users/email/${email}`)
           .pipe(
             catchError(() => of(payloadUser as User))

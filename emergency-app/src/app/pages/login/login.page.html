@@ -2,12 +2,36 @@
   <ion-toolbar>
     <ion-title>login</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> 
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Email *</label>
+      <input 
+        type="email"
+        formControlName="email" 
+        class="native-select"
+        placeholder="Enter your email" />
+      <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        Email is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password *</label>
+      <input 
+        type="password"
+        formControlName="password" 
+        class="native-select"
+        placeholder="Enter your password" />
+      <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        Password must be at least 6 characters long
+      </div>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="loginForm.invalid">
+      Login
+    </ion-button>
+  </form>
 </ion-content>
