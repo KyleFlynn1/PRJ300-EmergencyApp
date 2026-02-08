@@ -66,7 +66,6 @@ ion-content {
 
 ion-title {
   color: $PRIMARY_TITLE_COLOUR;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   background-color: white;
 }
 
@@ -85,13 +84,12 @@ ion-title {
 }
 
 .section-header {
-  --background: transparent;
-  --color: #ffffff;
+  --background: white;
+  --color: #0000001;
   --padding-top: 20px;
-  --padding-bottom: 20px;
+  --padding-bottom: 40px;
   --padding-start: 20px;
   --padding-end: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   ion-title {
     font-weight: 800;
@@ -100,6 +98,7 @@ ion-title {
     letter-spacing: 0.5px;
     text-align: left;
     padding: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
 }
 
