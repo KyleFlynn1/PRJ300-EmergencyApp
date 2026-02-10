@@ -1103,6 +1103,8 @@ ion-title {
 
     .info-content {
         flex: 1;
+        min-width: 0;
+        
       .label {
         font-size: 10px;
         color: $PRIMARY_TITLE_COLOUR;
@@ -1117,6 +1119,12 @@ ion-title {
         color: $PRIMARY_TEXT_COLOUR;
         margin: 0;
         font-weight: 500;
+        line-height: 1.2;
+        word-wrap: break-word;
+      }
+
+      p {
+        overflow-y: auto;
       }
     }
   }
