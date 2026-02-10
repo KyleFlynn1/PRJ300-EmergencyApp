@@ -27,7 +27,7 @@ export class HomePage implements OnInit {
   // Alerts filtered in a 10km radius
   activeAlertsInArea: any[] = [];
   activeAlertsCount: number = 5;
-  recentBroadcasts: any[] = [];
+  weatherAlerts: any[] = [];
 
   // User location, set from geolocation service
   userLat?: number;
@@ -49,6 +49,7 @@ export class HomePage implements OnInit {
   // On component initialization fetch alerts and user location
   async ngOnInit() {
     await this.getAndSetUserLocation();
+    this.alertService.getWeatherAlerts();
     this.alertService.getAlerts().subscribe(alerts => {
       this.activeAlerts = alerts.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -92,6 +93,7 @@ export class HomePage implements OnInit {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
   }
+
 
   // Filter alerts within radius and last 24 hours
   private filterAlertsInRadius() {
