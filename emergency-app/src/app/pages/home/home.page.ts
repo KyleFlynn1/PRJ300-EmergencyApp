@@ -33,7 +33,7 @@ export class HomePage implements OnInit {
   userLat?: number;
   userLng?: number;
   // Radius around user location to show alerts on home page
-  userRadiusDistance : number = 20; // in km
+  userRadiusDistance : number = 270; // in km
 
   // Modal state if they are opened or closed
   showReportModal: boolean = false;
@@ -93,23 +93,34 @@ export class HomePage implements OnInit {
     return R * c; // Distance in km
   }
 
-  // Filter alerts within 10km radius
+  // Filter alerts within radius and last 24 hours
   private filterAlertsInRadius() {
     if (this.userLat === undefined || this.userLng === undefined) {
       this.activeAlertsInArea = [];
       return;
     }
+    
+    const now = new Date();
     this.activeAlertsInArea = this.activeAlerts.filter(alert => {
       if (!alert.location?.lat || !alert.location?.lng) {
         return false; // Skip alerts without coordinates
       }
+      
+      // Check if alert is within 24 hours
+      const alertTime = new Date(alert.timestamp);
+      const hoursDifference = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+      if (hoursDifference > 24) {
+        return false;
+      }
+      
+      // Check if alert is within radius
       const distance = this.getDistance(
         this.userLat as number,
         this.userLng as number,
         alert.location.lat,
         alert.location.lng
       );
-      return distance <= this.userRadiusDistance; // Within 10km from the variable
+      return distance <= this.userRadiusDistance;
     });
   }
 
