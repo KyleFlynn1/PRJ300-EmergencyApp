@@ -110,6 +110,18 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
     }
   }
 
+  // Check if a alert is Active or Inactive depending if its made within 24 hours and put a tag saying which
+  CheckAlertActive(timestamp: string | Date | undefined | null): boolean {
+    if (!timestamp) 
+      return false; 
+    
+    const alertTime = new Date(timestamp);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+    
+    return hoursDiff < 24;
+  }
+
   // Show update form to edit alert with CRUD operations
   updateAlert() {
     this.showform = true;
