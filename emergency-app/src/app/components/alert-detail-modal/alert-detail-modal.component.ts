@@ -22,7 +22,7 @@ import {ReportModalComponent} from '../report-modal/report-modal.component';
   selector: 'app-alert-detail-modal',
   templateUrl: './alert-detail-modal.component.html',
   styleUrls: ['./alert-detail-modal.component.scss'],
-  imports: [IonicModule, CommonModule, RouterModule, AsyncPipe, ReportModalComponent],
+  imports: [IonicModule, CommonModule, RouterModule, ReportModalComponent],
   standalone: true,
 })
 export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
