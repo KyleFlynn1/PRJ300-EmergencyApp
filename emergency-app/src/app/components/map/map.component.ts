@@ -91,20 +91,20 @@ export class MapComponent  implements OnInit, AfterViewInit {
     // Get user location first, then initialize map
     await this.getAndSetUserLocation();
     setTimeout(() => this.initMap(), 100);
-    
-    // Listen for map refresh events
-    window.addEventListener('refreshMapPins', (e: any) => {
-      console.log('refreshMapPins event received with', e.detail.alerts?.length, 'alerts');
-      if (e.detail.alerts && e.detail.alerts.length > 0) {
-        this.pins = e.detail.alerts
-          .filter((alert: any) => alert.location?.lng && alert.location?.lat)
-          .map((alert: any) => ({
-            lon: alert.location.lng!,
-            lat: alert.location.lat!,
-            title: alert.category || 'Alert',
-            alert: alert
-          }));
-        console.log('Updated pins to', this.pins.length);
+  }
+
+  // refresh pins public method
+  refreshPins() {
+    this.alertService.getAlerts().subscribe(alerts => {
+      this.pins = alerts
+        .filter(alert => alert.location?.lng && alert.location?.lat)
+        .map(alert => ({
+          lon: alert.location.lng!,
+          lat: alert.location.lat!,
+          title: alert.category || 'Alert',
+          alert: alert
+        }));
+      if (this.map) {
         this.updateMapMarkers();
       }
     });
@@ -178,37 +178,45 @@ export class MapComponent  implements OnInit, AfterViewInit {
       }),
     });
 
-    // Single tap — use OL's built-in hit detection (pixel-based, works great on mobile)
+    // Single tap with Openlayer built in pixel detection
     this.map.on('singleclick', (evt) => {
-      // hitTolerance gives a generous tap area around each pin
+      // hitTolerance for area around pin to count 20 px for mobile so it dosnt need to be accurate
       const feature = this.map.forEachFeatureAtPixel(
         evt.pixel,
         (f) => f,
-        { hitTolerance: 20 } // 20px tolerance — easy to tap on mobile
+        { hitTolerance: 20 } 
       );
 
+      // Send alert for a selected and open detailed view with single click
       if (feature) {
         const alert = feature.get('alertData');
         if (alert) {
           this.alertSelected.emit(alert);
-          return; // pin was tapped, don't drop a report pin
+          return;
         }
       }
     });
 
-    // Long press — drop a report pin (only if no alert pin tapped)
+    // Long press for dropping a pin and open a report form with the locatin filled in for that address and lon and lat
     let longPressTimeout: any;
     let moved = false;
+    let pressEvent: PointerEvent | null = null;
 
-    this.map.getViewport().addEventListener('pointerdown', () => {
+    this.map.getViewport().addEventListener('pointerdown', (e: PointerEvent) => {
       moved = false;
-      longPressTimeout = setTimeout(() => {
-        if (!moved) {
-          const center = this.map.getView().getCenter();
-          if (center) {
-            const [lon, lat] = toLonLat(center);
-            this.reportLocation.emit({ lat, lng: lon, address: `${lat.toFixed(4)}, ${lon.toFixed(4)}` });
-          }
+      pressEvent = e;
+      longPressTimeout = setTimeout(async () => {
+        if (!moved && pressEvent) {
+          // Use OL's getEventPixel to correctly convert the DOM event to map pixel
+          const pixel = this.map.getEventPixel(pressEvent);
+          const coord = this.map.getCoordinateFromPixel(pixel);
+          const [lon, lat] = toLonLat(coord);
+
+          // Reverse geocode to get the actual address
+          const address = await this.geolocationService.reverseGeoloc(lat, lon);
+
+          // Emit to parent with resolved address
+          this.reportLocation.emit({ lat, lng: lon, address });
         }
       }, 800);
     });
@@ -223,7 +231,6 @@ export class MapComponent  implements OnInit, AfterViewInit {
 
     this.updateMapMarkers();
   }
-
 
   
 }
