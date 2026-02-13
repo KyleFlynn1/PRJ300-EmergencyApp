@@ -1,17 +1,20 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="section-header">
-    <ion-title>Defibrillators</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="false" class="app-header">
+  <div class="header-spacer"></div>
+  <div class="header-row">
+    <h1>Defibrillators</h1>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <!-- Add Defibrillator Button -->
-  <div class="add-defib-section">
-    <button class="add-defib-top-button" (click)="openAddDefibModal()">
-      <ion-icon name="add-circle"></ion-icon>
-      Add Defibrillator Location
-    </button>
-    <p class="report-note">Add a defibrillator location to help others in need.</p>
+  <div class="section action-buttons-section">
+    <div class="report-container">
+      <button class="native-defib-button" (click)="openAddDefibModal()">
+        <ion-icon name="add-circle"></ion-icon>
+        Add Defibrillator Location
+      </button>
+      <p class="report-note">Add a defibrillator location to help others in need.</p>
+    </div>
   </div>
 
   <!-- Map Container -->

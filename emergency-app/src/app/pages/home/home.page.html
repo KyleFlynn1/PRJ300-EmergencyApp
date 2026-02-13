@@ -1,11 +1,14 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="section-header">
-    <ion-title>Alerts</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="false" class="app-header">
+  <div class="header-spacer"></div>
+  <div class="header-row">
+    <h1>Home</h1>
+    <button class="header-icon-btn" routerLink="/settings">
+      <ion-icon name="person-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>
@@ -40,16 +43,29 @@
       <!-- Auto add new alerts from report modal and alert service-->
       <div
          *ngFor="let alert of activeAlertsInArea"
-         class="native-feed-card feed-card" (click)="openAlertDetailModal(alert)" [style.background]="getAlertSeverityColor(alert.severity)">
-        <div class="card-iinner"> 
-          <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>
+         class="native-feed-card"
+         (click)="openAlertDetailModal(alert)"
+         [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+        <div class="card-inner"> 
+          <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
           <div class="card-content">
             <div class="card-header">
               <h3>{{ alert.category }}</h3>
               <span class="severity-badge">{{ alert.severity }}</span>
             </div>
-            <p>{{ alert.notes }}</p>
-            <small>{{ getDistanceString(alert) }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+            <div class="description-text">
+              <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
+            </div>
+            <p class="detail-text">
+              <span class="detail-icon">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ getDistanceString(alert) }}
+              </span>
+              <span class="detail-icon">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ getFormattedTimestamp(alert.timestamp) }}
+              </span>
+            </p>
           </div>
         </div>
       </div>
@@ -150,10 +166,10 @@
 
   <!--Other warnings section -->
   <div class="section other-warnings">
-    <h2>Other Warnings / Info</h2>
+    <h2>Met Eireann Alerts</h2>
 
     <div class="warning-list">
-      <div class="native-warning-card" style="background: #f200ff">
+      <div class="native-warning-card">
         <div>
           <ion-icon name="alert-circle"></ion-icon>
           <div>
@@ -163,7 +179,7 @@
         </div>
       </div>
 
-      <div class="native-warning-card" style="background: #ff8e1d">
+      <div class="native-warning-card">
         <div>
           <ion-icon name="megaphone"></ion-icon>
           <div>

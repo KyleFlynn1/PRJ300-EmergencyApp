@@ -1,0 +1,17 @@
+ion-item {
+  --background: var(--card-background);
+  --color: var(--primary-text-colour);
+  --border-color: transparent;
+  border-radius: 50px;
+}
+
+ion-label {
+  color: var(--primary-text-colour) !important;
+}
+
+ion-toggle {
+  --track-background: var(--card-badge-background);
+  --track-background-checked: var(--card-colour-green);
+  --handle-background: var(--primary-text-colour);
+  --handle-background-checked: #ffffff;
+}

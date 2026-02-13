@@ -7,7 +7,12 @@
         <div class="detail-header">
           <ion-icon [name]="getIcon(alert?.category)" class="main-icon"></ion-icon>
           <h1>{{ alert?.category || 'Alert' }}</h1>
-          <ion-badge color="light" class="severity-badge">{{ alert?.severity }}</ion-badge>
+          <div class="badge-container">
+            <ion-badge color="light" class="severity-badge">{{ alert?.severity }}</ion-badge>
+            <ion-badge [color]="CheckAlertActive(alert?.timestamp) ? 'success' : 'danger'" class="active-badge">
+              {{ CheckAlertActive(alert?.timestamp) ? 'Active' : 'Inactive' }}
+            </ion-badge>
+          </div>
         </div>
 
         <!-- Description -->

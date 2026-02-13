@@ -17,6 +17,8 @@ export class Alert {
   ];
   private apiUrl = this.apiUrls[0];
 
+  private weatherApiUrl = 'http://localhost:3000/api/v1/weather/import';
+
   constructor() {
     // If primary fails, switch to fallback
     this.http.get(this.apiUrls[0], { observe: 'response' }).subscribe({
@@ -26,6 +28,12 @@ export class Alert {
   private alerts: Report[] = [];
   private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
+
+
+  getWeatherAlerts(): Observable<Report[]> {
+    const headers = { 'X-API-Key': "blahblah" };
+    return this.http.post<Report[]>(this.weatherApiUrl, { headers });
+  }
 
   getAlerts(): Observable<Report[]> {
     return this.http.get<Report[]>(this.apiUrl);

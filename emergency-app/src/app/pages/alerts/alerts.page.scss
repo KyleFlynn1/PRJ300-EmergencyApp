@@ -9,7 +9,7 @@
   .filter-button {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
+    border-radius: 18px;
     padding: 10px 14px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -35,8 +35,8 @@
       color: #ffffff;
       
       &.selected {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: #ffffff;
+        background: rgba(92, 92, 92, 0.2);
+        border-color: #c0c0c0;
         box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
       }
     }

@@ -1,40 +1,10 @@
-.add-defib-section {
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.add-defib-top-button {
-  width: 100%;
-  padding: 14px;
-  background: #ec0303;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(236, 3, 3, 0.3);
-  transition: transform 0.2s;
-
-  ion-icon {
-    font-size: 24px;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
+/* Keep only map sizing here; buttons use global styles */
 .emergency-map-container {
   width: 100%;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 160px);
   position: relative;
 
-  // Hide OpenLayers controls
+  /* Hide OpenLayers controls */
   ::ng-deep .ol-attribution {
     display: none !important;
   }

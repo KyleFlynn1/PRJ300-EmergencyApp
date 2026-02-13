@@ -1,0 +1,17 @@
+<ion-header [translucent]="false" class="app-header">
+  <div class="header-spacer"></div>
+  <div class="header-row">
+    <h1>Settings</h1>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Dark Light Theme-->
+  <div class="section">
+    <h2>Appearance</h2>
+    <ion-item lines="full">
+      <ion-label>Dark Mode</ion-label>
+      <ion-toggle slot="end" [(ngModel)]="isDarkMode" (ionChange)="toggleDarkMode()"></ion-toggle>
+    </ion-item>
+  </div>
+</ion-content>

@@ -1,20 +1,21 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="section-header">
-    <ion-title>All Alerts</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="false" class="app-header">
+  <div class="header-spacer"></div>
+  <div class="header-row">
+    <h1>All Alerts</h1>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 <div class="section">
   <!--Search bar with date icon-->
   <div class="search-container">
+    <ion-icon name="search-outline"></ion-icon>
     <input 
       type="search" 
       class="native-select" 
       placeholder="Search for Alert"
       [value]="searchTerm"
       (input)="onSearchChange($event)" />
-
   </div>
   
   <!--Filter Buttons-->
@@ -38,18 +39,29 @@
     <!-- Alerts cards -->
     <div 
       *ngFor="let alert of alerts" 
-      class="native-feed-card" 
-      [style.background]="getAlertSeverityColor(alert.severity)"
-      (click)="openAlertDetailModal(alert)">
-      <div class="card-iinner">
-        <ion-icon [name]="getIcon(alert.category)" class="card-icon"></ion-icon>
+      class="native-feed-card"
+      (click)="openAlertDetailModal(alert)"
+      [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+      <div class="card-inner">
+        <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
         <div class="card-content">
           <div class="card-header">
             <h3>{{ alert.category }}</h3>
             <span class="severity-badge">{{ alert.severity }}</span>
           </div>
-          <p>{{ alert.notes }}</p>
-          <small>{{ getDistanceString(alert) }} • {{ getFormattedTimestamp(alert.timestamp) }}</small>
+          <div class="description-text">
+            <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
+          </div>
+          <p class="detail-text">
+            <span class="detail-icon">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ getDistanceString(alert) }}
+            </span>
+            <span class="detail-icon">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ getFormattedTimestamp(alert.timestamp) }}
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -59,9 +71,8 @@
 
 <!-- Alert Detail Modal (native overlay) -->
 <div class="native-modal-overlay" *ngIf="showAlertDetailModal">
-  <div class="native-modal-content" [style.background]="getAlertSeverityColor(selectedAlert?.severity)">
+  <div class="native-modal-content" [style.border-left]="'6px solid ' + getAlertSeverityColor(selectedAlert?.severity)">
     <div class="modal-header">
-      <h2>{{selectedAlert?.category || 'Alert Details'}}</h2>
       <button class="close-button" (click)="closeAlertDetailModal()">
         <ion-icon name="close"></ion-icon>
       </button>

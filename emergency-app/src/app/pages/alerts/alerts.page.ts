@@ -165,10 +165,6 @@ export class AlertsPage implements OnInit {
     }
   }
 
-  // Open side menu for navigation
-  openMenu() {
-    this.menuController.open();
-  }
 
   // Get user's current location
   async getUserLocation() {
