@@ -10,10 +10,9 @@ import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import { Icon, Style } from 'ol/style';
+import { Icon, Style, Circle as CircleStyle, RegularShape, Fill, Stroke } from 'ol/style';
+import { getAlertSeverityColor, getCircleAlertSVG } from 'src/app/utils/modalUtil';
 import { Alert } from 'src/app/services/alerts/alert';
-import { Report } from 'src/app/interfaces/report.interface';
-import { ReportModalComponent } from '../report-modal/report-modal.component';
 
 @Component({
   selector: 'app-map-component',
@@ -125,14 +124,18 @@ export class MapComponent  implements OnInit, AfterViewInit {
       const feature = new Feature({
         geometry: new Point(fromLonLat([pin.lon, pin.lat]))
       });
-      // Store alert data on the feature so tap detection can retrieve it
       feature.set('alertData', pin.alert);
+      // Use a circular SVG marker with icon in center
+      const color = getAlertSeverityColor(pin.alert.severity);
+      const svgUrl = getCircleAlertSVG(color);
       feature.setStyle(
         new Style({
           image: new Icon({
-            anchor: [0.5, 1],
-            src: 'assets/marker.png',
-            scale: 0.1
+            anchor: [0.5, 0.5],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            src: svgUrl,
+            scale: 0.28
           })
         })
       );
