@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons } from '@ionic/angular'
 import { IonicModule, MenuController } from "@ionic/angular";
 import { MapComponent } from 'src/app/components/map/map.component';
 import { getAlertSeverityColor, getFormattedTimestamp, getIcon } from 'src/app/utils/modalUtil';
@@ -54,14 +53,6 @@ export class MapPage implements OnInit {
   
     // Open and close report modal methods
 
-    // Listen for custom event from map component to open modal with pin location
-    ngAfterViewInit() {
-      window.addEventListener('openReportModalWithLocation', (e: any) => {
-        const { lat, lng, address } = e.detail;
-        this.openReportModalWithLocation(lat, lng, address);
-      });
-    }
-
     openReportModal() {
       this.showReportModal = true;
       this.reportModalLocation = undefined;
@@ -111,4 +102,6 @@ export class MapPage implements OnInit {
       this.showAlertDetailModal = false;
       this.selectedAlert = null;
     }
+
+    
 }

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { IonicModule, ModalController } from "@ionic/angular";
 import Map from 'ol/Map';
@@ -25,12 +25,16 @@ import { ReportModalComponent } from '../report-modal/report-modal.component';
 export class MapComponent  implements OnInit, AfterViewInit {
   map!: Map;
 
+  // Emit selected alert to parent (no window events needed)
+  @Output() alertSelected = new EventEmitter<any>();
+  @Output() reportLocation = new EventEmitter<{ lat: number; lng: number; address: string }>();
+
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
 
   //List of pins to show on map got from the alerts service with api
-  pins: { lon: number; lat: number; title: string }[] = [];
+  pins: { lon: number; lat: number; title: string; alert: any }[] = [];
 
   // Pin dropped by user (for reporting)
   droppedPin?: { lon: number; lat: number; address?: string };
@@ -50,7 +54,8 @@ export class MapComponent  implements OnInit, AfterViewInit {
         .map(alert => ({
           lon: alert.location.lng!,
           lat: alert.location.lat!,
-          title: alert.category || 'Alert'
+          title: alert.category || 'Alert',
+          alert: alert
         }));
       
       // Reinitialize map if already created to update pins
@@ -96,7 +101,8 @@ export class MapComponent  implements OnInit, AfterViewInit {
           .map((alert: any) => ({
             lon: alert.location.lng!,
             lat: alert.location.lat!,
-            title: alert.category || 'Alert'
+            title: alert.category || 'Alert',
+            alert: alert
           }));
         console.log('Updated pins to', this.pins.length);
         this.updateMapMarkers();
@@ -119,6 +125,8 @@ export class MapComponent  implements OnInit, AfterViewInit {
       const feature = new Feature({
         geometry: new Point(fromLonLat([pin.lon, pin.lat]))
       });
+      // Store alert data on the feature so tap detection can retrieve it
+      feature.set('alertData', pin.alert);
       feature.setStyle(
         new Style({
           image: new Icon({
@@ -170,24 +178,52 @@ export class MapComponent  implements OnInit, AfterViewInit {
       }),
     });
 
-    // Remove or comment out the longpress event listener
-    // this.map.on('singleclick', (event) => {
-    //   const coordinates = toLonLat(event.coordinate);
-    //   this.handleMapClick(coordinates);
-    // });
+    // Single tap — use OL's built-in hit detection (pixel-based, works great on mobile)
+    this.map.on('singleclick', (evt) => {
+      // hitTolerance gives a generous tap area around each pin
+      const feature = this.map.forEachFeatureAtPixel(
+        evt.pixel,
+        (f) => f,
+        { hitTolerance: 20 } // 20px tolerance — easy to tap on mobile
+      );
 
-    this.updateMapMarkers();
-  }
-
-  // Open the report modal with lat/lng/address, using the same mechanism as the main page button
-  async openReportModal(lat: number, lon: number, address: string) {
-    // Dispatch a custom event to the window so the parent page can open the modal as usual
-    const event = new CustomEvent('openReportModalWithLocation', {
-      detail: { lat, lng: lon, address }
+      if (feature) {
+        const alert = feature.get('alertData');
+        if (alert) {
+          this.alertSelected.emit(alert);
+          return; // pin was tapped, don't drop a report pin
+        }
+      }
     });
-    window.dispatchEvent(event);
-    // Optionally, clear dropped pin after dispatch
-    this.droppedPin = undefined;
+
+    // Long press — drop a report pin (only if no alert pin tapped)
+    let longPressTimeout: any;
+    let moved = false;
+
+    this.map.getViewport().addEventListener('pointerdown', () => {
+      moved = false;
+      longPressTimeout = setTimeout(() => {
+        if (!moved) {
+          const center = this.map.getView().getCenter();
+          if (center) {
+            const [lon, lat] = toLonLat(center);
+            this.reportLocation.emit({ lat, lng: lon, address: `${lat.toFixed(4)}, ${lon.toFixed(4)}` });
+          }
+        }
+      }, 800);
+    });
+
+    this.map.getViewport().addEventListener('pointermove', () => {
+      moved = true;
+    });
+
+    this.map.getViewport().addEventListener('pointerup', () => {
+      clearTimeout(longPressTimeout);
+    });
+
     this.updateMapMarkers();
   }
+
+
+  
 }
