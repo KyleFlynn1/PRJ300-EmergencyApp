@@ -15,7 +15,10 @@
       </p>
     </div>
   </div>
-  <app-map-component></app-map-component>
+  <app-map-component
+    (alertSelected)="openAlertDetailModal($event)"
+    (reportLocation)="openReportModalWithLocation($event.lat, $event.lng, $event.address)">
+  </app-map-component>
 </ion-content>
 <div class="native-modal-overlay" *ngIf="showReportModal">
   <div class="native-modal-content">

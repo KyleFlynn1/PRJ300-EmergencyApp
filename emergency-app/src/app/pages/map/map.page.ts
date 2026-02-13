@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons } from '@ionic/angular'
 import { IonicModule, MenuController } from "@ionic/angular";
 import { MapComponent } from 'src/app/components/map/map.component';
 import { getAlertSeverityColor, getFormattedTimestamp, getIcon } from 'src/app/utils/modalUtil';
@@ -17,6 +16,7 @@ import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal
   imports: [CommonModule, FormsModule, IonicModule, MapComponent, ReportModalComponent, AlertDetailModalComponent]
 })
 export class MapPage implements OnInit {
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
   openMenu() {
     this.menuController.open();
   }
@@ -54,14 +54,6 @@ export class MapPage implements OnInit {
   
     // Open and close report modal methods
 
-    // Listen for custom event from map component to open modal with pin location
-    ngAfterViewInit() {
-      window.addEventListener('openReportModalWithLocation', (e: any) => {
-        const { lat, lng, address } = e.detail;
-        this.openReportModalWithLocation(lat, lng, address);
-      });
-    }
-
     openReportModal() {
       this.showReportModal = true;
       this.reportModalLocation = undefined;
@@ -81,8 +73,7 @@ export class MapPage implements OnInit {
     handleReportClose(date: any) {
       this.closeReportModal();
       if (date) {
-        console.log('Report submitted with date:', date);
-        // Small delay to ensure report is saved
+        // Delay to ensure the report is saved on the backend before fetching
         setTimeout(() => {
           this.alertService.getAlerts().subscribe({
             next: (alerts) => {
@@ -90,11 +81,8 @@ export class MapPage implements OnInit {
                 new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
               );
               this.activeAlertsCount = this.activeAlerts.length;
-              // Dispatch event to refresh map pins
-              window.dispatchEvent(new CustomEvent('refreshMapPins', { 
-                detail: { alerts: this.activeAlerts } 
-              }));
-              console.log('Dispatched refreshMapPins event with', this.activeAlerts.length, 'alerts');
+              // Refresh map pins and update map size after modal closes
+              this.mapComponent.refreshPins();
             }
           });
         }, 500);
@@ -111,4 +99,6 @@ export class MapPage implements OnInit {
       this.showAlertDetailModal = false;
       this.selectedAlert = null;
     }
+
+    
 }

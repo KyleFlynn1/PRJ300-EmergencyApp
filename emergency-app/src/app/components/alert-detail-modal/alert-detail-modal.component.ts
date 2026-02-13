@@ -1,10 +1,12 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { Icon } from 'ionicons/dist/types/components/icon/icon';
 import { Report } from 'src/app/interfaces/report.interface';
 import { Alert } from 'src/app/services/alerts/alert';
-import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
+import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils/modalUtil';
+import { RouterModule } from '@angular/router';
+import {ReportModalComponent} from '../report-modal/report-modal.component';
+
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -15,8 +17,7 @@ import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
-import { RouterModule } from '@angular/router';
-import {ReportModalComponent} from '../report-modal/report-modal.component';
+
 
 @Component({
   selector: 'app-alert-detail-modal',
@@ -29,7 +30,6 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
-
   // Control to  show update form or detail view
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;
@@ -74,12 +74,17 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
       geometry: new Point(fromLonLat([lon, lat]))
     });
 
+    // Use the same SVG pin style as the main map
+    const color = getAlertSeverityColor(this.alert?.severity);
+    const svgUrl = getCircleAlertSVG(color);
     feature.setStyle(
       new Style({
         image: new OLIcon({
-          anchor: [0.5, 1],
-          src: 'assets/marker.png',
-          scale: 0.1
+          anchor: [0.5, 0.5],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: svgUrl,
+          scale: 0.28
         })
       })
     );

@@ -1,3 +1,9 @@
+// Generate a circular SVG marker with a single, well-centered alert icon
+export function getCircleAlertSVG(color: string): string {
+  const iconSvg = '<path d="M256 80c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176S353.2 80 256 80zm0 320c-79.5 0-144-64.5-144-144s64.5-144 144-144 144 64.5 144 144-64.5 144-144 144zm-16-224h32v112h-32zm0 144h32v32h-32z" fill="#fff"/>';
+  const svg = `<svg width="96" height="96" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><circle cx="256" cy="256" r="208" fill="${color}"/>${iconSvg}</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
 // Utility functions for modals to be reused across components
 
 // Get alert severity color based on severity level
