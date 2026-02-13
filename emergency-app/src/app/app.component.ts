@@ -10,7 +10,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class AppComponent {
   constructor() {
-    // Temporary manual theme switch for 'dark' or 'light
-    document.body.classList.add('dark');
+    // Load saved theme preference, default to dark if not set
+    const savedDark = localStorage.getItem('darkMode');
+    if (savedDark === null || savedDark === 'true') {
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
+    } else {
+      document.body.classList.add('light');
+      document.body.classList.remove('dark');
+    }
   }
 }

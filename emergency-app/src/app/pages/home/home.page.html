@@ -1,11 +1,14 @@
-<ion-header [translucent]="false">
-  <ion-toolbar class="section-header">
-    <ion-title>Home</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="false" class="app-header">
+  <div class="header-spacer"></div>
+  <div class="header-row">
+    <h1>Home</h1>
+    <button class="header-icon-btn" routerLink="/settings">
+      <ion-icon name="person-outline"></ion-icon>
+    </button>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>
