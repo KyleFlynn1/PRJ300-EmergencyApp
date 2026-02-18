@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { IonicModule, AlertController } from '@ionic/angular';
 import { Defib } from 'src/app/interfaces/defib.interface';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
-
+import { PhotoService } from 'src/app/services/photos/photo.service';
 @Component({
   selector: 'app-add-defib-modal',
   templateUrl: './add-defib-modal.component.html',
@@ -30,7 +30,8 @@ export class AddDefibModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private geolocationService: GeolocationService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private photoService: PhotoService
   ) { }
 
   async ngOnInit() {
@@ -45,6 +46,11 @@ export class AddDefibModalComponent implements OnInit {
 
     // Get user location
     await this.getAndSetUserLocation();
+  }
+
+  // Photos 
+  addPhotoToGallery() {
+    this.photoService.addNewToGallery();
   }
 
   // Get and set user location with reverse geocoding
