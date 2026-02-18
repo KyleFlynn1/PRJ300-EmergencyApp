@@ -36,7 +36,6 @@ export class AddDefibModalComponent implements OnInit {
 
   async ngOnInit() {
     this.showAlert = true;
-    
     // Initialize form with validation - only working status is required
     this.defibForm = this.fb.group({
       working: [true, Validators.required],
@@ -46,11 +45,39 @@ export class AddDefibModalComponent implements OnInit {
 
     // Get user location
     await this.getAndSetUserLocation();
+
+    // If a photo was already taken (unlikely on init), set preview
+    if (this.photoService.photos.length > 0) {
+      this.setPhotoPreview(this.photoService.photos[0].webviewPath);
+    }
   }
 
-  // Photos 
-  addPhotoToGallery() {
-    this.photoService.addNewToGallery();
+
+  // Photo logic for form
+  photoPreview?: string;
+
+  async onAddPhoto() {
+    await this.photoService.addNewToGallery();
+    if (this.photoService.photos.length > 0) {
+      const photo = this.photoService.photos[0];
+      this.setPhotoPreview(photo.webviewPath);
+      this.defibForm.patchValue({ photoUrl: photo.webviewPath });
+    }
+  }
+
+  retakePhoto() {
+    this.onAddPhoto();
+  }
+
+  removePhoto() {
+    // Remove from service and form
+    this.photoService.photos.shift();
+    this.setPhotoPreview(undefined);
+    this.defibForm.patchValue({ photoUrl: '' });
+  }
+
+  private setPhotoPreview(path?: string) {
+    this.photoPreview = path;
   }
 
   // Get and set user location with reverse geocoding
@@ -117,7 +144,6 @@ export class AddDefibModalComponent implements OnInit {
       accessInstructions: this.defibForm.value.accessInstructions || undefined
     };
 
-    console.log('Defibrillator submitted:', defibData);
     this.closeModal.emit(defibData);
   }
 
