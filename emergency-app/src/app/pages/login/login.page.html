@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <div class="logo-section">
+      <ion-icon name="person-circle-outline" size="large"></ion-icon>
+      <h1>Welcome Back</h1>
+      <p>Sign in to continue</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()">
+      <!-- Email Input -->
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          autocomplete="email"
+        ></ion-input>
+      </ion-item>
+
+      <!-- Password Input -->
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          [(ngModel)]="password"
+          name="password"
+          required
+        ></ion-input>
+        <ion-button
+          fill="clear"
+          slot="end"
+          (click)="togglePasswordVisibility()"
+        >
+          <ion-icon
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          ></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <!-- Error Message -->
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p class="error-text">{{ errorMessage }}</p>
+      </ion-text>
+
+      <!-- Login Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="isLoading"
+        class="login-button"
+      >
+        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        <span *ngIf="!isLoading">Login</span>
+      </ion-button>
+
+      <!-- Forgot Password -->
+      <div class="forgot-password">
+        <ion-button fill="clear" size="small" (click)="onForgotPassword()">
+          Forgot Password?
+        </ion-button>
+      </div>
+    </form>
+
+    <!-- Sign Up Link -->
+    <div class="signup-section">
+      <p>
+        Don't have an account?
+        <ion-button fill="clear" size="small" (click)="onSignUp()">
+          Sign Up
+        </ion-button>
+      </p>
+    </div>
+  </div>
+</ion-content>

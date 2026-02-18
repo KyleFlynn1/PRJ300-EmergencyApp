@@ -13,7 +13,7 @@ export class Alert {
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
     'http://localhost:3000/api/v1/alert',
-    'http://localhost:3001/api/v1/alert', // fallback
+    'http://localhost:3000/api/v1/alert', // fallback
   ];
   private apiUrl = this.apiUrls[0];
 

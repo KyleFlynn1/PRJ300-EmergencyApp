@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sign Up</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="signup-container">
+    <h1>Create Account</h1>
+    <p>Join us today</p>
+
+    <form (ngSubmit)="onSignUp()">
+       <!-- Nickname (NEW) -->
+      <ion-item>
+        <ion-label position="floating">Username/Nickname</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="nickname"
+          name="nickname"
+          required
+        ></ion-input>
+      </ion-item>
+      <!-- Email -->
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Password -->
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          [(ngModel)]="password"
+          name="password"
+          required
+        ></ion-input>
+        <ion-button
+          fill="clear"
+          slot="end"
+          (click)="togglePasswordVisibility()"
+        >
+          <ion-icon
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          ></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <!-- Confirm Password -->
+      <ion-item>
+        <ion-label position="floating">Confirm Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Error Message -->
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p class="error-text">{{ errorMessage }}</p>
+      </ion-text>
+
+      <!-- Sign Up Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="isLoading"
+        class="signup-button"
+      >
+        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        <span *ngIf="!isLoading">Sign Up</span>
+      </ion-button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="login-section">
+      <p>
+        Already have an account?
+        <ion-button fill="clear" size="small" routerLink="/login">
+          Login
+        </ion-button>
+      </p>
+    </div>
+  </div>
+</ion-content>
