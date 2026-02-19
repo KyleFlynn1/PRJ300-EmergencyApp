@@ -49,5 +49,11 @@
 	<string>We need your location to report emergencies</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to report emergencies</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to the camera to take photos for reports and alerts.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to your photo library to choose photos for reports.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow saving photos taken in the app to your photo library.</string>
 </dict>
 </plist>
