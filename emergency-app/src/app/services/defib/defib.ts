@@ -11,8 +11,8 @@ export class DefibService {
 private http = inject(HttpClient);
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
-    'https://192.168.1.206:3000/api/v1/defibs', // primary
-    'https://192.168.1.206:3001/api/v1/defibs', // fallback
+    'http://localhost:3000/api/v1/defibs', // primary
+    'http://localhost:3001/api/v1/defibs', // fallback
   ];
 
   private apiUrl = this.apiUrls[0];
@@ -27,17 +27,18 @@ private http = inject(HttpClient);
   private defibsSubject = new BehaviorSubject<Defib[]>(this.defibs);
 
 
+  private apiHeaders = { 'X-API-Key': 'blahblah' };
+
   getDefibs(): Observable<Defib[]> {
-    return this.http.get<Defib[]>(this.apiUrl);
+    return this.http.get<Defib[]>(this.apiUrl, { headers: this.apiHeaders });
   }
   getDefibById(id: string): Observable<Defib> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Defib>(url);
+    return this.http.get<Defib>(url, { headers: this.apiHeaders });
   }
 
-
   addDefib(defib: Defib): Observable<Defib> {
-  return this.http.post<Defib>(this.apiUrl, defib).pipe(
+    return this.http.post<Defib>(this.apiUrl, defib, { headers: this.apiHeaders }).pipe(
     tap((newDefib) => {
       this.defibs = [newDefib, ...this.defibs];
       this.defibsSubject.next(this.defibs);
@@ -46,7 +47,7 @@ private http = inject(HttpClient);
   }
   updateDefib(id: string, defib: Defib): Observable<Defib> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<Defib>(url, defib).pipe(
+    return this.http.put<Defib>(url, defib, { headers: this.apiHeaders }).pipe(
       tap((updatedDefib) => {
         this.defibs = this.defibs.map(d => d._id === id ? updatedDefib : d);
         this.defibsSubject.next(this.defibs);
@@ -55,7 +56,7 @@ private http = inject(HttpClient);
   }
   deleteDefib(id: string): Observable<void> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<void>(url).pipe(
+    return this.http.delete<void>(url, { headers: this.apiHeaders }).pipe(
       tap(() => {
         this.defibs = this.defibs.filter(defib => defib._id !== id);
         this.defibsSubject.next(this.defibs);

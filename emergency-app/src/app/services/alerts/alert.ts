@@ -12,12 +12,12 @@ export class Alert {
   private http = inject(HttpClient);
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
-    'https://192.168.1.206:3000/api/v1/alert',
-    'https://192.168.1.206:3001/api/v1/alert', // fallback
+    'http://localhost:3000/api/v1/alert',
+    'http://localhost:3001/api/v1/alert', // fallback
   ];
   private apiUrl = this.apiUrls[0];
 
-  private weatherApiUrl = 'https://192.168.1.206:3000/api/v1/weather/import';
+  private weatherApiUrl = 'http://localhost:3000/api/v1/weather/import';
 
   constructor() {
     // If primary fails, switch to fallback

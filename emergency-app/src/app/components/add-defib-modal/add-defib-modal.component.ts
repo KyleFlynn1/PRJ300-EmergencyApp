@@ -28,6 +28,7 @@ export class AddDefibModalComponent implements OnInit {
   // Using Angular forms for form handling and validation
   defibForm!: FormGroup;
 
+
   constructor(
     private fb: FormBuilder,
     private geolocationService: GeolocationService,
@@ -159,17 +160,19 @@ export class AddDefibModalComponent implements OnInit {
       accessInstructions: this.defibForm.value.accessInstructions || undefined
     };
 
-    try {
-      await this.defibService.addDefib(defibData);
-      this.closeModal.emit(defibData);
-    } catch (error) {
-      const alert = await this.alertController.create({
-        header: 'Save Failed',
-        message: 'Could not save defibrillator. Please try again.',
-        buttons: ['OK']
-      });
-      await alert.present();
-    }
+    this.defibService.addDefib(defibData).subscribe({
+      next: () => {
+        this.closeModal.emit(defibData);
+      },
+      error: async () => {
+        const alert = await this.alertController.create({
+          header: 'Save Failed',
+          message: 'Could not save defibrillator. Please try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
+    });
   }
 
   
