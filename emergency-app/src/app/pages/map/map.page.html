@@ -17,6 +17,7 @@
     </div>
   </div>
   <app-map-component
+    [pins]="pins"
     (alertSelected)="openAlertDetailModal($event)"
     (reportLocation)="openReportModalWithLocation($event.lat, $event.lng, $event.address)">
   </app-map-component>

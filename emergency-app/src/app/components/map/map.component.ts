@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { IonicModule, ModalController } from "@ionic/angular";
 import Map from 'ol/Map';
@@ -21,19 +21,28 @@ import { Alert } from 'src/app/services/alerts/alert';
   imports: [IonicModule],
 })
 
-export class MapComponent  implements OnInit, AfterViewInit {
-  map!: Map;
+export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
+    @ViewChild('mapContainer', { static: true }) mapContainer?: ElementRef<HTMLDivElement>;
+
+    ngOnDestroy() {
+      if (this.map) {
+        this.map.setTarget(undefined);
+        this.map = undefined;
+      }
+    }
+  map: Map | undefined;
 
   // Emit selected alert to parent (no window events needed)
   @Output() alertSelected = new EventEmitter<any>();
+  @Output() defibSelected = new EventEmitter<any>();
   @Output() reportLocation = new EventEmitter<{ lat: number; lng: number; address: string }>();
-
+  
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
 
-  //List of pins to show on map got from the alerts service with api
-  pins: { lon: number; lat: number; title: string; alert: any }[] = [];
+  // Pins to show on map, passed from parent
+  @Input() pins: { lon: number; lat: number; title: string; data: any }[] = [];
 
   // Pin dropped by user (for reporting)
   droppedPin?: { lon: number; lat: number; address?: string };
@@ -45,23 +54,16 @@ export class MapComponent  implements OnInit, AfterViewInit {
   ) {}
 
   async ngOnInit() {
-    // Fetch alerts
-    this.alertService.getAlerts().subscribe(alerts => {
-      // Convert alerts to pins
-      this.pins = alerts
-        .filter(alert => alert.location?.lng && alert.location?.lat)
-        .map(alert => ({
-          lon: alert.location.lng!,
-          lat: alert.location.lat!,
-          title: alert.category || 'Alert',
-          alert: alert
-        }));
-      
-      // Reinitialize map if already created to update pins
-      if (this.map) {
-        this.updateMapMarkers();
-      }
-    });
+    // Reinitialize map if already created to update pins
+    if (this.map) {
+      this.updateMapMarkers();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['pins'] && this.map) {
+      this.refreshPins();
+    }
   }
   
   // Get and set user location, with user-friendly error handling
@@ -85,37 +87,33 @@ export class MapComponent  implements OnInit, AfterViewInit {
     }
   }
 
+  
+
   // Make sure map is initialized after view is ready to avoid errors or map not showing
   async ngAfterViewInit() {
     // Get user location first, then initialize map
     await this.getAndSetUserLocation();
-    setTimeout(() => this.initMap(), 100);
+    this.initMap();
   }
 
   // refresh pins public method
   refreshPins() {
-    this.alertService.getAlerts().subscribe(alerts => {
-      this.pins = alerts
-        .filter(alert => alert.location?.lng && alert.location?.lat)
-        .map(alert => ({
-          lon: alert.location.lng!,
-          lat: alert.location.lat!,
-          title: alert.category || 'Alert',
-          alert: alert
-        }));
-      if (this.map) {
-        this.updateMapMarkers();
-      }
-    });
+    if (this.map) {
+      this.updateMapMarkers();
+      setTimeout(() => this.map?.updateSize(), 0);
+    }
   }
   
   // Update map markers without recreating the entire map
   private updateMapMarkers() {
+    if (!this.map) return;
+    const map = this.map;
+
     // Remove old marker layer
-    const layers = this.map.getLayers();
+    const layers = map.getLayers();
     layers.forEach(layer => {
       if (layer instanceof VectorLayer) {
-        this.map.removeLayer(layer);
+        map.removeLayer(layer);
       }
     });
     
@@ -124,21 +122,35 @@ export class MapComponent  implements OnInit, AfterViewInit {
       const feature = new Feature({
         geometry: new Point(fromLonLat([pin.lon, pin.lat]))
       });
-      feature.set('alertData', pin.alert);
-      // Use a circular SVG marker with icon in center
-      const color = getAlertSeverityColor(pin.alert.severity);
-      const svgUrl = getCircleAlertSVG(color);
-      feature.setStyle(
-        new Style({
-          image: new Icon({
-            anchor: [0.5, 0.5],
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'fraction',
-            src: svgUrl,
-            scale: 0.28
+      // If pin is an alert, use alert styling
+      if (pin.data && pin.data.severity) {
+        feature.set('alertData', pin.data);
+        const color = getAlertSeverityColor(pin.data.severity);
+        const svgUrl = getCircleAlertSVG(color);
+        feature.setStyle(
+          new Style({
+            image: new Icon({
+              anchor: [0.5, 0.5],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'fraction',
+              src: svgUrl,
+              scale: 0.28
+            })
           })
-        })
-      );
+        );
+      } else {
+        // Otherwise, treat as defib and use defib icon
+        feature.set('defibData', pin.data);
+        feature.setStyle(
+          new Style({
+            image: new Icon({
+              anchor: [0.5, 1],
+              src: 'assets/defibMarker.png',
+              scale: 0.015
+            })
+          })
+        );
+      }
       return feature;
     });
 
@@ -163,13 +175,16 @@ export class MapComponent  implements OnInit, AfterViewInit {
     const markerLayer = new VectorLayer({
       source: new VectorSource({ features })
     });
-    this.map.addLayer(markerLayer);
+    map.addLayer(markerLayer);
   }
 
   // Initialize the map with OpenLayers
   initMap() {
+    const targetElement = this.mapContainer?.nativeElement;
+    if (!targetElement) return;
+
     this.map = new Map({
-      target: 'map',
+      target: targetElement,
       layers: [
         new TileLayer({
           source: new OSM(),
@@ -181,20 +196,28 @@ export class MapComponent  implements OnInit, AfterViewInit {
       }),
     });
 
+    const map = this.map;
+    if (!map) return;
+
     // Single tap with Openlayer built in pixel detection
-    this.map.on('singleclick', (evt) => {
+    map.on('singleclick', (evt) => {
       // hitTolerance for area around pin to count 20 px for mobile so it dosnt need to be accurate
-      const feature = this.map.forEachFeatureAtPixel(
+      const feature = map.forEachFeatureAtPixel(
         evt.pixel,
         (f) => f,
         { hitTolerance: 20 } 
       );
 
-      // Send alert for a selected and open detailed view with single click
+      // Send alert or defib for a selected and open detailed view with single click
       if (feature) {
         const alert = feature.get('alertData');
         if (alert) {
           this.alertSelected.emit(alert);
+          return;
+        }
+        const defib = feature.get('defibData');
+        if (defib) {
+          this.defibSelected.emit(defib);
           return;
         }
       }
@@ -205,14 +228,14 @@ export class MapComponent  implements OnInit, AfterViewInit {
     let moved = false;
     let pressEvent: PointerEvent | null = null;
 
-    this.map.getViewport().addEventListener('pointerdown', (e: PointerEvent) => {
+    map.getViewport().addEventListener('pointerdown', (e: PointerEvent) => {
       moved = false;
       pressEvent = e;
       longPressTimeout = setTimeout(async () => {
         if (!moved && pressEvent) {
           // Use OL's getEventPixel to correctly convert the DOM event to map pixel
-          const pixel = this.map.getEventPixel(pressEvent);
-          const coord = this.map.getCoordinateFromPixel(pixel);
+          const pixel = map.getEventPixel(pressEvent);
+          const coord = map.getCoordinateFromPixel(pixel);
           const [lon, lat] = toLonLat(coord);
 
           // Reverse geocode to get the actual address
@@ -224,15 +247,16 @@ export class MapComponent  implements OnInit, AfterViewInit {
       }, 800);
     });
 
-    this.map.getViewport().addEventListener('pointermove', () => {
+    map.getViewport().addEventListener('pointermove', () => {
       moved = true;
     });
 
-    this.map.getViewport().addEventListener('pointerup', () => {
+    map.getViewport().addEventListener('pointerup', () => {
       clearTimeout(longPressTimeout);
     });
 
     this.updateMapMarkers();
+    setTimeout(() => map.updateSize(), 0);
   }
 
   

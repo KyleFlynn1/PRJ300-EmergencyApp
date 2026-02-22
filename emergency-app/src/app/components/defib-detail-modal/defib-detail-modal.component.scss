@@ -1,0 +1,19 @@
+.detail-section {
+
+  .map-container {
+    // Hide OpenLayers attribution watermark
+    ::ng-deep .ol-attribution {
+      display: none !important;
+    }
+
+    // Hide zoom controls
+    ::ng-deep .ol-zoom {
+      display: none !important;
+    }
+
+    // Hide rotate controls
+    ::ng-deep .ol-rotate {
+      display: none !important;
+    }
+  }
+}
