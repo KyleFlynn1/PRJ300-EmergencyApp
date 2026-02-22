@@ -1,0 +1,78 @@
+@if (!showform){
+  <div>
+    <div class="alert-detail-container detail-card">
+      <div>
+        <!-- Icon and Title -->
+        <div class="detail-header">
+          <ion-icon name="medkit" class="main-icon"></ion-icon>
+          <h1>Defibrillator</h1>
+          <div class="badge-container">
+            <ion-badge color="light" class="severity-badge">
+              {{ defib && 'working' in defib ? (defib.working ? 'Working' : 'Not Working') : 'Unknown' }}
+            </ion-badge>
+            <ion-badge [color]="CheckDefibActive(defib?.timestamp) ? 'success' : 'danger'" class="active-badge">
+              {{ CheckDefibActive(defib?.timestamp) ? 'Active' : 'Inactive' }}
+            </ion-badge>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="detail-section" *ngIf="defib && 'photoUrl' in defib && defib.photoUrl">
+          <img [src]="defib.photoUrl" alt="Defibrillator Photo" style="max-width:100%;max-height:200px;display:block;margin:1em auto;" />
+        </div>
+
+        <!-- Access Instructions -->
+        <div class="detail-section">
+          <p class="description">
+            {{ defib && 'accessInstructions' in defib && defib.accessInstructions ? defib.accessInstructions : (defib?.notes || 'No access instructions provided.') }}
+          </p>
+        </div>
+
+        <!-- Location -->
+        <div class="detail-section">
+          <div class="info-row">
+            <ion-icon name="location"></ion-icon>
+            <div class="info-content">
+              <p class="label">Location</p>
+              <p class="value">{{ defib?.location?.address || 'Unknown' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time -->
+        <div class="detail-section">
+          <div class="info-row">
+            <ion-icon name="time"></ion-icon>
+            <div class="info-content">
+              <p class="label">Time Added</p>
+              <p class="value">{{ defib?.timestamp | date:'MMM dd, yyyy HH:mm' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="detail-section">
+          <div class="map-header">
+            <ion-icon name="map"></ion-icon>
+            <p>Location Map</p>
+          </div>
+          <div class="map-container">
+            <div id="defib-detail-map" style="width: 100%; height: 100%;position: absolute;"></div>
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="delete-button" (click)="deleteDefib()">
+            <ion-icon name="trash"></ion-icon>
+            Delete Defib
+          </button>
+          <button class="update-button" (click)="updateDefib()">
+            <ion-icon name="create"></ion-icon>
+            Update Defib
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <app-report-modal [alert]="defib" [isNativeModal]="true" (closeModal)="handleFormClose($event)"></app-report-modal>
+}

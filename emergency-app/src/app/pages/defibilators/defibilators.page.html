@@ -20,6 +20,8 @@
   <!-- Map Container -->
   <app-map-component
     [pins]="pins"
+    (defibSelected)="openDefibDetailModal($event)"
+    (reportLocation)="openAddDefibModal($event)"
   ></app-map-component>
 </ion-content>
 
@@ -33,7 +35,22 @@
       </button>
     </div>
     <div class="modal-body">
-      <app-add-defib-modal [isNativeModal]="true" (closeModal)="handleDefibSubmit($event)"></app-add-defib-modal>
+      <app-add-defib-modal [isNativeModal]="true" [location]="addDefibLocation" (closeModal)="handleDefibSubmit($event)"></app-add-defib-modal>
+    </div>
+  </div>
+</div>
+
+<!-- Defibrillator Detail Modal -->
+<div class="native-modal-overlay" *ngIf="showDefibDetailModal">
+  <div class="native-modal-content" [style.border-left]="'6px solid #2dd36f'">
+    <div class="modal-header">
+      <h2>{{selectedDefib?.accessInstructions || 'Defibrillator Details'}}</h2>
+      <button class="close-button" (click)="closeDefibDetailModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-defib-detail-modal [defib]="selectedDefib" [isNativeModal]="true"></app-defib-detail-modal>
     </div>
   </div>
 </div>

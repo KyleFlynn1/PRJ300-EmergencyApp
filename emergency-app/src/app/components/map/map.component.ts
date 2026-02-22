@@ -34,8 +34,9 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
 
   // Emit selected alert to parent (no window events needed)
   @Output() alertSelected = new EventEmitter<any>();
+  @Output() defibSelected = new EventEmitter<any>();
   @Output() reportLocation = new EventEmitter<{ lat: number; lng: number; address: string }>();
-
+  
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
@@ -207,11 +208,16 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
         { hitTolerance: 20 } 
       );
 
-      // Send alert for a selected and open detailed view with single click
+      // Send alert or defib for a selected and open detailed view with single click
       if (feature) {
         const alert = feature.get('alertData');
         if (alert) {
           this.alertSelected.emit(alert);
+          return;
+        }
+        const defib = feature.get('defibData');
+        if (defib) {
+          this.defibSelected.emit(defib);
           return;
         }
       }

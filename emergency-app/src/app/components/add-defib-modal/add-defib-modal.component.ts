@@ -15,6 +15,7 @@ import { DefibService } from 'src/app/services/defib/defib';
 })
 export class AddDefibModalComponent implements OnInit {
   @Input() isNativeModal: boolean = false;
+  @Input() location?: { lat: number; lng: number; address: string };
   @Output() closeModal = new EventEmitter<any>();
 
   // Boolean to see if the popup ionic alert is showing or not
@@ -46,8 +47,15 @@ export class AddDefibModalComponent implements OnInit {
       accessInstructions: ['']
     });
 
-    // Get user location
-    await this.getAndSetUserLocation();
+    // Use provided location from map hold/click if available
+    if (this.location) {
+      this.userLat = this.location.lat;
+      this.userLng = this.location.lng;
+      this.userAddress = this.location.address;
+    } else {
+      // Fallback to device location
+      await this.getAndSetUserLocation();
+    }
 
     // If a photo was already taken (unlikely on init), set preview
     if (this.photoService.photos.length > 0) {
