@@ -5,6 +5,7 @@ import { IonicModule, AlertController } from '@ionic/angular';
 import { Defib } from 'src/app/interfaces/defib.interface';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { PhotoService } from 'src/app/services/photos/photo.service';
+import { DefibService } from 'src/app/services/defib/defib';
 @Component({
   selector: 'app-add-defib-modal',
   templateUrl: './add-defib-modal.component.html',
@@ -23,7 +24,7 @@ export class AddDefibModalComponent implements OnInit {
   userLat?: number;
   userLng?: number;
   userAddress?: string;
-  
+  photoBase64?: string;
   // Using Angular forms for form handling and validation
   defibForm!: FormGroup;
 
@@ -31,7 +32,8 @@ export class AddDefibModalComponent implements OnInit {
     private fb: FormBuilder,
     private geolocationService: GeolocationService,
     private alertController: AlertController,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private defibService: DefibService
   ) { }
 
   async ngOnInit() {
@@ -61,7 +63,8 @@ export class AddDefibModalComponent implements OnInit {
     if (this.photoService.photos.length > 0) {
       const photo = this.photoService.photos[0];
       this.setPhotoPreview(photo.webviewPath);
-      this.defibForm.patchValue({ photoUrl: photo.webviewPath });
+      this.photoBase64 = await this.toBase64(photo.webviewPath);
+      this.defibForm.patchValue({ photoUrl: this.photoBase64 || '' });
     }
   }
 
@@ -70,9 +73,9 @@ export class AddDefibModalComponent implements OnInit {
   }
 
   removePhoto() {
-    // Remove from service and form
     this.photoService.photos.shift();
     this.setPhotoPreview(undefined);
+    this.photoBase64 = undefined;
     this.defibForm.patchValue({ photoUrl: '' });
   }
 
@@ -113,6 +116,19 @@ export class AddDefibModalComponent implements OnInit {
     }
   }
 
+  private async toBase64(path?: string): Promise<string | undefined> {
+    if (!path) return undefined;
+    if (path.startsWith('data:image/')) return path;
+    const res = await fetch(path);
+    const blob = await res.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   async submitDefib() {
     if (this.defibForm.invalid) {
       Object.keys(this.defibForm.controls).forEach(key => {
@@ -121,7 +137,6 @@ export class AddDefibModalComponent implements OnInit {
       return;
     }
 
-    // Ensure we have a location
     if (!this.userLat || !this.userLng) {
       const alert = await this.alertController.create({
         header: 'Location Required',
@@ -140,12 +155,24 @@ export class AddDefibModalComponent implements OnInit {
         lng: this.userLng,
         address: this.userAddress || 'Address not available'
       },
-      photoUrl: this.defibForm.value.photoUrl || undefined,
+      photoUrl: this.photoBase64 || undefined,
       accessInstructions: this.defibForm.value.accessInstructions || undefined
     };
 
-    this.closeModal.emit(defibData);
+    try {
+      await this.defibService.addDefib(defibData);
+      this.closeModal.emit(defibData);
+    } catch (error) {
+      const alert = await this.alertController.create({
+        header: 'Save Failed',
+        message: 'Could not save defibrillator. Please try again.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
+
+  
 
   cancel() {
     this.closeModal.emit(null);
