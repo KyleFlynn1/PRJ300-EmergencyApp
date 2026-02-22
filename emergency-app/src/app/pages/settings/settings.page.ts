@@ -12,24 +12,31 @@ import { IonicModule } from '@ionic/angular';
 })
 export class SettingsPage implements OnInit {
 
-  isDarkMode: boolean = false;
+  theme: string = 'dark';
+  radius: number = 50;
 
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   ngOnInit() {
-    // Default to dark if no preference saved yet
-    const saved = localStorage.getItem('darkMode');
-    this.isDarkMode = saved === null ? true : saved === 'true';
+    const saved = localStorage.getItem('theme');
+    this.theme = saved ? saved : 'dark';
     this.applyTheme();
   }
 
-  toggleDarkMode() {
-    localStorage.setItem('darkMode', this.isDarkMode.toString());
+  onThemeChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.theme = value;
+    localStorage.setItem('theme', this.theme);
     this.applyTheme();
+  }
+
+  onRadiusChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    localStorage.setItem('alertRadius', value);
   }
 
   private applyTheme() {
-    if (this.isDarkMode) {
+    if (this.theme === 'dark') {
       this.document.body.classList.add('dark');
       this.document.body.classList.remove('light');
     } else {

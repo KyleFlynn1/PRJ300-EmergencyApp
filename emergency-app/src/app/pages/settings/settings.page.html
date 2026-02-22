@@ -9,9 +9,26 @@
   <!-- Dark Light Theme-->
   <div class="section">
     <h2>Appearance</h2>
-    <ion-item lines="full">
-      <ion-label>Dark Mode</ion-label>
-      <ion-toggle slot="end" [(ngModel)]="isDarkMode" (ionChange)="toggleDarkMode()"></ion-toggle>
-    </ion-item>
+    <!--Dark and Light theme settings-->
+    <div class="theme-dropdown-label" style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="color: var(--primary-title-colour); font-size: 1.1em; font-weight: bold;">Color Theme</span>
+      <select [value]="theme" (change)="onThemeChange($event)" class="native-select theme-select">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </div>
+    <!--Radius settings -->
+    <div class="theme-dropdown-label" style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="color: var(--primary-title-colour); font-size: 1.1em; font-weight: bold;">Alerts Feed Radius</span>
+      <select [value]="radius" (change)="onRadiusChange($event)" class="native-select theme-select">
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+        <option value="20">20 km</option>
+        <option value="50">50 km</option>
+        <option value="100">100 km</option>
+        <option value="200">200 km</option>
+        <option value="500">500 km</option>
+      </select>
+    </div>
   </div>
 </ion-content>
