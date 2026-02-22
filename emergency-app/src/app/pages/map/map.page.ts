@@ -27,6 +27,7 @@ export class MapPage implements OnInit {
   
     // Test Data
     activeAlerts: any[] = [];
+    pins: any[] = [];
     activeAlertsCount: number = 5;
     recentBroadcasts: any[] = [];
   
@@ -44,12 +45,25 @@ export class MapPage implements OnInit {
   
     ngOnInit() {
       this.alertService.getAlerts().subscribe(alerts => {
-        // Sort by timestamp descending (newest first)
         this.activeAlerts = alerts.sort((a, b) => 
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         this.activeAlertsCount = alerts.length;
+        this.pins = alerts
+          .filter(alert => alert.location?.lng && alert.location?.lat)
+          .map(alert => ({
+            lon: alert.location.lng,
+            lat: alert.location.lat,
+            title: alert.category || 'Alert',
+            data: alert
+          }));
       });
+    }
+
+    ionViewDidEnter() {
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
     }
   
     // Open and close report modal methods

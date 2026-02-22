@@ -30,7 +30,7 @@ private http = inject(HttpClient);
   private apiHeaders = { 'X-API-Key': 'blahblah' };
 
   getDefibs(): Observable<Defib[]> {
-    return this.http.get<Defib[]>(this.apiUrl, { headers: this.apiHeaders });
+    return this.http.get<Defib[]>(this.apiUrl);
   }
   getDefibById(id: string): Observable<Defib> {
     const url = `${this.apiUrl}/${id}`;
