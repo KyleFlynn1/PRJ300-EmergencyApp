@@ -6,6 +6,7 @@ import { AddDefibModalComponent } from 'src/app/components/add-defib-modal/add-d
 import { DefibService } from 'src/app/services/defib/defib';
 import { MapComponent } from 'src/app/components/map/map.component';
 import { DefibDetailModalComponent } from 'src/app/components/defib-detail-modal/defib-detail-modal.component';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-defibilators',
@@ -14,7 +15,7 @@ import { DefibDetailModalComponent } from 'src/app/components/defib-detail-modal
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, AddDefibModalComponent, MapComponent, DefibDetailModalComponent]
 })
-export class DefibilatorsPage implements OnInit {
+export class DefibilatorsPage implements ViewWillEnter {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   showAddDefibModal: boolean = false;
   addDefibLocation?: { lat: number; lng: number; address: string };
@@ -34,7 +35,7 @@ export class DefibilatorsPage implements OnInit {
     private menuController: MenuController, 
     private defibService: DefibService) {}
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     this.defibService.getDefibs().subscribe(defibs => {
       this.defibLocations = defibs.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()

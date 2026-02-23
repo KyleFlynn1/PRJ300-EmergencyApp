@@ -9,6 +9,8 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
 import { Router, RouterLink } from '@angular/router';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
+import { ViewWillEnter } from '@ionic/angular';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -16,7 +18,7 @@ import { GeolocationService } from 'src/app/services/geolocation/geolocation';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, RouterLink]
 })
-export class HomePage implements OnInit {
+export class HomePage implements ViewWillEnter {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
@@ -33,7 +35,7 @@ export class HomePage implements OnInit {
   userLat?: number;
   userLng?: number;
   // Radius around user location to show alerts on home page
-  userRadiusDistance : number = 270; // in km
+  userRadiusDistance : number = 50; // in km
 
   // Modal state if they are opened or closed
   showReportModal: boolean = false;
@@ -47,8 +49,12 @@ export class HomePage implements OnInit {
   ) { }
 
   // On component initialization fetch alerts and user location
-  async ngOnInit() {
+  async ionViewWillEnter() {
     await this.getAndSetUserLocation();
+    const savedRadius = localStorage.getItem('alertRadius');
+    if (savedRadius) {
+      this.userRadiusDistance = parseInt(savedRadius);
+    }
     this.alertService.getWeatherAlerts();
     this.alertService.getAlerts().subscribe(alerts => {
       this.activeAlerts = alerts.sort((a, b) => 

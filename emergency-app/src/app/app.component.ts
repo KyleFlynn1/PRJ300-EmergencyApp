@@ -48,9 +48,9 @@ export class AppComponent {
   }
 
   constructor() {
-    // Load saved theme preference, default to dark if not set
-    const savedDark = localStorage.getItem('darkMode');
-    if (savedDark === null || savedDark === 'true') {
+    // Load saved theme preference, default to light if not set
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === null || savedTheme === 'dark') {
       document.body.classList.add('dark');
       document.body.classList.remove('light');
     } else {

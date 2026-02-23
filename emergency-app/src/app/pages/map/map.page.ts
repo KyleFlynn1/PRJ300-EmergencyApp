@@ -7,6 +7,7 @@ import { getAlertSeverityColor, getFormattedTimestamp, getIcon } from 'src/app/u
 import { Alert } from 'src/app/services/alerts/alert';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-map',
@@ -15,7 +16,7 @@ import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, MapComponent, ReportModalComponent, AlertDetailModalComponent]
 })
-export class MapPage implements OnInit {
+export class MapPage implements ViewWillEnter {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   openMenu() {
     this.menuController.open();
@@ -43,7 +44,7 @@ export class MapPage implements OnInit {
       private menuController: MenuController
     ) { }
   
-    ngOnInit() {
+    ionViewWillEnter() {
       this.alertService.getAlerts().subscribe(alerts => {
         this.activeAlerts = alerts.sort((a, b) => 
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
