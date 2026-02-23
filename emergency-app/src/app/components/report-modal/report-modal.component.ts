@@ -149,26 +149,76 @@ export class ReportModalComponent implements OnInit {
       return;
     }
     const currentAlert = this.alert;
+
+    let location: any = {};
+
+    // If editing an alert, preserve original lat/lng unless geocoding succeeds
     if (this.alert && this.alert._id) {
+      location = { ...this.alert.location };
+      if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
+        // Try geocoding custom address
+        try {
+          const geoResult = await this.geolocationService.geocodeAddress(this.reportForm.value.customAddress);
+          if (geoResult && geoResult.lat && geoResult.lng) {
+            location = {
+              lat: geoResult.lat,
+              lng: geoResult.lng,
+              address: this.reportForm.value.customAddress
+            };
+          } else {
+            // Only update address, keep lat/lng
+            location.address = this.reportForm.value.customAddress;
+          }
+        } catch (e) {
+          // Only update address, keep lat/lng
+          location.address = this.reportForm.value.customAddress;
+        }
+      }
       const updatedData: Report = {
         category: this.reportForm.value.category,
         severity: this.reportForm.value.severity,
         notes: this.reportForm.value.notes,
         timestamp: this.alert.timestamp, // Keep original timestamp
-        location: this.reportForm.value.overrideLocation && this.reportForm.value.customAddress
-          ? { address: this.reportForm.value.customAddress }
-          : this.alert.location // Keep original location or use custom
+        location
       };
       this.updateAlert(this.alert._id, updatedData);
       return;
     }
-    
+    // New report
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
-    
-    // Use custom address if override is checked, otherwise use default user location
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
-      formData.location = { address: this.reportForm.value.customAddress };
+      // Try geocoding custom address
+      try {
+        const geoResult = await this.geolocationService.geocodeAddress(this.reportForm.value.customAddress);
+        if (geoResult && geoResult.lat && geoResult.lng) {
+          formData.location = {
+            lat: geoResult.lat,
+            lng: geoResult.lng,
+            address: this.reportForm.value.customAddress
+          };
+        } else if (this.userLat && this.userLng) {
+          // If fails then usse device lat/lng, custom address
+          formData.location = {
+            lat: this.userLat,
+            lng: this.userLng,
+            address: this.reportForm.value.customAddress
+          };
+        } else {
+          formData.location = { address: this.reportForm.value.customAddress };
+        }
+      } catch (e) {
+        // use device lat/lng, custom address
+        if (this.userLat && this.userLng) {
+          formData.location = {
+            lat: this.userLat,
+            lng: this.userLng,
+            address: this.reportForm.value.customAddress
+          };
+        } else {
+          formData.location = { address: this.reportForm.value.customAddress };
+        }
+      }
     } else if (this.userLat && this.userLng) {
       formData.location = {
         lat: this.userLat,
@@ -178,7 +228,6 @@ export class ReportModalComponent implements OnInit {
     } else {
       formData.location = { address: 'Unknown Location' };
     }
-
     this.alertService.addAlert(formData).subscribe({
       next: (response) => {
         console.log("POST sent successfully:", response);

@@ -11,8 +11,8 @@ export class DefibService {
 private http = inject(HttpClient);
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
-    'http://localhost:3000/api/v1/defibs', // primary
-    'http://localhost:3001/api/v1/defibs', // fallback
+    'http://192.168.5.108:3000/api/v1/defibs', // primary
+    'http://192.168.5.108:3001/api/v1/defibs', // fallback
   ];
 
   private apiUrl = this.apiUrls[0];

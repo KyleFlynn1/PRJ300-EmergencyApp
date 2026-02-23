@@ -49,8 +49,12 @@ export class DefibilatorsPage implements ViewWillEnter {
           title: defib.accessInstructions || 'Defibrillator',
           data: defib
         }));
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
     });
   }
+
   ionViewDidEnter() {
     if (this.mapComponent) {
       this.mapComponent.refreshPins();

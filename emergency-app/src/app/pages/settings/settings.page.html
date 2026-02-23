@@ -10,7 +10,7 @@
   <div class="section">
     <h2>Appearance</h2>
     <!--Dark and Light theme settings-->
-    <div class="theme-dropdown-label" style="display: flex; align-items: center; justify-content: space-between;">
+    <div class="theme-dropdown-label">
       <span class="setting-label">Color Theme</span>
       <select [value]="theme" (change)="onThemeChange($event)" class="native-select theme-select">
         <option value="dark">Dark</option>
@@ -18,7 +18,7 @@
       </select>
     </div>
     <!--Radius settings -->
-    <div class="theme-dropdown-label" style="display: flex; align-items: center; justify-content: space-between;">
+    <div class="theme-dropdown-label">
       <span class="setting-label">Alerts Feed Radius</span>
       <select [value]="radius" (change)="onRadiusChange($event)" class="native-select theme-select">
         <option value="5">5 km</option>

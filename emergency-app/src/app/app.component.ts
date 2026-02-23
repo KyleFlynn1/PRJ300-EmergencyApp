@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonIcon } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonIcon, IonContent } from '@ionic/angular/standalone';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
@@ -8,7 +8,7 @@ import { Capacitor } from '@capacitor/core';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive],
+  imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive, IonContent],
 })
 export class AppComponent {
 

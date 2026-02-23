@@ -157,8 +157,8 @@ ion-content {
   --overflow: auto;
   -webkit-overflow-scrolling: touch;
   flex-grow: 1;
-  padding-bottom: 60px;
   display: block;
+  scroll-behavior: smooth;
 }
 
 
@@ -480,10 +480,16 @@ ion-title {
     margin-bottom: 8px;
   }
 
-  .warning-list {
+  .feed-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 }
 

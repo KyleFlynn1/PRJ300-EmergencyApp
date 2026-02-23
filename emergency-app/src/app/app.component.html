@@ -33,9 +33,8 @@
   </ion-menu>-->
 
   <!--Bottom Navigation Bar-->
-  <div id="main-content">
+  <ion-content id="main-content" [scrollY]="true">
     <ion-router-outlet></ion-router-outlet>
-    
     <div class="bottom-nav-fixed">
       <button class="nav-btn" routerLink="/home" routerLinkActive="active">
         <ion-icon name="home"></ion-icon>
@@ -58,5 +57,5 @@
         <span>Settings</span>
       </button>
     </div>
-  </div>
+  </ion-content>
 </ion-app>

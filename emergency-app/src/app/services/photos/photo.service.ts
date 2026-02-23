@@ -20,17 +20,21 @@ export class PhotoService {
   }
 
   public async addNewToGallery() {
-    // Take a photo
+    // Take a photo as base64
     const capturedPhoto = await Camera.getPhoto({
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.Base64,
       source: CameraSource.Camera,
       quality: 100,
     });
 
-    // Save the picture and add it to photo collection
-    const savedImageFile = await this.savePicture(capturedPhoto);
-
-    this.photos.unshift(savedImageFile);
+    // Store base64 for backend and display
+    const fileName = Date.now() + '.jpeg';
+    const base64Data = capturedPhoto.base64String;
+    this.photos.unshift({
+      filepath: fileName,
+      webviewPath: `data:image/jpeg;base64,${base64Data}`,
+      base64: base64Data
+    });
 
     Preferences.set({
       key: this.PHOTO_STORAGE,
@@ -114,5 +118,6 @@ export class PhotoService {
 export interface UserPhoto {
   filepath: string;
   webviewPath?: string;
+  base64?: string;
 }
 

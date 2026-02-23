@@ -29,7 +29,6 @@ export class HomePage implements ViewWillEnter {
   // Alerts filtered in a 10km radius
   activeAlertsInArea: any[] = [];
   activeAlertsCount: number = 5;
-  weatherAlerts: any[] = [];
 
   // User location, set from geolocation service
   userLat?: number;
@@ -55,13 +54,20 @@ export class HomePage implements ViewWillEnter {
     if (savedRadius) {
       this.userRadiusDistance = parseInt(savedRadius);
     }
-    this.alertService.getWeatherAlerts();
+    // Fetch both alerts and weather alerts, then merge
     this.alertService.getAlerts().subscribe(alerts => {
-      this.activeAlerts = alerts.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
-      this.activeAlertsCount = alerts.length;
-      this.filterAlertsInRadius();
+      this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
+        const safeWeatherAlerts = Array.isArray(weatherAlerts) ? weatherAlerts : [];
+        const allAlerts = [...alerts, ...safeWeatherAlerts];
+        console.log('All alerts:', allAlerts);
+        console.log('Weather alerts:', safeWeatherAlerts);
+        this.activeAlerts = allAlerts.sort((a, b) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        this.activeAlertsCount = this.activeAlerts.length;
+        this.filterAlertsInRadius();
+        console.log('Filtered alerts in area:', this.activeAlertsInArea);
+      });
     });
   }
   // Get and set user location, with user-friendly error handling
@@ -98,6 +104,20 @@ export class HomePage implements ViewWillEnter {
     
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
+  }
+
+  // Getter for weather alerts
+  get weatherAlerts() {
+    // Show weather alerts from allAlerts, only filter by timestamp
+    const now = new Date();
+    return this.activeAlerts
+      ?.filter(a => a.category === 'Weather Warning' &&
+        (() => {
+          const alertTime = new Date(a.timestamp);
+          const hoursDifference = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+          return hoursDifference <= 24;
+        })()
+      ) || [];
   }
 
 
