@@ -1,82 +1,74 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="login-page">
+  <header class="login-header">
+    <h2>Login</h2>
+  </header>
 
-<ion-content class="ion-padding">
   <div class="login-container">
     <div class="logo-section">
-      <ion-icon name="person-circle-outline" size="large"></ion-icon>
+      <div class="avatar-icon">👤</div>
       <h1>Welcome Back</h1>
       <p>Sign in to continue</p>
     </div>
 
     <form (ngSubmit)="onLogin()">
-      <!-- Email Input -->
-      <ion-item>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
           type="email"
           [(ngModel)]="email"
           name="email"
           required
           autocomplete="email"
-        ></ion-input>
-      </ion-item>
+          class="native-input"
+        />
+      </div>
 
-      <!-- Password Input -->
-      <ion-item>
-        <ion-label position="floating">Password</ion-label>
-        <ion-input
-          [type]="showPassword ? 'text' : 'password'"
-          [(ngModel)]="password"
-          name="password"
-          required
-        ></ion-input>
-        <ion-button
-          fill="clear"
-          slot="end"
-          (click)="togglePasswordVisibility()"
-        >
-          <ion-icon
-            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-          ></ion-icon>
-        </ion-button>
-      </ion-item>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            required
+            class="native-input"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+          >
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
 
-      <!-- Error Message -->
-      <ion-text color="danger" *ngIf="errorMessage">
-        <p class="error-text">{{ errorMessage }}</p>
-      </ion-text>
+      <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-      <!-- Login Button -->
-      <ion-button
-        expand="block"
+      <button
         type="submit"
         [disabled]="isLoading"
         class="login-button"
       >
-        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-        <span *ngIf="!isLoading">Login</span>
-      </ion-button>
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
 
-      <!-- Forgot Password -->
       <div class="forgot-password">
-        <ion-button fill="clear" size="small" (click)="onForgotPassword()">
+        <button type="button" class="link-button" (click)="onForgotPassword()">
           Forgot Password?
-        </ion-button>
+        </button>
       </div>
     </form>
 
-    <!-- Sign Up Link -->
     <div class="signup-section">
       <p>
         Don't have an account?
-        <ion-button fill="clear" size="small" (click)="onSignUp()">
+        <button type="button" class="link-button" (click)="onSignUp()">
           Sign Up
-        </ion-button>
+        </button>
       </p>
     </div>
   </div>
-</ion-content>
+</div>

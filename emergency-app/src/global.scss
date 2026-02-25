@@ -147,7 +147,12 @@
 /* Add padding to content for bottom nav */
 ion-content {
   --background: var(--primary-background-colour);
-  --padding-bottom: 70px;
+  --padding-bottom: 80px;
+  --overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-grow: 1;
+  padding-bottom: 60px;
+  display: block;
 }
 
 

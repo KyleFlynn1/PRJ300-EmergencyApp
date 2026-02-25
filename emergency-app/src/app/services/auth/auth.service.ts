@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { signUp, signIn, confirmSignUp, signOut, getCurrentUser, fetchAuthSession, resetPassword, confirmResetPassword, resendSignUpCode } from '@aws-amplify/auth';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, timeout } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   
-  private apiUrl = 'http://localhost:3000/api/v1'; // Your Express API URL
+  private apiUrl = environment.apiBaseUrl + '/api/v1'; // Express API URL
 
   constructor(private http: HttpClient) {
     this.checkAuthStatus();
@@ -80,7 +81,9 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
       this.currentUserSubject.next(user);
       
       // After successful login, sync with your Express API
-      await this.syncUserWithBackend();
+      void this.syncUserWithBackend().catch((syncError) => {
+        console.warn('User sync failed after login:', syncError);
+      });
       
       return user;
     } catch (error) {
@@ -106,20 +109,29 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
     }
   }
 
+  async getAccessToken(): Promise<string> {
+    try {
+      const session = await fetchAuthSession();
+      return session.tokens?.accessToken?.toString() || '';
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async syncUserWithBackend() {
     try {
-      const token = await this.getIdToken();
+      const token = await this.getAccessToken();
       const user = await getCurrentUser();
       
       // Send user info to your Express API to create/update user profile
-      return this.http.post(`${this.apiUrl}/users/sync`, {
+      return firstValueFrom(this.http.post(`${this.apiUrl}/users/cognito/sync`, {
         cognitoId: user.username,
         email: user.signInDetails?.loginId
       }, {
         headers: new HttpHeaders({
           'Authorization': `Bearer ${token}`
         })
-      }).toPromise();
+      }).pipe(timeout(8000)));
     } catch (error) {
       throw error;
     }
@@ -127,7 +139,7 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
 
   // Method to make authenticated API calls
   async makeAuthenticatedRequest(endpoint: string, method: string = 'GET', data?: any): Promise<Observable<any>> {
-    const token = await this.getIdToken();
+    const token = await this.getAccessToken();
     
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,

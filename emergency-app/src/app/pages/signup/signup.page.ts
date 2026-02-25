@@ -58,7 +58,7 @@ export class SignupPage {
         nickname: this.nickname
       });
 
-      await this.showToast('Account created! Please check your email to verify your account.', 'success');
+      this.showToast('Account created! Please check your email to verify your account.', 'success');
 
       // Navigate to verification page
       this.router.navigate(['/verify-email'], {
@@ -88,4 +88,8 @@ export class SignupPage {
     });
     await toast.present();
   }
+
+    async onGoToLogin() {
+    this.router.navigate(['/login']);
+    }
 }

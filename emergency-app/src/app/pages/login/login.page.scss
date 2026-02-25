@@ -1,7 +1,22 @@
+.login-page {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+}
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
 }
 
 .logo-section {
@@ -9,9 +24,10 @@
   margin-bottom: 40px;
   margin-top: 40px;
 
-  ion-icon {
+  .avatar-icon {
     font-size: 80px;
     color: var(--ion-color-primary);
+    line-height: 1;
   }
 
   h1 {
@@ -27,28 +43,83 @@
   }
 }
 
-ion-item {
+.form-group {
   margin-bottom: 20px;
-  --border-radius: 8px;
-  --background: var(--ion-color-light);
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+.native-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 8px;
+  background: var(--ion-color-light);
+  font-size: 16px;
+  box-sizing: border-box;
+  color: #000;
+}
+
+.password-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .native-input {
+    flex: 1;
+  }
+}
+
+.toggle-password {
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
 }
 
 .error-text {
   padding: 10px;
   text-align: center;
   font-size: 14px;
+  color: var(--ion-color-danger);
 }
 
 .login-button {
+  width: 100%;
   margin-top: 30px;
-  --border-radius: 8px;
+  border: none;
+  border-radius: 8px;
   height: 50px;
   font-weight: bold;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .forgot-password {
   text-align: center;
   margin-top: 15px;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
 }
 
 .signup-section {

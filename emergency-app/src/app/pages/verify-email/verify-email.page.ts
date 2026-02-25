@@ -46,7 +46,7 @@ export class VerifyEmailPage implements OnInit {
     try {
       await this.authService.confirmSignUp(this.email, this.verificationCode);
 
-      await this.showToast('Email verified successfully!', 'success');
+      this.showToast('Email verified successfully!', 'success');
 
       // Navigate to login
       this.router.navigate(['/login']);
@@ -76,10 +76,10 @@ export class VerifyEmailPage implements OnInit {
 
     try {
       await this.authService.resendSignUpCode(this.email);
-      await this.showToast('Verification code sent!', 'success');
+      this.showToast('Verification code sent!', 'success');
     } catch (error: any) {
       console.error('Resend error:', error);
-      await this.showToast('Failed to resend code', 'danger');
+      this.showToast('Failed to resend code', 'danger');
     } finally {
       this.isResending = false;
     }
@@ -93,5 +93,8 @@ export class VerifyEmailPage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+  async onGoTosignup() {
+    this.router.navigate(['/signup']);
   }
 }

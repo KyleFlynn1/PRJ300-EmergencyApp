@@ -51,7 +51,7 @@ export class LoginPage {
       await this.authService.signIn(this.email, this.password);
 
       // Show success message
-      await this.showToast('Login successful!', 'success');
+      this.showToast('Login successful!', 'success');
 
       // Navigate to home page
       this.router.navigate(['/home']);

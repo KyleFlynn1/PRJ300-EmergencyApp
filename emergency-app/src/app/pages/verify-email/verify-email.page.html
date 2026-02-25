@@ -1,16 +1,13 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title>Verify Email</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="verify-page">
+  <header class="verify-header">
+    <button type="button" class="back-button" (click)="onGoTosignup()">← Back</button>
+    <h2>Verify Email</h2>
+    <div style="width: 40px;"></div>
+  </header>
 
-<ion-content class="ion-padding">
   <div class="verify-container">
     <div class="icon-section">
-      <ion-icon name="mail-outline" size="large"></ion-icon>
+      <div class="mail-icon">📧</div>
     </div>
 
     <h1>Check Your Email</h1>
@@ -19,46 +16,43 @@
 
     <form (ngSubmit)="onVerify()">
       <!-- Verification Code Input -->
-      <ion-item>
-        <ion-label position="floating">Verification Code</ion-label>
-        <ion-input
+      <div class="form-group">
+        <label for="code">Verification Code</label>
+        <input
+          id="code"
           type="text"
           [(ngModel)]="verificationCode"
           name="code"
           required
           maxlength="6"
           inputmode="numeric"
-        ></ion-input>
-      </ion-item>
+          class="native-input"
+          placeholder="Enter 6-digit code"
+        />
+      </div>
 
-      <!-- Error Message -->
-      <ion-text color="danger" *ngIf="errorMessage">
-        <p class="error-text">{{ errorMessage }}</p>
-      </ion-text>
+      <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-      <!-- Verify Button -->
-      <ion-button
-        expand="block"
+      <button
         type="submit"
         [disabled]="isLoading"
         class="verify-button"
       >
-        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-        <span *ngIf="!isLoading">Verify Email</span>
-      </ion-button>
+        {{ isLoading ? 'Verifying...' : 'Verify Email' }}
+      </button>
     </form>
 
     <!-- Resend Code -->
     <div class="resend-section">
       <p>Didn't receive the code?</p>
-      <ion-button
-        fill="clear"
+      <button
+        type="button"
+        class="link-button"
         (click)="onResendCode()"
         [disabled]="isResending"
       >
-        <ion-spinner name="crescent" *ngIf="isResending"></ion-spinner>
-        <span *ngIf="!isResending">Resend Code</span>
-      </ion-button>
+        {{ isResending ? 'Sending...' : 'Resend Code' }}
+      </button>
     </div>
   </div>
-</ion-content>
+</div>
