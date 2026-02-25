@@ -35,6 +35,29 @@
         </div>
       </div>
 
+      <!-- Photo URL (optional) -->
+      <div class="form-group">
+        <label>Photo (Optional)</label>
+        <ng-container *ngIf="photoPreview; else addPhotoBtn">
+          <div class="photo-preview-container">
+            <img [src]="photoPreview" alt="Defib Photo" class="photo-preview-img" />
+            <div class="photo-actions">
+              <button type="button" class="photo-action-btn" (click)="retakePhoto()">
+                <ion-icon name="camera"></ion-icon> Retake
+              </button>
+              <button type="button" class="photo-action-btn remove" (click)="removePhoto()">
+                <ion-icon name="trash"></ion-icon> Remove
+              </button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #addPhotoBtn>
+          <button type="button" class="photo-btn" (click)="onAddPhoto()">
+            <ion-icon name="camera"></ion-icon> Add Photo
+          </button>
+        </ng-template>
+      </div>
+
       <!-- Additional Notes -->
       <div class="form-group">
         <label>Additional Notes</label>

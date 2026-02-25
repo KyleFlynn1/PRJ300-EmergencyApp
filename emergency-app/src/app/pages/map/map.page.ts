@@ -18,6 +18,8 @@ import { ViewWillEnter } from '@ionic/angular';
 })
 export class MapPage implements ViewWillEnter {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
+  @ViewChild('typeSelect', { static: false }) typeSelect: any;
+
   openMenu() {
     this.menuController.open();
   }
@@ -38,6 +40,10 @@ export class MapPage implements ViewWillEnter {
     selectedAlert: any = null;
     reportModalLocation?: { lat: number, lng: number, address: string };
     currentTimestamp: string = new Date().toISOString();
+
+    // Filters
+    selectedType = 'all';
+    selectedStatus = 'all';
   
     constructor(
       private alertService: Alert,
@@ -62,6 +68,36 @@ export class MapPage implements ViewWillEnter {
     }
 
     ionViewDidEnter() {
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
+    }
+
+    openTypeSelect() {
+      this.typeSelect.open();
+    }
+
+    // Filter by selection of alert type or if its activee based on if it was 24 hours old or not
+    filterAlerts() {
+      const now = new Date();
+      const filteredAlerts = this.activeAlerts.filter(alert => {
+        const alertTime = new Date(alert.timestamp);
+        const isActive = (now.getTime() - alertTime.getTime()) < 24 * 60 * 60 * 1000;
+        const alertCategory = (alert.category || '').toLowerCase().replace(/\s+/g, '-');
+        const matchesType = this.selectedType === 'all' || alertCategory === this.selectedType;
+        const matchesStatus = this.selectedStatus === 'all' || (this.selectedStatus === 'active' ? isActive : !isActive);
+        return matchesType && matchesStatus;
+      });
+
+      this.pins = filteredAlerts
+        .filter(alert => alert.location?.lng && alert.location?.lat)
+        .map(alert => ({
+          lon: alert.location.lng,
+          lat: alert.location.lat,
+          title: alert.category || 'Alert',
+          data: alert
+        }));
+
       if (this.mapComponent) {
         this.mapComponent.refreshPins();
       }

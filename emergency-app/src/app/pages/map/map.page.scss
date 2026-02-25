@@ -17,3 +17,12 @@
     display: none !important;
   }
 }
+
+input[type="radio"]:checked + span {
+  color: var(--ion-color-primary, #3880ff);
+  font-weight: 700;
+}
+
+input[type="radio"] {
+  accent-color: var(--ion-color-primary, #3880ff);
+}

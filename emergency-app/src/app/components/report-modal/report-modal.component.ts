@@ -7,6 +7,7 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { Capacitor } from '@capacitor/core';
+import { PhotoService } from 'src/app/services/photos/photo.service';
 
 @Component({
   selector: 'app-report-modal',
@@ -24,6 +25,7 @@ export class ReportModalComponent implements OnInit {
   userLat?: number;
   userLng?: number;
   userAddress?: string;
+  photoBase64?: string;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -64,7 +66,8 @@ export class ReportModalComponent implements OnInit {
     private modalController: ModalController,
     private alertService: Alert,
     private alertController: AlertController,
-    private geolocationService: GeolocationService
+    private geolocationService: GeolocationService,
+    private photoService: PhotoService
   ) {}
 
   async ngOnInit() {
@@ -93,6 +96,35 @@ export class ReportModalComponent implements OnInit {
     } else {
       await this.getAndSetUserLocation();
     }
+  }
+
+    // Photo logic for form
+  photoPreview?: string;
+
+  async onAddPhoto() {
+    await this.photoService.addNewToGallery();
+    if (this.photoService.photos.length > 0) {
+      const photo = this.photoService.photos[0];
+      this.setPhotoPreview(photo.webviewPath);
+      // Use base64 directly from photoService
+      this.photoBase64 = photo.webviewPath;
+      this.reportForm.patchValue({ photoUrl: this.photoBase64 || '' });
+    }
+  }
+
+  retakePhoto() {
+    this.onAddPhoto();
+  }
+
+  removePhoto() {
+    this.photoService.photos.shift();
+    this.setPhotoPreview(undefined);
+    this.photoBase64 = undefined;
+    this.reportForm.patchValue({ photoUrl: '' });
+  }
+
+  private setPhotoPreview(path?: string) {
+    this.photoPreview = path;
   }
 
   // Get and set user location
@@ -131,8 +163,14 @@ export class ReportModalComponent implements OnInit {
         console.log("Alert updated successfully:", response);
         window.location.href = '/home';
       },
-      error: (err) => {
+      error: async (err) => {
         console.error("Error updating alert:", err);
+        const alert = await this.alertController.create({
+          header: 'Submission Failed',
+          message: 'Could not update the report. Please check your connection and try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
       }
     });
   }
@@ -237,14 +275,18 @@ export class ReportModalComponent implements OnInit {
           this.modalController.dismiss(response, 'confirm');
         }
       },
-      error: (err) => {
-        console.error("Error sending POST:", err);
+      error: async () => {
+        const alert = await this.alertController.create({
+          header: 'Submission Failed',
+          message: 'Could not submit the report. Please try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
       }
     });
   }
 
   //Getters for form controls
-
   get category() {
     return this.reportForm.get('category');
   }

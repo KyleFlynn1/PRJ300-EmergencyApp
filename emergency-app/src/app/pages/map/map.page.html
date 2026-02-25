@@ -4,7 +4,35 @@
     <h1>Map</h1>
   </div>
 </ion-header>
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <div class="map-filter-bar minimalist-float">
+    <select [(ngModel)]="selectedType" (change)="filterAlerts()" class="native-select type-select">
+      <option value="all">All</option>
+      <option value="other">Other</option>
+      <option value="missing-person">Missing Person</option>
+      <option value="injury">Injury</option>
+      <option value="tree-fallen">Tree fallen</option>
+      <option value="power-outage">Power outage</option>
+      <option value="fire">Fire</option>
+      <option value="flood">Flood</option>
+      <option value="road-blockage">Road blockage</option>
+      <option value="weather">Weather</option>
+    </select>
+    <div class="status-segment minimalist-status">
+      <label>
+        <input type="radio" name="status" value="all" [(ngModel)]="selectedStatus" (change)="filterAlerts()">
+        <span>All</span>
+      </label>
+      <label>
+        <input type="radio" name="status" value="active" [(ngModel)]="selectedStatus" (change)="filterAlerts()">
+        <span>Active</span>
+      </label>
+      <label>
+        <input type="radio" name="status" value="inactive" [(ngModel)]="selectedStatus" (change)="filterAlerts()">
+        <span>Inactive</span>
+      </label>
+    </div>
+  </div>
   <div class="section action-buttons-section">
     <div class="report-container">
       <button class="native-report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">

@@ -7,11 +7,8 @@
           <ion-icon name="medkit" class="main-icon"></ion-icon>
           <h1>Defibrillator</h1>
           <div class="badge-container">
-            <ion-badge color="light" class="severity-badge">
+            <ion-badge class="active-badge" [color]="defib?.working ? 'success' : 'danger'">
               {{ defib && 'working' in defib ? (defib.working ? 'Working' : 'Not Working') : 'Unknown' }}
-            </ion-badge>
-            <ion-badge [color]="CheckDefibActive(defib?.timestamp) ? 'success' : 'danger'" class="active-badge">
-              {{ CheckDefibActive(defib?.timestamp) ? 'Active' : 'Inactive' }}
             </ion-badge>
           </div>
         </div>

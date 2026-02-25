@@ -842,6 +842,8 @@ ion-title {
   padding: 20px;
   color: var(--primary-text-colour);
   background-color: var(--card-background);
+  height: 70vh;
+  overflow-y: auto;
 
   p {
     margin: 0 0 16px 0; 
@@ -1572,3 +1574,56 @@ ion-title {
     font-size: 18px; 
     font-weight: bold;
 }
+
+/* Map filter Styles */
+
+.map-filter-bar.minimalist-float {
+  position: absolute;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0);
+  color: var(--ion-text-color, #222);
+  border-radius: 26px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+  padding: 6px 24px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  backdrop-filter: blur(12px);
+}
+
+.type-select {
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  padding: 0px;
+  color: inherit;
+  outline: none;
+  min-width: 120px;
+}
+
+.type-select:focus {
+  outline: 2px solid var(--ion-color-primary, #3880ff);
+}
+
+.minimalist-status {
+  display: flex;
+  gap: 10px;
+}
+
+.minimalist-status label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.minimalist-status input[type="radio"] {
+  accent-color: var(--ion-color-primary, #3880ff);
+  margin: 0 2px 0 0;
+}
+
