@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet, IonIcon, IonContent } from '@ionic/angular/standalone';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
+import { Preferences } from '@capacitor/preferences';
+import { NotificationsService } from 'src/app/services/notifications/notifications';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +13,29 @@ import { Capacitor } from '@capacitor/core';
   styleUrls: ['app.component.scss'],
   imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive, IonContent],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+  constructor(
+    private notificationsService: NotificationsService
+  ) {
+    // Load saved theme preference, default to light if not set
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === null || savedTheme === 'dark') {
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
+    } else {
+      document.body.classList.add('light');
+      document.body.classList.remove('dark');
+    }
+  }
 
   ngOnInit() {
     if (Capacitor.getPlatform() !== 'web') {
       this.initPush();
     }
   }
+
+  
   async initPush() {
     //Request permission (Android auto-grants permisionsa but shows prompt on iOS)
     const permission = await PushNotifications.requestPermissions();
@@ -28,7 +47,7 @@ export class AppComponent {
     // 3. Get the FCM token (send this to your backend)
     PushNotifications.addListener('registration', (token) => {
       console.log('FCM Token:', token.value);
-      // Add backened to send token to save 
+      this.saveTokenToDatabase(token.value);
     });
 
     //Handle errors
@@ -46,16 +65,45 @@ export class AppComponent {
       console.log('Notification tapped:', action);
     });
   }
+  async getCognitoId(): Promise<string | null> {
+    try {
+      // Implement your logic to get the Cognito ID here
+      return 'cognitoId-placeholder';
+    } catch (error) {
+      console.error('Error getting Cognito ID:', error);
+      return null;
+    }
+  }
 
-  constructor() {
-    // Load saved theme preference, default to light if not set
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === null || savedTheme === 'dark') {
-      document.body.classList.add('dark');
-      document.body.classList.remove('light');
-    } else {
-      document.body.classList.add('light');
-      document.body.classList.remove('dark');
+  async getCurrentLocation() {
+    const position = await Geolocation.getCurrentPosition();
+    return {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    };
+  }
+
+  // Save token to database for notifications
+  async saveTokenToDatabase(token: string) {
+    // Implement your backend API call here to save the token
+    console.log('Saving token to database:', token);
+    const { value: savedToken } = await Preferences.get({ key: 'fcm_token' });
+
+    if (savedToken === token) {
+      // If the token is already saved, no need to save again
+      return;
+    }
+
+    // New token or need chafnging
+    try {
+      await this.notificationsService.saveTokenToDatabase(
+        token, 
+        await this.getCognitoId() || '', 
+       (await this.getCurrentLocation())?.lat || 0, (await this.getCurrentLocation())?.lng || 0);
+      await Preferences.set({ key: 'fcm_token', value: token });
+      console.log('Token saved successfully!');
+    } catch (error) {
+      console.error('Error saving token:', error);
     }
   }
 }
