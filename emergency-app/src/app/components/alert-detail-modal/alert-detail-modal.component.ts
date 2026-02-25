@@ -6,6 +6,7 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils/modalUtil';
 import { RouterModule } from '@angular/router';
 import {ReportModalComponent} from '../report-modal/report-modal.component';
+import { Clipboard } from '@capacitor/clipboard';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -74,6 +75,7 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
       geometry: new Point(fromLonLat([lon, lat]))
     });
 
+
     // Use the same SVG pin style as the main map
     const color = getAlertSeverityColor(this.alert?.severity);
     const svgUrl = getCircleAlertSVG(color);
@@ -100,6 +102,21 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
         center: fromLonLat([lon, lat]),
         zoom: 15 // Zoomed in for alert detail
       })
+    });
+  }
+
+  // COPY or share alert details to clipboradd
+  copyAlertDetails = async (alert: any) => {
+    const details = 
+        `Category: ${alert?.category || 'N/A'}\n` +
+        `Severity: ${alert?.severity || 'N/A'}\n` +
+        `Status: ${this.CheckAlertActive(alert?.timestamp) ? 'Active' : 'Inactive'}\n` +
+        `Location: ${alert?.location?.address || 'Unknown'}\n` +
+        `Time: ${alert?.timestamp ? (new Date(alert.timestamp)).toLocaleString() : 'N/A'}\n` +
+        `Notes: ${alert?.notes || 'No additional details provided.'}`;
+
+    await Clipboard.write({
+      string: details
     });
   }
 
