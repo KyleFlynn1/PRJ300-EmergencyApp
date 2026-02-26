@@ -5,6 +5,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { NotificationsService } from 'src/app/services/notifications/notifications';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
@@ -16,7 +17,8 @@ import { Geolocation } from '@capacitor/geolocation';
 export class AppComponent implements OnInit {
 
   constructor(
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private authService: AuthService
   ) {
     // Load saved theme preference, default to light if not set
     const savedTheme = localStorage.getItem('theme');
@@ -65,10 +67,16 @@ export class AppComponent implements OnInit {
       console.log('Notification tapped:', action);
     });
   }
+
   async getCognitoId(): Promise<string | null> {
     try {
-      // Implement your logic to get the Cognito ID here
-      return 'cognitoId-placeholder';
+      const user = await this.authService['currentUserSubject']?.getValue?.();
+      if (user && user.username) {
+        return user.username;
+      }
+      // If not in BehaviorSubject, fetch from AuthService
+      const currentUser = await this.authService.getCurrentUser();
+      return currentUser?.username || null;
     } catch (error) {
       console.error('Error getting Cognito ID:', error);
       return null;
@@ -85,21 +93,24 @@ export class AppComponent implements OnInit {
 
   // Save token to database for notifications
   async saveTokenToDatabase(token: string) {
-    // Implement your backend API call here to save the token
     console.log('Saving token to database:', token);
     const { value: savedToken } = await Preferences.get({ key: 'fcm_token' });
-
     if (savedToken === token) {
       // If the token is already saved, no need to save again
       return;
     }
-
-    // New token or need chafnging
     try {
+      const cognitoId = await this.getCognitoId();
+      if (!cognitoId) {
+        throw new Error('Cognito ID not found. User may not be authenticated.');
+      }
+      const location = await this.getCurrentLocation();
       await this.notificationsService.saveTokenToDatabase(
-        token, 
-        await this.getCognitoId() || '', 
-       (await this.getCurrentLocation())?.lat || 0, (await this.getCurrentLocation())?.lng || 0);
+        token,
+        cognitoId,
+        location?.lat || 0,
+        location?.lng || 0
+      );
       await Preferences.set({ key: 'fcm_token', value: token });
       console.log('Token saved successfully!');
     } catch (error) {
