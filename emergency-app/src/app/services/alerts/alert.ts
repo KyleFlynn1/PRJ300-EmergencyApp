@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Report } from 'src/app/interfaces/report.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +11,13 @@ export class Alert {
 
   private http = inject(HttpClient);
   private readonly apiUrls = [
-    `${environment.apiBaseUrl}/api/v1/alert`,
-    `${environment.apiBaseUrl}/api/v1/alert` // fallback
+    // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
+    'http://localhost:3000/api/v1/alert',
+    'http://localhost:3001/api/v1/alert', // fallback
   ];
   private apiUrl = this.apiUrls[0];
 
-  private weatherApiUrl = environment.apiBaseUrl + '/api/v1/weather/alerts';
+  private weatherApiUrl = 'http://localhost:3000/api/v1/weather/import';
 
   constructor() {
     // If primary fails, switch to fallback

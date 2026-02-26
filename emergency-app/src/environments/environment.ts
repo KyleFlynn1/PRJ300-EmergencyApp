@@ -3,9 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  apiBaseUrl: 'https://prj300emergecnyapp.freedynamicdns.net',
-  // apiBaseUrl: 'http://localhost:3000', // Use local API during development
+  production: false
 };
 
 /*
