@@ -1,6 +1,8 @@
 .signup-page {
   min-height: 100vh;
   padding: 20px;
+  background: var(--primary-background-colour);
+  color: var(--primary-text-colour);
 }
 
 .signup-header {
@@ -15,12 +17,13 @@
     font-weight: 600;
     flex: 1;
     text-align: center;
+    color: var(--primary-title-colour);
   }
 
   .back-button {
     border: none;
     background: transparent;
-    color: var(--ion-color-primary);
+    color: var(--primary-button-colour);
     font-size: 16px;
     cursor: pointer;
     padding: 8px;
@@ -36,11 +39,12 @@
     font-size: 24px;
     font-weight: bold;
     margin: 0 0 10px 0;
+    color: var(--primary-title-colour);
   }
 
   p {
     text-align: center;
-    color: var(--ion-color-medium);
+    color: var(--primary-text-colour);
     margin-bottom: 30px;
   }
 }
@@ -52,6 +56,7 @@
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
+    color: var(--primary-title-colour);
   }
 }
 
@@ -60,10 +65,10 @@
   padding: 12px;
   border: 1px solid var(--ion-color-light-shade);
   border-radius: 8px;
-  background: var(--ion-color-light);
+  background: var(--primary-background-colour);
   font-size: 16px;
   box-sizing: border-box;
-  color: #000;
+  color: var(--primary-text-colour);
 }
 
 .password-wrapper {

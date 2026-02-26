@@ -1,6 +1,8 @@
 .verify-page {
   min-height: 100vh;
   padding: 20px;
+  background: var(--primary-background-colour);
+  color: var(--primary-text-colour);
 }
 
 .verify-header {
@@ -15,12 +17,13 @@
     font-weight: 600;
     flex: 1;
     text-align: center;
+    color: var(--primary-title-colour);
   }
 
   .back-button {
     border: none;
     background: transparent;
-    color: var(--ion-color-primary);
+    color: var(--primary-button-colour);
     font-size: 16px;
     cursor: pointer;
     padding: 8px;
@@ -41,6 +44,7 @@
   .mail-icon {
     font-size: 80px;
     line-height: 1;
+    color: var(--primary-button-colour);
   }
 }
 
@@ -49,16 +53,18 @@ h1 {
   font-weight: bold;
   margin-bottom: 15px;
   margin-top: 0;
+  color: var(--primary-title-colour);
 }
 
 p {
   color: var(--ion-color-medium);
   margin: 10px 0;
+  color: var(--primary-text-colour);
 }
 
 .email-text {
   font-weight: bold;
-  color: var(--ion-color-dark);
+  color: var(--primary-title-colour);
   font-size: 16px;
   margin-bottom: 30px;
 }
@@ -71,6 +77,7 @@ p {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
+    color: var(--primary-title-colour);
   }
 }
 
