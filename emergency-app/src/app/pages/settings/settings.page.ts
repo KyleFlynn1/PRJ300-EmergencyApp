@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -11,7 +10,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class SettingsPage implements OnInit {
 

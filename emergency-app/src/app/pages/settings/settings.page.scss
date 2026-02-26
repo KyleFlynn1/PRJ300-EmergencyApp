@@ -1,43 +1,90 @@
-ion-item {
-  --background: var(--card-background);
-  --color: var(--primary-text-colour);
-  --border-color: transparent;
-  border-radius: 50px;
+.settings-page {
+  min-height: calc(100vh - 150px);
+  padding: 8px 0 110px;
 }
 
-ion-label {
-  color: var(--primary-text-colour) !important;
+.settings-card {
+  background: var(--card-background);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
 }
 
-ion-toggle {
-  --track-background: var(--card-badge-background);
-  --track-background-checked: var(--card-colour-green);
-  --handle-background: var(--primary-text-colour);
-  --handle-background-checked: #ffffff;
-}
-
-.auth-links {
-  margin-top: 16px;
-}
-
-.auth-button {
-  --background: var(--card-colour-green);
-  --color: #ffffff;
-  --border-radius: 50px;
-  --box-shadow: none;
-  margin-top: 10px;
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: var(--primary-text-colour);
   font-weight: 600;
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--card-badge-background);
+  transition: 0.2s;
+  border-radius: 30px;
+}
+
+.slider::before {
+  position: absolute;
+  content: '';
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--primary-text-colour);
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: var(--card-colour-green);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(22px);
+  background-color: #ffffff;
+}
+
+.auth-links {
+  margin-top: 0;
+}
+
+.auth-button {
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  height: 44px;
+  background: var(--card-colour-green);
+  color: #ffffff;
+  margin-top: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .auth-button.secondary {
-  --background: var(--card-background);
-  --color: var(--primary-text-colour);
-  --border-color: var(--card-badge-background);
-  --border-style: solid;
-  --border-width: 1px;
+  background: var(--card-background);
+  color: var(--primary-text-colour);
+  border: 1px solid var(--card-badge-background);
 }
 
 .auth-button.danger {
-  --background: var(--ion-color-danger);
-  --color: #ffffff;
+  background: var(--ion-color-danger);
+  color: #ffffff;
 }
