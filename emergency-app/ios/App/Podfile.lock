@@ -1,11 +1,13 @@
 PODS:
-  - Capacitor (8.1.0):
+  - Capacitor (8.0.2):
     - CapacitorCordova
   - CapacitorApp (7.1.0):
     - Capacitor
   - CapacitorCamera (8.0.1):
     - Capacitor
-  - CapacitorCordova (8.1.0)
+  - CapacitorClipboard (8.0.1):
+    - Capacitor
+  - CapacitorCordova (8.0.2)
   - CapacitorFilesystem (8.1.2):
     - Capacitor
     - IONFilesystemLib (~> 1.1.1)
@@ -29,6 +31,7 @@ DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
+  - "CapacitorClipboard (from `../../node_modules/@capacitor/clipboard`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
@@ -50,6 +53,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/app"
   CapacitorCamera:
     :path: "../../node_modules/@capacitor/camera"
+  CapacitorClipboard:
+    :path: "../../node_modules/@capacitor/clipboard"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorFilesystem:
@@ -68,10 +73,11 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  Capacitor: 47b825120c6b8b6d6f9f053e9350a8960d436710
+  Capacitor: 2b79172ad27f3be2d103cce88b8eb9803fdcc744
   CapacitorApp: 26587c2ce485d88ddb39adb21cac64f8e481afe3
   CapacitorCamera: fcacb82cc319e62f8d8c93e20f3f70e2464efe5e
-  CapacitorCordova: e8b76fd95fc1e157775abc484c59cc0de464095d
+  CapacitorClipboard: c75fdaa6e622111119f35e7914ecfc67b05efecb
+  CapacitorCordova: 921bdb690ebe82421b24fce45552fd3dea2ae43a
   CapacitorFilesystem: 2db285a1ac6e475cc27cae2e1bea999000f9e2be
   CapacitorGeolocation: ab54d708e2fcf99a7bafe0219eaa6f7a932f001a
   CapacitorHaptics: b3fb2869e72c4466e18ce9ccbeb60a3d8723b3d4
@@ -82,6 +88,6 @@ SPEC CHECKSUMS:
   IONFilesystemLib: dfa8706539ac9ab77ccfd6e5b3830ce9b5e57f6c
   IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
 
-PODFILE CHECKSUM: 440a15e88ed38c2bcb55d81ac3984a0e1307bd7b
+PODFILE CHECKSUM: 8d18dfe57e586ea2da24c4060d620802ac0148fb
 
 COCOAPODS: 1.16.2

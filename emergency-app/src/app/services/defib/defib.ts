@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Defib } from 'src/app/interfaces/defib.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-
+import { environment } from 'src/environments/environment.prod';
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +12,6 @@ private http = inject(HttpClient);
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
     `${environment.apiBaseUrl}/api/v1/defibs`, // primary
-    `${environment.apiBaseUrl}/api/v1/defibs`, // fallback
   ];
 
   private apiUrl = this.apiUrls[0];
