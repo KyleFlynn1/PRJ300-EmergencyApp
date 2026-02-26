@@ -8,3 +8,29 @@
   color: var(--primary-title-colour);
   font-size: 15px;
 }
+
+.auth-links {
+  margin-top: 16px;
+}
+
+.auth-button {
+  --background: var(--card-colour-green);
+  --color: #ffffff;
+  --border-radius: 50px;
+  --box-shadow: none;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.auth-button.secondary {
+  --background: var(--card-background);
+  --color: var(--primary-text-colour);
+  --border-color: var(--card-badge-background);
+  --border-style: solid;
+  --border-width: 1px;
+}
+
+.auth-button.danger {
+  --background: var(--ion-color-danger);
+  --color: #ffffff;
+}

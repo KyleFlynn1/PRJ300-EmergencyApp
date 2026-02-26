@@ -31,4 +31,11 @@
       </select>
     </div>
   </div>
+
+  <div class="section auth-links">
+    <h2>Account</h2>
+    <ion-button expand="block" class="auth-button" *ngIf="!(currentUser$ | async)" routerLink="/login">Login</ion-button>
+    <ion-button expand="block" class="auth-button secondary" *ngIf="!(currentUser$ | async)" routerLink="/signup">Sign Up</ion-button>
+    <ion-button expand="block" class="auth-button danger" *ngIf="currentUser$ | async" (click)="onLogout()">Log Out</ion-button>
+  </div>
 </ion-content>
