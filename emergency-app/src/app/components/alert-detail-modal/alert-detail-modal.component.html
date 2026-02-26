@@ -15,8 +15,22 @@
           </div>
         </div>
 
+        <!-- Image -->
+        <div class="detail-section" *ngIf="alert && alert.photoUrl">
+          <img [src]="alert.photoUrl" alt="Alert Photo" style="max-width:100%;max-height:200px;display:block;margin:1em auto;" />
+        </div>
+
         <!-- Description -->
         <div class="detail-section">
+          <button
+            type="button"
+            class="copy-icon-btn"
+            (click)="copyAlertDetails(alert)"
+            aria-label="Copy details"
+            title="Copy details"
+          >
+            <ion-icon name="copy-outline"></ion-icon>
+          </button>
           <p class="description">{{ alert?.notes || 'No additional details provided.' }}</p>
         </div>
 

@@ -17,3 +17,29 @@
     }
   }
 }
+
+.copy-icon-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ion-color-medium);
+  display: inline-flex;
+  float: right;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.copy-icon-btn ion-icon {
+  font-size: 16px;
+}
+
+.copy-icon-btn:hover {
+  color: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}

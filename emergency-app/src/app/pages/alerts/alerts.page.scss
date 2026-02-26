@@ -92,20 +92,3 @@
     }
   }
 }
-
-/* No alerts message styling */
-.no-alerts-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 20px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 15px;
-  
-  ion-icon {
-    font-size: 22px;
-    color: rgba(255, 255, 255, 0.5);
-  }
-}

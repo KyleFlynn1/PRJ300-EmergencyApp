@@ -13,6 +13,7 @@ import VectorLayer from 'ol/layer/Vector';
 import { Icon, Style, Circle as CircleStyle, RegularShape, Fill, Stroke } from 'ol/style';
 import { getAlertSeverityColor, getCircleAlertSVG } from 'src/app/utils/modalUtil';
 import { Alert } from 'src/app/services/alerts/alert';
+import { Circle as OlCircle } from 'ol/geom';
 
 @Component({
   selector: 'app-map-component',
@@ -21,7 +22,7 @@ import { Alert } from 'src/app/services/alerts/alert';
   imports: [IonicModule],
 })
 
-export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
+export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
     @ViewChild('mapContainer', { static: true }) mapContainer?: ElementRef<HTMLDivElement>;
 
     ngOnDestroy() {
@@ -40,6 +41,8 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
+  userRadiusDistance : number = 50; // in km,
+  
 
   // Pins to show on map, passed from parent
   @Input() pins: { lon: number; lat: number; title: string; data: any }[] = [];
@@ -53,7 +56,12 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
     private modalController: ModalController
   ) {}
 
-  async ngOnInit() {
+
+  ngOnInit() {  
+    const savedRadius = localStorage.getItem('alertRadius');
+    if (savedRadius) {
+      this.userRadiusDistance = parseInt(savedRadius);
+    }
     // Reinitialize map if already created to update pins
     if (this.map) {
       this.updateMapMarkers();
@@ -61,6 +69,10 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    const savedRadius = localStorage.getItem('alertRadius');
+    if (savedRadius) {
+      this.userRadiusDistance = parseInt(savedRadius);
+    }
     if (changes['pins'] && this.map) {
       this.refreshPins();
     }
@@ -92,6 +104,10 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
   // Make sure map is initialized after view is ready to avoid errors or map not showing
   async ngAfterViewInit() {
     // Get user location first, then initialize map
+    const savedRadius = localStorage.getItem('alertRadius');
+    if (savedRadius) {
+      this.userRadiusDistance = parseInt(savedRadius);
+    }
     await this.getAndSetUserLocation();
     this.initMap();
   }
@@ -118,7 +134,7 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
     });
     
     // Recreate features with updated pins
-    const features = this.pins.map(pin => {
+    const features: Feature[] = this.pins.map(pin => {
       const feature = new Feature({
         geometry: new Point(fromLonLat([pin.lon, pin.lat]))
       });
@@ -169,7 +185,19 @@ export class MapComponent  implements OnInit, AfterViewInit, OnChanges {
         })
       );
       features.push(userMarker);
-    }
+
+      // Add blue radius circle
+      const radiusCircle = new Feature({
+        geometry: new OlCircle(fromLonLat([this.userLng, this.userLat]), this.userRadiusDistance * 1000) // Multiply by 1000 to coneverft into meteres
+      });
+      radiusCircle.setStyle(
+        new Style({
+          stroke: new Stroke({ color: 'rgba(0, 229, 255, 1)', width: 2 }),
+          fill: new Fill({ color: 'rgba(0, 229, 255, 0.1)' }),
+        })
+      );
+      features.push(radiusCircle);
+  }
 
     // Add new marker layer
     const markerLayer = new VectorLayer({

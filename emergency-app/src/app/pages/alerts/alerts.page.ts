@@ -7,6 +7,7 @@ import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp} from 'src/app/utils/modalUtil';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-alerts',
@@ -15,7 +16,7 @@ import { GeolocationService } from 'src/app/services/geolocation/geolocation';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, AlertDetailModalComponent]
 })
-export class AlertsPage implements OnInit {
+export class AlertsPage implements ViewWillEnter {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
@@ -50,7 +51,7 @@ export class AlertsPage implements OnInit {
   ) { }
 
   // Fetch alerts on component initialization to keep data up to date
-  async ngOnInit() {
+  async ionViewWillEnter() {
     // Get user's current location
     await this.getUserLocation();
     
@@ -61,17 +62,11 @@ export class AlertsPage implements OnInit {
       );
       this.allAlerts = alerts;
       this.filteredAlerts = alerts;
-      this.loadMoreAlerts(); // Load first batch
+      this.infiniteScrollDisabled = false;
+      this.currentPage = 0;
+      this.alerts = [];
+      this.loadMoreAlerts();
     });
-  }
-
-  // Reset pagination and reload alerts when the view is about to enter
-  ionViewWillEnter() {
-    // Reset pagination state when returning to the page
-    this.infiniteScrollDisabled = false;
-    this.currentPage = 0;
-    this.alerts = [];
-    this.loadMoreAlerts();
   }
 
   // Functions for handling filter changes

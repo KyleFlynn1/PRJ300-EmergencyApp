@@ -6,6 +6,23 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!--Filter for working or not working-->
+  <div class="map-filter-bar minimalist-float">
+    <div class="status-segment minimalist-status">
+      <label class="radio-hit-area">
+        <input type="radio" name="status" value="all" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+        <span>All</span>
+      </label>
+      <label class="radio-hit-area">
+        <input type="radio" name="status" value="working" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+        <span>Working</span>
+      </label>
+      <label class="radio-hit-area">
+        <input type="radio" name="status" value="notWorking" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+        <span style="white-space:nowrap">Not&nbsp;Working</span>
+      </label>
+    </div>
+  </div>
   <!-- Add Defibrillator Button -->
   <div class="section action-buttons-section">
     <div class="report-container">
