@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class SettingsPage implements  ViewWillEnter {
 

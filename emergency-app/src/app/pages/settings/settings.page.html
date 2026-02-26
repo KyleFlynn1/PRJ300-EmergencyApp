@@ -1,13 +1,13 @@
-<ion-header [translucent]="false" class="app-header">
+<header class="app-header">
   <div class="header-spacer"></div>
   <div class="header-row">
     <h1>Settings</h1>
   </div>
-</ion-header>
+</header>
 
-<ion-content [fullscreen]="true">
+<div class="settings-page">
   <!-- Dark Light Theme-->
-  <div class="section">
+  <div class="section settings-card">
     <h2>Appearance</h2>
     <!--Dark and Light theme settings-->
     <div class="theme-dropdown-label">
@@ -32,10 +32,10 @@
     </div>
   </div>
 
-  <div class="section auth-links">
+  <div class="section settings-card auth-links">
     <h2>Account</h2>
     <button class="auth-button" *ngIf="!(currentUser$ | async)" routerLink="/login">Login</button>
     <button class="auth-button secondary" *ngIf="!(currentUser$ | async)" routerLink="/signup">Sign Up</button>
     <button class="auth-button danger" *ngIf="currentUser$ | async" (click)="onLogout()">Log Out</button>
   </div>
-</ion-content>
+</div>
