@@ -33,9 +33,11 @@
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/status-bar": "7.0.3",
     "@ionic/angular": "^8.0.0",
+    "chromedriver": "^145.0.6",
     "ionicons": "^7.4.0",
     "ol": "^10.7.0",
     "rxjs": "~7.8.0",
+    "selenium-webdriver": "^4.41.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
