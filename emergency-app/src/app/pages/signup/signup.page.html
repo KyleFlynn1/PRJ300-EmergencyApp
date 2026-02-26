@@ -1,0 +1,99 @@
+<div class="signup-page">
+  <header class="signup-header">
+    <button type="button" class="back-button" (click)="onGoToLogin()">← Back</button>
+    <h2>Sign Up</h2>
+    <div style="width: 40px;"></div>
+  </header>
+
+  <div class="signup-container">
+    <h1>Create Account</h1>
+    <p>Join us today</p>
+
+    <form (ngSubmit)="onSignUp()">
+      <!-- Nickname -->
+      <div class="form-group">
+        <label for="nickname">Username/Nickname</label>
+        <input
+          id="nickname"
+          type="text"
+          [(ngModel)]="nickname"
+          name="nickname"
+          required
+          class="native-input"
+          placeholder="Enter your nickname"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          class="native-input"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            required
+            class="native-input"
+            placeholder="At least 8 characters"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+          >
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          class="native-input"
+          placeholder="Re-enter your password"
+        />
+      </div>
+
+      <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button
+        type="submit"
+        [disabled]="isLoading"
+        class="signup-button"
+      >
+        {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
+      </button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="login-section">
+      <p>
+        Already have an account?
+        <button type="button" class="link-button" routerLink="/login">
+          Login
+        </button>
+      </p>
+    </div>
+  </div>
+</div>
