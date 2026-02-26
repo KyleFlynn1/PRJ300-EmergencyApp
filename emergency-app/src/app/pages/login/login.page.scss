@@ -1,6 +1,8 @@
 .login-page {
   min-height: 100vh;
   padding: 20px;
+  background: var(--primary-background-colour);
+  color: var(--primary-text-colour);
 }
 
 .login-header {
@@ -11,6 +13,7 @@
     margin: 0;
     font-size: 22px;
     font-weight: 600;
+    color: var(--primary-title-colour);
   }
 }
 
@@ -26,7 +29,7 @@
 
   .avatar-icon {
     font-size: 80px;
-    color: var(--ion-color-primary);
+    color: var(--primary-button-colour);
     line-height: 1;
   }
 
@@ -35,10 +38,11 @@
     font-weight: bold;
     margin-top: 20px;
     margin-bottom: 10px;
+    color: var(--primary-title-colour);
   }
 
   p {
-    color: var(--ion-color-medium);
+    color: var(--primary-text-colour);
     font-size: 16px;
   }
 }
@@ -47,6 +51,7 @@
   margin-bottom: 20px;
 
   label {
+    color: var(--primary-title-colour);
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
@@ -58,10 +63,11 @@
   padding: 12px;
   border: 1px solid var(--ion-color-light-shade);
   border-radius: 8px;
-  background: var(--ion-color-light);
   font-size: 16px;
   box-sizing: border-box;
   color: #000;
+  background: var(--primary-background-colour);
+  color: var(--primary-text-colour);
 }
 
 .password-wrapper {
@@ -77,7 +83,7 @@
 .toggle-password {
   border: none;
   background: transparent;
-  color: var(--ion-color-primary);
+  color: var(--primary-button-colour);
   font-weight: 600;
   cursor: pointer;
   padding: 8px;
@@ -109,7 +115,7 @@
 
 .guest-button {
   margin-top: 12px;
-  background: var(--ion-color-light);
+  background: var(--light-text-colour);
   color: var(--ion-color-dark);
   border: 1px solid var(--ion-color-light-shade);
 }

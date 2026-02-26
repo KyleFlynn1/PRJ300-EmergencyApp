@@ -9,6 +9,42 @@ import { CapacitorHttp } from '@capacitor/core';
   providedIn: 'root',
 })
 export class GeolocationService {
+  
+  // Geocode address to lat/lng using Nominatim
+  async geocodeAddress(address: string): Promise<{ lat: number, lng: number, address: string } | null> {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+      let response: any;
+      if (Capacitor.getPlatform() !== 'web') {
+        response = await CapacitorHttp.get({
+          url: url,
+          headers: {
+            'User-Agent': 'PRJ300EmergencyApp/1.0'
+          }
+        });
+        response = response.data;
+      } else {
+        const headers = new HttpHeaders({
+          'User-Agent': 'PRJ300EmergencyApp/1.0'
+        });
+        response = await firstValueFrom(
+          this.http.get(url, { headers })
+        );
+      }
+      if (Array.isArray(response) && response.length > 0) {
+        const result = response[0];
+        return {
+          lat: parseFloat(result.lat),
+          lng: parseFloat(result.lon),
+          address: result.display_name
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error geocoding address:', error);
+      return null;
+    }
+  }
 
   private readonly url = "https://nominatim.openstreetmap.org/reverse";
 

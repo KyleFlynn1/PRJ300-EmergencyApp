@@ -2,10 +2,9 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
-import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils/modalUtil';
 import { RouterModule } from '@angular/router';
-import {ReportModalComponent} from '../report-modal/report-modal.component';
+import { AddDefibModalComponent } from '../add-defib-modal/add-defib-modal.component';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -18,13 +17,14 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
 import { DefibService } from 'src/app/services/defib/defib';
+import { Defib } from 'src/app/interfaces/defib.interface';
 
 
 @Component({
   selector: 'app-defib-detail-modal',
   templateUrl: './defib-detail-modal.component.html',
   styleUrls: ['./defib-detail-modal.component.scss'],
-  imports: [IonicModule, CommonModule, RouterModule, ReportModalComponent],
+    imports: [IonicModule, CommonModule, RouterModule, AddDefibModalComponent],
   standalone: true,
 })
 export class DefibDetailModalComponent  implements OnInit, AfterViewInit {
@@ -34,7 +34,7 @@ export class DefibDetailModalComponent  implements OnInit, AfterViewInit {
   // Control to  show update form or detail view
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;
-  @Input() defib?: Report;
+  @Input() defib?: Defib;
   
   // OpenLayers map instance
   map?: Map;

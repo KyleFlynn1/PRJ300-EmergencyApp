@@ -18,50 +18,6 @@
   color: var(--primary-text-colour);
   font-weight: 600;
 }
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 52px;
-  height: 30px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: var(--card-badge-background);
-  transition: 0.2s;
-  border-radius: 30px;
-}
-
-.slider::before {
-  position: absolute;
-  content: '';
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
-  background-color: var(--primary-text-colour);
-  transition: 0.2s;
-  border-radius: 50%;
-}
-
-.switch input:checked + .slider {
-  background-color: var(--card-colour-green);
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(22px);
-  background-color: #ffffff;
-}
-
 .auth-links {
   margin-top: 0;
 }
@@ -87,4 +43,22 @@
 .auth-button.danger {
   background: var(--ion-color-danger);
   color: #ffffff;
+}
+.theme-dropdown-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 20px;
+  text-align: center;
+  color: var(--primary-title-colour);
+  font-size: 15px;
+}
+
+.auth-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  margin-top: 24px;
 }

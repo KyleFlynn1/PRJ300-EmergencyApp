@@ -7,6 +7,7 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { Capacitor } from '@capacitor/core';
+import { PhotoService } from 'src/app/services/photos/photo.service';
 
 @Component({
   selector: 'app-report-modal',
@@ -24,6 +25,7 @@ export class ReportModalComponent implements OnInit {
   userLat?: number;
   userLng?: number;
   userAddress?: string;
+  photoBase64?: string;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -64,7 +66,8 @@ export class ReportModalComponent implements OnInit {
     private modalController: ModalController,
     private alertService: Alert,
     private alertController: AlertController,
-    private geolocationService: GeolocationService
+    private geolocationService: GeolocationService,
+    private photoService: PhotoService
   ) {}
 
   async ngOnInit() {
@@ -93,6 +96,35 @@ export class ReportModalComponent implements OnInit {
     } else {
       await this.getAndSetUserLocation();
     }
+  }
+
+    // Photo logic for form
+  photoPreview?: string;
+
+  async onAddPhoto() {
+    await this.photoService.addNewToGallery();
+    if (this.photoService.photos.length > 0) {
+      const photo = this.photoService.photos[0];
+      this.setPhotoPreview(photo.webviewPath);
+      // Use base64 directly from photoService
+      this.photoBase64 = photo.webviewPath;
+      this.reportForm.patchValue({ photoUrl: this.photoBase64 || '' });
+    }
+  }
+
+  retakePhoto() {
+    this.onAddPhoto();
+  }
+
+  removePhoto() {
+    this.photoService.photos.shift();
+    this.setPhotoPreview(undefined);
+    this.photoBase64 = undefined;
+    this.reportForm.patchValue({ photoUrl: '' });
+  }
+
+  private setPhotoPreview(path?: string) {
+    this.photoPreview = path;
   }
 
   // Get and set user location
@@ -131,8 +163,14 @@ export class ReportModalComponent implements OnInit {
         console.log("Alert updated successfully:", response);
         window.location.href = '/home';
       },
-      error: (err) => {
+      error: async (err) => {
         console.error("Error updating alert:", err);
+        const alert = await this.alertController.create({
+          header: 'Submission Failed',
+          message: 'Could not update the report. Please check your connection and try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
       }
     });
   }
@@ -149,26 +187,76 @@ export class ReportModalComponent implements OnInit {
       return;
     }
     const currentAlert = this.alert;
+
+    let location: any = {};
+
+    // If editing an alert, preserve original lat/lng unless geocoding succeeds
     if (this.alert && this.alert._id) {
+      location = { ...this.alert.location };
+      if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
+        // Try geocoding custom address
+        try {
+          const geoResult = await this.geolocationService.geocodeAddress(this.reportForm.value.customAddress);
+          if (geoResult && geoResult.lat && geoResult.lng) {
+            location = {
+              lat: geoResult.lat,
+              lng: geoResult.lng,
+              address: this.reportForm.value.customAddress
+            };
+          } else {
+            // Only update address, keep lat/lng
+            location.address = this.reportForm.value.customAddress;
+          }
+        } catch (e) {
+          // Only update address, keep lat/lng
+          location.address = this.reportForm.value.customAddress;
+        }
+      }
       const updatedData: Report = {
         category: this.reportForm.value.category,
         severity: this.reportForm.value.severity,
         notes: this.reportForm.value.notes,
         timestamp: this.alert.timestamp, // Keep original timestamp
-        location: this.reportForm.value.overrideLocation && this.reportForm.value.customAddress
-          ? { address: this.reportForm.value.customAddress }
-          : this.alert.location // Keep original location or use custom
+        location
       };
       this.updateAlert(this.alert._id, updatedData);
       return;
     }
-    
+    // New report
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
-    
-    // Use custom address if override is checked, otherwise use default user location
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
-      formData.location = { address: this.reportForm.value.customAddress };
+      // Try geocoding custom address
+      try {
+        const geoResult = await this.geolocationService.geocodeAddress(this.reportForm.value.customAddress);
+        if (geoResult && geoResult.lat && geoResult.lng) {
+          formData.location = {
+            lat: geoResult.lat,
+            lng: geoResult.lng,
+            address: this.reportForm.value.customAddress
+          };
+        } else if (this.userLat && this.userLng) {
+          // If fails then usse device lat/lng, custom address
+          formData.location = {
+            lat: this.userLat,
+            lng: this.userLng,
+            address: this.reportForm.value.customAddress
+          };
+        } else {
+          formData.location = { address: this.reportForm.value.customAddress };
+        }
+      } catch (e) {
+        // use device lat/lng, custom address
+        if (this.userLat && this.userLng) {
+          formData.location = {
+            lat: this.userLat,
+            lng: this.userLng,
+            address: this.reportForm.value.customAddress
+          };
+        } else {
+          formData.location = { address: this.reportForm.value.customAddress };
+        }
+      }
     } else if (this.userLat && this.userLng) {
       formData.location = {
         lat: this.userLat,
@@ -178,7 +266,6 @@ export class ReportModalComponent implements OnInit {
     } else {
       formData.location = { address: 'Unknown Location' };
     }
-
     this.alertService.addAlert(formData).subscribe({
       next: (response) => {
         console.log("POST sent successfully:", response);
@@ -188,14 +275,18 @@ export class ReportModalComponent implements OnInit {
           this.modalController.dismiss(response, 'confirm');
         }
       },
-      error: (err) => {
-        console.error("Error sending POST:", err);
+      error: async () => {
+        const alert = await this.alertController.create({
+          header: 'Submission Failed',
+          message: 'Could not submit the report. Please try again.',
+          buttons: ['OK']
+        });
+        await alert.present();
       }
     });
   }
 
   //Getters for form controls
-
   get category() {
     return this.reportForm.get('category');
   }

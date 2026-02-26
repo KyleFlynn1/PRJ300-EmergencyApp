@@ -9,17 +9,26 @@
   <!-- Dark Light Theme-->
   <div class="section settings-card">
     <h2>Appearance</h2>
-    <div class="toggle-row">
-      <span>Dark Mode</span>
-      <label class="switch" for="darkModeToggle">
-        <input
-          id="darkModeToggle"
-          type="checkbox"
-          [(ngModel)]="isDarkMode"
-          (ngModelChange)="toggleDarkMode()"
-        />
-        <span class="slider"></span>
-      </label>
+    <!--Dark and Light theme settings-->
+    <div class="theme-dropdown-label">
+      <span class="setting-label">Color Theme</span>
+      <select [value]="theme" (change)="onThemeChange($event)" class="native-select theme-select">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </div>
+    <!--Radius settings -->
+    <div class="theme-dropdown-label">
+      <span class="setting-label">Alerts Feed Radius</span>
+      <select [value]="radius" (change)="onRadiusChange($event)" class="native-select theme-select">
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+        <option value="20">20 km</option>
+        <option value="50">50 km</option>
+        <option value="100">100 km</option>
+        <option value="200">200 km</option>
+        <option value="500">500 km</option>
+      </select>
     </div>
   </div>
 

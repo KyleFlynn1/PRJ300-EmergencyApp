@@ -7,24 +7,21 @@
           <ion-icon name="medkit" class="main-icon"></ion-icon>
           <h1>Defibrillator</h1>
           <div class="badge-container">
-            <ion-badge color="light" class="severity-badge">
+            <ion-badge class="active-badge" [color]="defib?.working ? 'success' : 'danger'">
               {{ defib && 'working' in defib ? (defib.working ? 'Working' : 'Not Working') : 'Unknown' }}
-            </ion-badge>
-            <ion-badge [color]="CheckDefibActive(defib?.timestamp) ? 'success' : 'danger'" class="active-badge">
-              {{ CheckDefibActive(defib?.timestamp) ? 'Active' : 'Inactive' }}
             </ion-badge>
           </div>
         </div>
 
         <!-- Image -->
-        <div class="detail-section" *ngIf="defib && 'photoUrl' in defib && defib.photoUrl">
+        <div class="detail-section" *ngIf="defib && defib.photoUrl">
           <img [src]="defib.photoUrl" alt="Defibrillator Photo" style="max-width:100%;max-height:200px;display:block;margin:1em auto;" />
         </div>
 
         <!-- Access Instructions -->
         <div class="detail-section">
           <p class="description">
-            {{ defib && 'accessInstructions' in defib && defib.accessInstructions ? defib.accessInstructions : (defib?.notes || 'No access instructions provided.') }}
+            {{ defib && defib.accessInstructions ? defib.accessInstructions : 'No access instructions provided.' }}
           </p>
         </div>
 
@@ -74,5 +71,5 @@
     </div>
   </div>
 } @else {
-  <app-report-modal [alert]="defib" [isNativeModal]="true" (closeModal)="handleFormClose($event)"></app-report-modal>
+  <app-add-defib-modal [defib]="defib" [isNativeModal]="true" (closeModal)="handleFormClose($event)"></app-add-defib-modal>
 }

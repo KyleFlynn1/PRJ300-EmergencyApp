@@ -1,3 +1,7 @@
+// Prevent radio label wrapping
+.minimalist-status label span {
+  white-space: nowrap;
+}
 .defib-map-container {
   width: 100%;
   /* leave space for header + buttons */
@@ -16,4 +20,13 @@
   ::ng-deep .ol-rotate {
     display: none !important;
   }
+}
+
+input[type="radio"]:checked + span {
+  color: var(--ion-color-primary, #3880ff);
+  font-weight: 700;
+}
+
+input[type="radio"] {
+  accent-color: var(--ion-color-primary, #3880ff);
 }

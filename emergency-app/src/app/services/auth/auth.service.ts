@@ -1,3 +1,4 @@
+  
 import { Injectable } from '@angular/core';
 import { signUp, signIn, confirmSignUp, signOut, getCurrentUser, fetchAuthSession, resetPassword, confirmResetPassword, resendSignUpCode } from '@aws-amplify/auth';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -157,6 +158,22 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
         return this.http.delete(`${this.apiUrl}${endpoint}`, { headers });
       default:
         throw new Error('Invalid HTTP method');
+    }
+  }
+
+  // Returns the current Cognito user 
+  async getCurrentUser(): Promise<any> {
+    let user = this.currentUserSubject.getValue();
+    if (user) {
+      return user;
+    }
+    try {
+      user = await getCurrentUser();
+      this.currentUserSubject.next(user);
+      return user;
+    } catch (err) {
+      this.currentUserSubject.next(null);
+      return null;
     }
   }
 }

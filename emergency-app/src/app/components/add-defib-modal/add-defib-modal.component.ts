@@ -16,6 +16,7 @@ import { DefibService } from 'src/app/services/defib/defib';
 export class AddDefibModalComponent implements OnInit {
   @Input() isNativeModal: boolean = false;
   @Input() location?: { lat: number; lng: number; address: string };
+  @Input() defib?: Defib;
   @Output() closeModal = new EventEmitter<any>();
 
   // Boolean to see if the popup ionic alert is showing or not
@@ -28,7 +29,6 @@ export class AddDefibModalComponent implements OnInit {
   photoBase64?: string;
   // Using Angular forms for form handling and validation
   defibForm!: FormGroup;
-
 
   constructor(
     private fb: FormBuilder,
@@ -72,7 +72,8 @@ export class AddDefibModalComponent implements OnInit {
     if (this.photoService.photos.length > 0) {
       const photo = this.photoService.photos[0];
       this.setPhotoPreview(photo.webviewPath);
-      this.photoBase64 = await this.toBase64(photo.webviewPath);
+      // Use base64 directly from photoService
+      this.photoBase64 = photo.webviewPath;
       this.defibForm.patchValue({ photoUrl: this.photoBase64 || '' });
     }
   }

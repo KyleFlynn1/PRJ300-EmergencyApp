@@ -9,6 +9,8 @@ import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
 import { Router, RouterLink } from '@angular/router';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
+import { ViewWillEnter } from '@ionic/angular';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -16,7 +18,7 @@ import { GeolocationService } from 'src/app/services/geolocation/geolocation';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, RouterLink]
 })
-export class HomePage implements OnInit {
+export class HomePage implements ViewWillEnter {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
@@ -27,13 +29,12 @@ export class HomePage implements OnInit {
   // Alerts filtered in a 10km radius
   activeAlertsInArea: any[] = [];
   activeAlertsCount: number = 5;
-  weatherAlerts: any[] = [];
 
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
   // Radius around user location to show alerts on home page
-  userRadiusDistance : number = 270; // in km
+  userRadiusDistance : number = 50; // in km
 
   // Modal state if they are opened or closed
   showReportModal: boolean = false;
@@ -47,15 +48,26 @@ export class HomePage implements OnInit {
   ) { }
 
   // On component initialization fetch alerts and user location
-  async ngOnInit() {
+  async ionViewWillEnter() {
     await this.getAndSetUserLocation();
-    this.alertService.getWeatherAlerts();
+    const savedRadius = localStorage.getItem('alertRadius');
+    if (savedRadius) {
+      this.userRadiusDistance = parseInt(savedRadius);
+    }
+    // Fetch both alerts and weather alerts, then merge
     this.alertService.getAlerts().subscribe(alerts => {
-      this.activeAlerts = alerts.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
-      this.activeAlertsCount = alerts.length;
-      this.filterAlertsInRadius();
+      this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
+        const safeWeatherAlerts = Array.isArray(weatherAlerts) ? weatherAlerts : [];
+        const allAlerts = [...alerts, ...safeWeatherAlerts];
+        console.log('All alerts:', allAlerts);
+        console.log('Weather alerts:', safeWeatherAlerts);
+        this.activeAlerts = allAlerts.sort((a, b) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        this.activeAlertsCount = this.activeAlerts.length;
+        this.filterAlertsInRadius();
+        console.log('Filtered alerts in area:', this.activeAlertsInArea);
+      });
     });
   }
   // Get and set user location, with user-friendly error handling
@@ -92,6 +104,20 @@ export class HomePage implements OnInit {
     
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
+  }
+
+  // Getter for weather alerts
+  get weatherAlerts() {
+    // Show weather alerts from allAlerts, only filter by timestamp
+    const now = new Date();
+    return this.activeAlerts
+      ?.filter(a => a.category === 'Weather Warning' &&
+        (() => {
+          const alertTime = new Date(a.timestamp);
+          const hoursDifference = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+          return hoursDifference <= 24;
+        })()
+      ) || [];
   }
 
 

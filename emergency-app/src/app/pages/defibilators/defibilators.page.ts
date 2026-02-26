@@ -6,6 +6,7 @@ import { AddDefibModalComponent } from 'src/app/components/add-defib-modal/add-d
 import { DefibService } from 'src/app/services/defib/defib';
 import { MapComponent } from 'src/app/components/map/map.component';
 import { DefibDetailModalComponent } from 'src/app/components/defib-detail-modal/defib-detail-modal.component';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
   selector: 'app-defibilators',
@@ -14,7 +15,7 @@ import { DefibDetailModalComponent } from 'src/app/components/defib-detail-modal
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, AddDefibModalComponent, MapComponent, DefibDetailModalComponent]
 })
-export class DefibilatorsPage implements OnInit {
+export class DefibilatorsPage implements ViewWillEnter {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   showAddDefibModal: boolean = false;
   addDefibLocation?: { lat: number; lng: number; address: string };
@@ -30,11 +31,14 @@ export class DefibilatorsPage implements OnInit {
   selectedDefib: any = null;
   showDefibDetailModal: boolean = false;
 
+  // Filters
+  selectedStatus = 'all';
+  
   constructor(
     private menuController: MenuController, 
     private defibService: DefibService) {}
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     this.defibService.getDefibs().subscribe(defibs => {
       this.defibLocations = defibs.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -48,14 +52,41 @@ export class DefibilatorsPage implements OnInit {
           title: defib.accessInstructions || 'Defibrillator',
           data: defib
         }));
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
     });
   }
+
+  
+
   ionViewDidEnter() {
     if (this.mapComponent) {
       this.mapComponent.refreshPins();
     }
   }
 
+  filterDefibs() {
+    const filtered = this.defibLocations
+      .filter(defib => {
+        if (this.selectedStatus === 'all') return true;
+        if (this.selectedStatus === 'working') return defib.working === true;
+        if (this.selectedStatus === 'notWorking') return defib.working === false;
+        return true;
+      })
+      .filter(defib => defib.location?.lng && defib.location?.lat);
+    this.pins = filtered.map(defib => ({
+      lon: defib.location.lng,
+      lat: defib.location.lat,
+      title: defib.accessInstructions || 'Defibrillator',
+      data: defib
+    }));
+    if (this.mapComponent) {
+      this.mapComponent.refreshPins();
+    }
+  }
+
+  
   // Open and close add defibrillator modal
   openAddDefibModal(location?: { lat: number; lng: number; address: string }) {
     this.addDefibLocation = location;
