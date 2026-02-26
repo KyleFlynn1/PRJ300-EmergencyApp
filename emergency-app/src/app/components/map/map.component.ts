@@ -192,8 +192,8 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
       });
       radiusCircle.setStyle(
         new Style({
-          stroke: new Stroke({ color: 'blue', width: 2 }),
-          fill: new Fill({ color: 'rgba(0,0,255,0.1)' }),
+          stroke: new Stroke({ color: 'rgba(0, 229, 255, 1)', width: 2 }),
+          fill: new Fill({ color: 'rgba(0, 229, 255, 0.1)' }),
         })
       );
       features.push(radiusCircle);
