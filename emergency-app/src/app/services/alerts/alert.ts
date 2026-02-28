@@ -4,6 +4,7 @@ import { Report } from 'src/app/interfaces/report.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment.prod';
+import { Weather } from 'src/app/interfaces/weather.interface';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,7 +17,7 @@ export class Alert {
   ];
   private apiUrl = this.apiUrls[0];
 
-  private weatherApiUrl = `${environment.apiBaseUrl}/api/v1/weather/import`;
+  private weatherApiUrl = `${environment.apiBaseUrl}/api/v1/weather`;
 
   constructor() {
     // If primary fails, switch to fallback
@@ -29,9 +30,13 @@ export class Alert {
 
 
 
-  getWeatherAlerts(): Observable<Report[]> {
+  getWeatherAlerts(): Observable<Weather[]> {
     const headers = { 'X-API-Key': "blahblah" };
-    return this.http.post<Report[]>(this.weatherApiUrl, { headers });
+    return this.http.post<Weather[]>(`${this.weatherApiUrl}/import`, { headers });
+  }
+
+  getAllWeatherAlerts(): Observable<Weather[]> {
+    return this.http.get<Weather[]>(this.weatherApiUrl);
   }
 
   getAlerts(): Observable<Report[]> {

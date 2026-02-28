@@ -1,0 +1,91 @@
+@if (!showform) {
+  <div class="alert-detail-container detail-card weather-detail-modal">
+    <div class="detail-header">
+      <h1 class="headline">{{ weather?.headline }}</h1>
+      <div class="badge-container">
+        <ion-badge color="light" class="severity-badge">{{ weather?.severity }}</ion-badge>
+        <ion-badge color="primary" class="event-badge">{{ weather?.event }}</ion-badge>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="info-row">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <div class="info-content">
+          <div style="display: flex; align-items: center;">
+            <p class="label" style="margin-right: 8px;">Description</p>
+            <button
+              type="button"
+              class="copy-icon-btn"
+              (click)="copyAlertDetails(weather)"
+              aria-label="Copy details"
+              title="Copy details"
+              style="background: none; border: none; padding: 0; margin-left: 0; cursor: pointer;"
+            >
+              <ion-icon name="copy-outline"></ion-icon>
+            </button>
+          </div>
+          <p class="value">{{ weather?.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="info-row">
+        <ion-icon name="time-outline"></ion-icon>
+        <div class="info-content">
+          <p class="label">Active</p>
+          <p class="value">
+            <span>From: {{ weather?.onset | date:'EEE d MMM, HH:mm' }}</span><br>
+            <span>Until: {{ weather?.expires | date:'EEE d MMM, HH:mm' }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="info-row">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <div class="info-content">
+          <p class="label">Urgency & Certainty</p>
+          <p class="value">{{ weather?.urgency }} &middot; {{ weather?.certainty }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section" *ngIf="weather?.areaDesc">
+      <div class="info-row">
+        <ion-icon name="location-outline"></ion-icon>
+        <div class="info-content">
+          <p class="label">Area</p>
+          <p class="value">{{ weather?.areaDesc }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section" *ngIf="weather?.author || weather?.pubdate">
+      <div class="info-row">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <div class="info-content">
+          <p class="label">Issued</p>
+          <p class="value">
+            <span *ngIf="weather?.author"><ion-icon name="person-outline"></ion-icon> {{ weather?.author }}</span>
+            <span *ngIf="weather?.pubdate">{{ weather?.pubdate | date:'EEE d MMM, HH:mm' }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section" *ngIf="weather?.guid">
+      <div class="info-row">
+        <ion-icon name="link-outline"></ion-icon>
+        <div class="info-content">
+          <a [href]="weather?.guid" target="_blank" rel="noopener" class="cap-link">
+            View official Met Éireann alert ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+}

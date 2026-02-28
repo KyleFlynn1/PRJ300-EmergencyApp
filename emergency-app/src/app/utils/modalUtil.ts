@@ -12,13 +12,13 @@ export const getAlertSeverityColor = (severity?: string) : string => {
       case 'info':
         return '#797979';
       case 'low':
-        return '#3ead44';
+        return '#339900';
       case 'moderate':
-        return '#ff8e1d';
+        return '#FFCC00';
       case 'high':
-        return '#ec0303';
+        return '#F46A25';
       case 'urgent':
-        return '#f200ff';
+        return '#FF0000';
       default:
         return '#797979'; // Default to 'info' color
     }

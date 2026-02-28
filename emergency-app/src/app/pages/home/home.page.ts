@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
+import { WeatherDetailModalComponent } from 'src/app/components/weather-detail-modal/weather-detail-modal.component';
 import { ModalController, MenuController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
@@ -16,7 +17,7 @@ import { ViewWillEnter } from '@ionic/angular';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, RouterLink]
+  imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, WeatherDetailModalComponent, RouterLink]
 })
 export class HomePage implements ViewWillEnter {
   // Call utility functions
@@ -24,8 +25,8 @@ export class HomePage implements ViewWillEnter {
   getIcon = getIcon;
   getFormattedTimestamp = getFormattedTimestamp;
 
-  // Test Data
   activeAlerts: any[] = [];
+  activeWeatherAlerts: any[] = [];
   // Alerts filtered in a 10km radius
   activeAlertsInArea: any[] = [];
   activeAlertsCount: number = 5;
@@ -39,7 +40,9 @@ export class HomePage implements ViewWillEnter {
   // Modal state if they are opened or closed
   showReportModal: boolean = false;
   showAlertDetailModal: boolean = false;
+  showWeatherAlertDetailModal: boolean = false;
   selectedAlert: any = null;
+  selectedWeatherAlert: any = null;
 
   constructor(
     private alertService: Alert,
@@ -54,20 +57,22 @@ export class HomePage implements ViewWillEnter {
     if (savedRadius) {
       this.userRadiusDistance = parseInt(savedRadius);
     }
-    // Fetch both alerts and weather alerts, then merge
+    // Fetch alerts and weather alerts separately
     this.alertService.getAlerts().subscribe(alerts => {
-      this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
-        const safeWeatherAlerts = Array.isArray(weatherAlerts) ? weatherAlerts : [];
-        const allAlerts = [...alerts, ...safeWeatherAlerts];
-        console.log('All alerts:', allAlerts);
-        console.log('Weather alerts:', safeWeatherAlerts);
-        this.activeAlerts = allAlerts.sort((a, b) => 
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        );
-        this.activeAlertsCount = this.activeAlerts.length;
-        this.filterAlertsInRadius();
-        console.log('Filtered alerts in area:', this.activeAlertsInArea);
-      });
+      this.activeAlerts = alerts.sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      this.activeAlertsCount = this.activeAlerts.length;
+      this.filterAlertsInRadius();
+      console.log('Filtered alerts in area:', this.activeAlertsInArea);
+    });
+    this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
+      // Only use for import status, not for displaying cards
+      console.log('Active weather alerts:', weatherAlerts);
+    });
+    this.alertService.getAllWeatherAlerts().subscribe(allWeatherAlerts => {
+      this.activeWeatherAlerts = allWeatherAlerts;
+      console.log('All weather alerts:', this.activeWeatherAlerts);
     });
   }
   // Get and set user location, with user-friendly error handling
@@ -110,7 +115,7 @@ export class HomePage implements ViewWillEnter {
   get weatherAlerts() {
     // Show weather alerts from allAlerts, only filter by timestamp
     const now = new Date();
-    return this.activeAlerts
+    return this.activeWeatherAlerts
       ?.filter(a => a.category === 'Weather Warning' &&
         (() => {
           const alertTime = new Date(a.timestamp);
@@ -187,6 +192,17 @@ export class HomePage implements ViewWillEnter {
   closeAlertDetailModal(){
     this.showAlertDetailModal = false;
     this.selectedAlert = null;
+  }
+
+  // Open weather alert detail modal
+  openWeatherAlertDetailModal(weather?: any) {
+    this.selectedWeatherAlert = weather;
+    this.showWeatherAlertDetailModal = true;
+  }
+
+  closeWeatherAlertDetailModal() {  
+    this.showWeatherAlertDetailModal = false;
+    this.selectedWeatherAlert = null;
   }
 
   // Get formatted distance string for alert card
