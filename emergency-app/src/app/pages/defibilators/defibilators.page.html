@@ -6,23 +6,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!--Filter for working or not working-->
-  <div class="map-filter-bar minimalist-float">
-    <div class="status-segment minimalist-status">
-      <label class="radio-hit-area">
-        <input type="radio" name="status" value="all" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
-        <span>All</span>
-      </label>
-      <label class="radio-hit-area">
-        <input type="radio" name="status" value="working" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
-        <span>Working</span>
-      </label>
-      <label class="radio-hit-area">
-        <input type="radio" name="status" value="notWorking" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
-        <span style="white-space:nowrap">Not&nbsp;Working</span>
-      </label>
-    </div>
-  </div>
   <!-- Add Defibrillator Button -->
   <div class="section action-buttons-section">
     <div class="report-container">
@@ -33,7 +16,25 @@
       <p class="report-note">Add a defibrillator location to help others in need.</p>
     </div>
   </div>
-
+  <!--Filter Buttons-->
+  <div class="filter-card">  
+    <div class="filter-row-combined">
+      <div class="status-segment minimalist-status styled-status-segment">
+        <label class="styled-radio-label">
+          <input type="radio" name="status" value="all" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+          <span>All</span>
+        </label>
+        <label class="styled-radio-label">
+          <input type="radio" name="status" value="working" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+          <span>Active</span>
+        </label>
+        <label class="styled-radio-label">
+          <input type="radio" name="status" value="notWorking" [(ngModel)]="selectedStatus" (change)="filterDefibs()">
+          <span style="white-space:nowrap">Not&nbsp;Working</span>
+        </label>
+      </div>
+    </div>
+  </div>
   <!-- Map Container -->
   <app-map-component
     [pins]="pins"

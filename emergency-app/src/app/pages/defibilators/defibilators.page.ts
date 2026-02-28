@@ -67,20 +67,30 @@ export class DefibilatorsPage implements ViewWillEnter {
   }
 
   filterDefibs() {
-    const filtered = this.defibLocations
-      .filter(defib => {
-        if (this.selectedStatus === 'all') return true;
-        if (this.selectedStatus === 'working') return defib.working === true;
-        if (this.selectedStatus === 'notWorking') return defib.working === false;
-        return true;
-      })
-      .filter(defib => defib.location?.lng && defib.location?.lat);
-    this.pins = filtered.map(defib => ({
-      lon: defib.location.lng,
-      lat: defib.location.lat,
-      title: defib.accessInstructions || 'Defibrillator',
-      data: defib
-    }));
+    if (this.selectedStatus != 'all') {
+      const filtered = this.defibLocations
+        .filter(defib => {
+          if (this.selectedStatus === 'working') return defib.working === true;
+          if (this.selectedStatus === 'notWorking') return defib.working === false;
+          return true;
+        })
+        .filter(defib => defib.location?.lng && defib.location?.lat);
+      this.pins = filtered.map(defib => ({
+        lon: defib.location.lng,
+        lat: defib.location.lat,
+        title: defib.accessInstructions || 'Defibrillator',
+        data: defib
+      }));
+    } else {
+      this.pins = this.defibLocations
+        .filter(defib => defib.location?.lng && defib.location?.lat)
+        .map(defib => ({
+          lon: defib.location.lng,
+          lat: defib.location.lat,
+          title: defib.accessInstructions || 'Defibrillator',
+          data: defib
+        }));
+    }
     if (this.mapComponent) {
       this.mapComponent.refreshPins();
     }
