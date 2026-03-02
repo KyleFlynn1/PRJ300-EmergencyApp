@@ -25,7 +25,7 @@
   </div>
   <!-- Add Defibrillator Button -->
   <div class="section action-buttons-section">
-    <div class="report-container">
+    <div class="report-container" *ngIf="!isGuest">
       <button class="native-defib-button" (click)="openAddDefibModal()">
         <ion-icon name="add-circle"></ion-icon>
         Add Defibrillator Location

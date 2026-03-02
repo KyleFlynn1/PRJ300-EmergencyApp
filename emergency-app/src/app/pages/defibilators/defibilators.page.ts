@@ -19,6 +19,7 @@ export class DefibilatorsPage implements ViewWillEnter {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   showAddDefibModal: boolean = false;
   addDefibLocation?: { lat: number; lng: number; address: string };
+  isGuest: boolean = true;
   
   // Sample defibrillator locations in Ireland
   defibLocations: any[] = [];
@@ -39,6 +40,8 @@ export class DefibilatorsPage implements ViewWillEnter {
     private defibService: DefibService) {}
 
   async ionViewWillEnter() {
+    this.isGuest = localStorage.getItem('guestMode') === 'true';
+
     this.defibService.getDefibs().subscribe(defibs => {
       this.defibLocations = defibs.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -89,12 +92,18 @@ export class DefibilatorsPage implements ViewWillEnter {
   
   // Open and close add defibrillator modal
   openAddDefibModal(location?: { lat: number; lng: number; address: string }) {
+    if (this.isGuest) {
+      return;
+    }
     this.addDefibLocation = location;
     this.showAddDefibModal = true;
   }
 
   // Open modal with pin location (from map)
   openAddDefibModalWithLocation(lat: number, lng: number, address: string) {
+    if (this.isGuest) {
+      return;
+    }
     this.defibModalLocation = { lat, lng, address };
     this.showAddDefibModal = true;
   }  

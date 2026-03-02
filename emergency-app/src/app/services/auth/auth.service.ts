@@ -20,6 +20,7 @@ export class AuthService {
   async checkAuthStatus() {
     try {
       const user = await getCurrentUser();
+      localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
     } catch (err) {
       this.currentUserSubject.next(null);
@@ -78,6 +79,7 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
   async signIn(email: string, password: string) {
     try {
       const user = await signIn({ username: email, password: password });
+      localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
       
       // After successful login, sync with your Express API
@@ -164,10 +166,12 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
   async getCurrentUser(): Promise<any> {
     let user = this.currentUserSubject.getValue();
     if (user) {
+      localStorage.removeItem('guestMode');
       return user;
     }
     try {
       user = await getCurrentUser();
+      localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
       return user;
     } catch (err) {
