@@ -40,6 +40,7 @@ export class MapPage implements ViewWillEnter {
     selectedAlert: any = null;
     reportModalLocation?: { lat: number, lng: number, address: string };
     currentTimestamp: string = new Date().toISOString();
+    isGuest: boolean = true;
 
     // Filters
     selectedType = 'all';
@@ -50,7 +51,9 @@ export class MapPage implements ViewWillEnter {
       private menuController: MenuController
     ) { }
   
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
+      this.isGuest = localStorage.getItem('guestMode') === 'true';
+
       this.alertService.getAlerts().subscribe(alerts => {
         this.activeAlerts = alerts.sort((a, b) => 
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -106,12 +109,18 @@ export class MapPage implements ViewWillEnter {
     // Open and close report modal methods
 
     openReportModal() {
+      if (this.isGuest) {
+        return;
+      }
       this.showReportModal = true;
       this.reportModalLocation = undefined;
     }
 
     // Open modal with pin location (from map)
     openReportModalWithLocation(lat: number, lng: number, address: string) {
+      if (this.isGuest) {
+        return;
+      }
       this.reportModalLocation = { lat, lng, address };
       this.showReportModal = true;
     }

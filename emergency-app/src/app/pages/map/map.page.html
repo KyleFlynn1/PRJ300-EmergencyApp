@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="section action-buttons-section">
-    <div class="report-container">
+    <div class="report-container" *ngIf="!isGuest">
       <button class="native-report-button" color="danger" size="large" shape="round" fill="solid" (click)="openReportModal()">
         <ion-icon name="paper-plane"></ion-icon>
         Report Emergency
