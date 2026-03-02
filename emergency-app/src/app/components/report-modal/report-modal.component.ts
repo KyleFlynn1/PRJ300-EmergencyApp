@@ -159,7 +159,7 @@ export class ReportModalComponent implements OnInit {
       this.modalController.dismiss(null, 'cancel');
     }
   }
-  updateAlert(id: string, updatedData: Report) {
+  updateAlert(id: string, updatedData: Partial<Report>) {
     this.alertService.updateAlert(id, updatedData).subscribe({
       next: (response) => {
         console.log("Alert updated successfully:", response);
@@ -167,9 +167,15 @@ export class ReportModalComponent implements OnInit {
       },
       error: async (err) => {
         console.error("Error updating alert:", err);
+        const backendMessage = err?.error?.message || 'Could not update the report. Please check your connection and try again.';
+        const validationDetails = Array.isArray(err?.error?.errors)
+          ? err.error.errors
+              .map((e: any) => e?.message || e?.msg || JSON.stringify(e))
+              .join('\n')
+          : '';
         const alert = await this.alertController.create({
           header: 'Submission Failed',
-          message: 'Could not update the report. Please check your connection and try again.',
+          message: validationDetails ? `${backendMessage}\n${validationDetails}` : backendMessage,
           buttons: ['OK']
         });
         await alert.present();
@@ -218,11 +224,10 @@ export class ReportModalComponent implements OnInit {
           location.address = this.reportForm.value.customAddress;
         }
       }
-      const updatedData: Report = {
+      const updatedData: Partial<Report> = {
         category: this.reportForm.value.category,
         severity: this.reportForm.value.severity,
         notes: this.reportForm.value.notes,
-        timestamp: this.alert.timestamp, // Keep original timestamp
         location
       };
       this.updateAlert(this.alert._id, updatedData);

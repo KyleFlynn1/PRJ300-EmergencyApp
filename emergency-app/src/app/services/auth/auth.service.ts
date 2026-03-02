@@ -4,12 +4,25 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, firstValueFrom, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+interface CognitoUserInfo {
+  cognitoId: string;
+  email: string;
+  emailVerified: boolean;
+  username: string;
+  nickname?: string;
+  groups: string[];
+  isAdmin: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+
+  private userInfoSubject = new BehaviorSubject<CognitoUserInfo | null>(null);
+  public userInfo$ = this.userInfoSubject.asObservable();
   
   private apiUrl = environment.apiBaseUrl + '/api/v1'; // Express API URL
 
@@ -22,8 +35,10 @@ export class AuthService {
       const user = await getCurrentUser();
       localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
+      await this.loadUserInfo();
     } catch (err) {
       this.currentUserSubject.next(null);
+      this.userInfoSubject.next(null);
     }
   }
 
@@ -81,6 +96,8 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
       const user = await signIn({ username: email, password: password });
       localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
+
+      await this.loadUserInfo();
       
       // After successful login, sync with your Express API
       void this.syncUserWithBackend().catch((syncError) => {
@@ -97,6 +114,7 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
     try {
       await signOut();
       this.currentUserSubject.next(null);
+      this.userInfoSubject.next(null);
     } catch (error) {
       throw error;
     }
@@ -116,6 +134,24 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
       const session = await fetchAuthSession();
       return session.tokens?.accessToken?.toString() || '';
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async loadUserInfo() {
+    try {
+      const token = await this.getIdToken();
+      const userInfo = await firstValueFrom(this.http.get<CognitoUserInfo>(`${this.apiUrl}/users/cognito/me`, {
+        headers: new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        })
+      }).pipe(timeout(5000))
+    );
+      this.userInfoSubject.next(userInfo);
+      return userInfo;
+    } catch (error) {
+      console.error('Error loading user info:', error);
+      this.userInfoSubject.next(null);
       throw error;
     }
   }
@@ -178,5 +214,14 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
       this.currentUserSubject.next(null);
       return null;
     }
+  }
+
+  isadmin(): boolean {
+    const userInfo = this.userInfoSubject.getValue();
+    return userInfo?.isAdmin || false;
+  }
+
+  getUserInfo(): CognitoUserInfo | null {
+    return this.userInfoSubject.getValue(); 
   }
 }

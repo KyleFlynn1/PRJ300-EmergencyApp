@@ -79,7 +79,7 @@ export class Alert {
     })
     );
   }
-  updateAlert(id: string, report: Report): Observable<Report> {
+  updateAlert(id: string, report: Partial<Report>): Observable<Report> {
     const url = `${this.apiUrl}/${id}`;
     return this.withAuthHeaders().pipe(
       switchMap((headers) => this.http.put<Report>(url, report, { headers })),
