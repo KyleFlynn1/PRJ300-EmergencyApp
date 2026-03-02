@@ -168,35 +168,42 @@
   <div class="section other-warnings">
     <h2>Met Eireann Alerts</h2>
     <div class="feed-list">
-      <div *ngIf="weatherAlerts.length === 0" class="no-alerts-message">
+      <div *ngIf="activeWeatherAlerts.length === 0" class="no-alerts-message">
         <ion-icon name="information-circle-outline"></ion-icon>
         <span>No weather alerts in your area</span>
       </div>
       <div
-         *ngFor="let alert of weatherAlerts"
-         class="native-feed-card"
-         (click)="openAlertDetailModal(alert)"
-         [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
-        <div class="card-inner"> 
-          <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
+        *ngFor="let alert of activeWeatherAlerts"
+        class="native-feed-card"
+        (click)="openWeatherAlertDetailModal(alert)"
+        [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+        <div class="card-inner">
+          <ion-icon [name]="getIcon(alert.event)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
           <div class="card-content">
+
             <div class="card-header">
-              <h3>{{ alert.category }}</h3>
-              <span class="severity-badge">{{ alert.severity }}</span>
+              <h3>{{ alert.headline }}</h3>
+              <span class="severity-badge" [ngStyle]="{ 'background': getAlertSeverityColor(alert.severity) }">
+                {{ alert.severity }}
+              </span>
             </div>
+
             <div class="description-text">
-              <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
+              <p>{{ alert.description ? (alert.description | slice:0:50) : 'No description' }}<span *ngIf="alert.description && alert.description.length > 80">...</span></p>
             </div>
+
             <p class="detail-text">
-              <span class="detail-icon">
-                <ion-icon name="location-outline"></ion-icon>
-                {{ getDistanceString(alert) }}
+              <span class="detail-icon" *ngIf="alert.onset">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ alert.onset | date:'d MMM' }}
+                <ng-container *ngIf="alert.expires"> – {{ alert.expires | date:'d MMM' }}</ng-container>
               </span>
               <span class="detail-icon">
-                <ion-icon name="time-outline"></ion-icon>
-                {{ getFormattedTimestamp(alert.timestamp) }}
+                <ion-icon name="calendar-outline"></ion-icon>
+                Issued {{ alert.pubDate | date:'d MMM, HH:mm' }}
               </span>
             </p>
+
           </div>
         </div>
       </div>
@@ -233,3 +240,16 @@
     </div>
   </div>
 </div>
+
+<!-- Weather Alert Detail Modal -->
+<div class="native-modal-overlay" *ngIf="showWeatherAlertDetailModal">
+  <div class="native-modal-content" [style.border-left]="'6px solid ' + getAlertSeverityColor(selectedWeatherAlert?.severity)">
+    <div class="modal-header">
+      <button class="close-button" (click)="closeWeatherAlertDetailModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-weather-detail-modal [weather]="selectedWeatherAlert" [isNativeModal]="true" (closeModal)="closeWeatherAlertDetailModal()"></app-weather-detail-modal>
+    </div>
+  </div>

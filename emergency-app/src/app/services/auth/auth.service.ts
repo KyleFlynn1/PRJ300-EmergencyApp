@@ -145,7 +145,8 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
     
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-API-Key': 'blahblah'
     });
 
     switch (method) {

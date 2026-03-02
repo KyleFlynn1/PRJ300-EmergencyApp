@@ -123,10 +123,8 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   // Close modal
   async closeDetailedView() {
     if (!this.isNativeModal) {
-      //console.warn('yes closeDetailedView called in non-native modal context');
       await this.modalController.dismiss();
     } else {
-      //console.warn('no closeDetailedView called in native modal context');
       // If using native modal, navigate to home
       window.location.href = '/home';
     }

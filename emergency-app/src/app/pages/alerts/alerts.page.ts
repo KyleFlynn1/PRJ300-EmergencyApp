@@ -5,7 +5,11 @@ import { IonicModule, MenuController } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
-import { getAlertSeverityColor, getIcon, getFormattedTimestamp} from 'src/app/utils/modalUtil';
+import {
+  getAlertSeverityColor,
+  getIcon,
+  getFormattedTimestamp,
+} from 'src/app/utils/modalUtil';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { ViewWillEnter } from '@ionic/angular';
 
@@ -14,7 +18,7 @@ import { ViewWillEnter } from '@ionic/angular';
   templateUrl: './alerts.page.html',
   styleUrls: ['./alerts.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, AlertDetailModalComponent]
+  imports: [IonicModule, CommonModule, FormsModule, AlertDetailModalComponent],
 })
 export class AlertsPage implements ViewWillEnter {
   // Call utility functions
@@ -23,13 +27,13 @@ export class AlertsPage implements ViewWillEnter {
   getFormattedTimestamp = getFormattedTimestamp;
 
   // Alert data and filtering state to store alerts and manage filters
-  allAlerts: any[] = []; 
-  filteredAlerts: any[] = []; 
-  alerts: any[] = []; 
+  allAlerts: any[] = [];
+  filteredAlerts: any[] = [];
+  alerts: any[] = [];
 
   // Filtering state stored here
-  selectedSeverityFilter: string = 'all'; 
-  searchTerm: string = ''; 
+  selectedSeverityFilter: string = 'all';
+  searchTerm: string = '';
 
   // Native alert detail modal state
   showAlertDetailModal: boolean = false;
@@ -47,18 +51,19 @@ export class AlertsPage implements ViewWillEnter {
   constructor(
     private alertService: Alert,
     private menuController: MenuController,
-    private geolocationService: GeolocationService
-  ) { }
+    private geolocationService: GeolocationService,
+  ) {}
 
   // Fetch alerts on component initialization to keep data up to date
   async ionViewWillEnter() {
     // Get user's current location
     await this.getUserLocation();
-    
-    this.alertService.getAlerts().subscribe(alerts => {
+
+    this.alertService.getAlerts().subscribe((alerts) => {
       // Sort by timestamp descending (newest first)
-      this.alerts = alerts.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      this.alerts = alerts.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
       this.allAlerts = alerts;
       this.filteredAlerts = alerts;
@@ -71,7 +76,8 @@ export class AlertsPage implements ViewWillEnter {
 
   // Functions for handling filter changes
   onFilterChange(event: any) {
-    this.selectedSeverityFilter = typeof event === 'string' ? event : event?.detail?.value;
+    this.selectedSeverityFilter =
+      typeof event === 'string' ? event : event?.detail?.value;
     this.applyFilters();
   }
 
@@ -86,28 +92,37 @@ export class AlertsPage implements ViewWillEnter {
     this.applyFilters();
   }
 
-
   // Apply filters to alerts based on severity and search term
   applyFilters() {
     let filtered = this.allAlerts;
-    console.log('All alerts:', this.allAlerts.map(a => ({ category: a.category, timestamp: a.timestamp })));
-    
+    console.log(
+      'All alerts:',
+      this.allAlerts.map((a) => ({
+        category: a.category,
+        timestamp: a.timestamp,
+      })),
+    );
+
     // Apply severity filter
     if (this.selectedSeverityFilter !== 'all') {
-      filtered = filtered.filter(alert => 
-        alert.severity.toLowerCase() === this.selectedSeverityFilter.toLowerCase()
+      filtered = filtered.filter(
+        (alert) =>
+          alert.severity.toLowerCase() ===
+          this.selectedSeverityFilter.toLowerCase(),
       );
     }
-    
+
     // Apply search filter
     if (this.searchTerm) {
-      filtered = filtered.filter(alert => 
-        (alert.category && alert.category.toLowerCase().includes(this.searchTerm)) ||
-        (alert.type && alert.type.toLowerCase().includes(this.searchTerm)) ||
-        (alert.notes && alert.notes.toLowerCase().includes(this.searchTerm))
+      filtered = filtered.filter(
+        (alert) =>
+          (alert.category &&
+            alert.category.toLowerCase().includes(this.searchTerm)) ||
+          (alert.type && alert.type.toLowerCase().includes(this.searchTerm)) ||
+          (alert.notes && alert.notes.toLowerCase().includes(this.searchTerm)),
       );
     }
-    
+
     this.filteredAlerts = filtered;
     this.currentPage = 0;
     this.alerts = [];
@@ -120,15 +135,15 @@ export class AlertsPage implements ViewWillEnter {
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
     const newAlerts = this.filteredAlerts.slice(start, end);
-    
+
     this.alerts = [...this.alerts, ...newAlerts];
     this.currentPage++;
-    
+
     // Check all alerts are loaded
     if (this.alerts.length >= this.filteredAlerts.length) {
       this.infiniteScrollDisabled = true;
     }
-    
+
     if (event) {
       event.target.complete();
     }
@@ -140,26 +155,26 @@ export class AlertsPage implements ViewWillEnter {
     this.showAlertDetailModal = true;
   }
 
-
   // Close native alert detail modal
   closeAlertDetailModal() {
     this.showAlertDetailModal = false;
     this.selectedAlert = null;
   }
 
-
   // Handle scroll event for infinite scroll
   onScroll(event: any) {
     const element = event.target;
     const threshold = 100; // Load more when 100px from bottom
-    
-    if (element.scrollHeight - element.scrollTop - element.clientHeight < threshold) {
+
+    if (
+      element.scrollHeight - element.scrollTop - element.clientHeight <
+      threshold
+    ) {
       if (!this.infiniteScrollDisabled) {
         this.loadMoreAlerts();
       }
     }
   }
-
 
   // Get user's current location
   async getUserLocation() {
@@ -175,14 +190,21 @@ export class AlertsPage implements ViewWillEnter {
   }
 
   // Calculate distance between two coordinates in kilometers
-  calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  calculateDistance(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number,
+  ): number {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRad(lat2 - lat1);
     const dLng = this.toRad(lng2 - lng1);
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      Math.cos(this.toRad(lat1)) *
+        Math.cos(this.toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
     return distance;
@@ -195,17 +217,22 @@ export class AlertsPage implements ViewWillEnter {
 
   // Get formatted distance string
   getDistanceString(alert: any): string {
-    if (!this.userLat || !this.userLng || !alert.location?.lat || !alert.location?.lng) {
+    if (
+      !this.userLat ||
+      !this.userLng ||
+      !alert.location?.lat ||
+      !alert.location?.lng
+    ) {
       return 'Unknown distance';
     }
-    
+
     const distance = this.calculateDistance(
       this.userLat,
       this.userLng,
       alert.location.lat,
-      alert.location.lng
+      alert.location.lng,
     );
-    
+
     return `${distance.toFixed(1)}km away`;
   }
 }

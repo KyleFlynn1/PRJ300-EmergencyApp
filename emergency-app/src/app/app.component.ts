@@ -32,8 +32,43 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (Capacitor.getPlatform() !== 'web') {
+    const isWeb = Capacitor.getPlatform() === 'web';
+    if (!isWeb) {
       this.initPush();
+    } else {
+      // For browser testing, set a test token in Preferences
+      Preferences.set({ key: 'fcm_token', value: 'TEST_BROWSER_TOKEN' });
+    }
+    // Subscribe to authentication state and update FCM token/location
+    this.authService.currentUser$.subscribe(async (user) => {
+      if (user) {
+        // Get FCM token from Preferences (or request if not present)
+        const { value: token } = await Preferences.get({ key: 'fcm_token' });
+        if (token) {
+          // Send token and location to backend
+          await this.sendTokenToBackend(token);
+        }
+      }
+    });
+  }
+
+
+  async sendTokenToBackend(token: string) {
+    try {
+      const cognitoId = await this.getCognitoId();
+      if (!cognitoId) {
+        throw new Error('Cognito ID not found. User may not be authenticated.');
+      }
+      const location = await this.getCurrentLocation();
+      await this.notificationsService.saveTokenToDatabase(
+        token,
+        cognitoId,
+        location?.lat || 0,
+        location?.lng || 0
+      );
+      console.log('FCM token and location sent to backend!');
+    } catch (error) {
+      console.error('Error sending metadata to backend:', error);
     }
   }
 
@@ -49,7 +84,7 @@ export class AppComponent implements OnInit {
     // 3. Get the FCM token (send this to your backend)
     PushNotifications.addListener('registration', (token) => {
       console.log('FCM Token:', token.value);
-      this.saveTokenToDatabase(token.value);
+      this.sendTokenToBackend(token.value);
     });
 
     //Handle errors
@@ -89,32 +124,5 @@ export class AppComponent implements OnInit {
       lat: position.coords.latitude,
       lng: position.coords.longitude
     };
-  }
-
-  // Save token to database for notifications
-  async saveTokenToDatabase(token: string) {
-    console.log('Saving token to database:', token);
-    const { value: savedToken } = await Preferences.get({ key: 'fcm_token' });
-    if (savedToken === token) {
-      // If the token is already saved, no need to save again
-      return;
-    }
-    try {
-      const cognitoId = await this.getCognitoId();
-      if (!cognitoId) {
-        throw new Error('Cognito ID not found. User may not be authenticated.');
-      }
-      const location = await this.getCurrentLocation();
-      await this.notificationsService.saveTokenToDatabase(
-        token,
-        cognitoId,
-        location?.lat || 0,
-        location?.lng || 0
-      );
-      await Preferences.set({ key: 'fcm_token', value: token });
-      console.log('Token saved successfully!');
-    } catch (error) {
-      console.error('Error saving token:', error);
-    }
   }
 }
