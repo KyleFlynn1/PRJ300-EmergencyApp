@@ -1,4 +1,3 @@
-  
 import { Injectable } from '@angular/core';
 import { signUp, signIn, confirmSignUp, signOut, getCurrentUser, fetchAuthSession, resetPassword, confirmResetPassword, resendSignUpCode } from '@aws-amplify/auth';
 import { HttpClient, HttpHeaders } from '@angular/common/http';

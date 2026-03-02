@@ -1,4 +1,4 @@
 export const environment = {
-  apiBaseUrl: 'https://prj300emergecnyapp.freedynamicdns.net',
+  apiBaseUrl: 'http://localhost:3000',
   production: true
 };
