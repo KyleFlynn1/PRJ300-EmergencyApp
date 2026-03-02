@@ -43,6 +43,7 @@ export class HomePage implements ViewWillEnter {
   showWeatherAlertDetailModal: boolean = false;
   selectedAlert: any = null;
   selectedWeatherAlert: any = null;
+  isGuest: boolean = true;
 
   constructor(
     private alertService: Alert,
@@ -52,6 +53,8 @@ export class HomePage implements ViewWillEnter {
 
   // On component initialization fetch alerts and user location
   async ionViewWillEnter() {
+    this.isGuest = localStorage.getItem('guestMode') === 'true';
+
     await this.getAndSetUserLocation();
     const savedRadius = localStorage.getItem('alertRadius');
     if (savedRadius) {
@@ -159,6 +162,9 @@ export class HomePage implements ViewWillEnter {
 
   // Open and close report modal methods
   openReportModal() {
+    if (this.isGuest) {
+      return;
+    }
     this.showReportModal = true;
   }
 

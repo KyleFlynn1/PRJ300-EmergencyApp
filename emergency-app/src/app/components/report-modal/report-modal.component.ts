@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, input, effect } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, input, effect, NgZone } from '@angular/core';
 import { ModalController, IonicModule, AlertController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -29,6 +29,7 @@ export class ReportModalComponent implements OnInit {
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
+  isSubmitting = false;
 
   // FormGroup for the report form
   reportForm!: FormGroup;
@@ -67,7 +68,8 @@ export class ReportModalComponent implements OnInit {
     private alertService: Alert,
     private alertController: AlertController,
     private geolocationService: GeolocationService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private ngZone: NgZone
   ) {}
 
   async ngOnInit() {
@@ -177,6 +179,10 @@ export class ReportModalComponent implements OnInit {
   
   // Submit report
   async submitReport() {
+    if (this.isSubmitting) {
+      return;
+    }
+
     if (this.reportForm.invalid) {
       const alert = await this.alertController.create({
         header: 'Invalid Input',
@@ -266,22 +272,50 @@ export class ReportModalComponent implements OnInit {
     } else {
       formData.location = { address: 'Unknown Location' };
     }
+    this.isSubmitting = true;
+    let hasClosed = false;
+
+    const closeModalOnce = (payload: any) => {
+      if (hasClosed) {
+        return;
+      }
+      hasClosed = true;
+      this.ngZone.run(() => {
+        if (this.isNativeModal) {
+          this.closeModal.emit(payload);
+        } else {
+          this.modalController.dismiss(payload, 'confirm');
+        }
+      });
+    };
+
+    const fallbackCloseTimer = setTimeout(() => {
+      if (this.isSubmitting) {
+        this.isSubmitting = false;
+        closeModalOnce({ ...formData, pending: true });
+      }
+    }, 3500);
+
     this.alertService.addAlert(formData).subscribe({
       next: (response) => {
+        clearTimeout(fallbackCloseTimer);
+        this.isSubmitting = false;
         console.log("POST sent successfully:", response);
-        if (this.isNativeModal) {
-          this.closeModal.emit(response);
-        } else {
-          this.modalController.dismiss(response, 'confirm');
-        }
+        closeModalOnce(response);
       },
       error: async () => {
+        clearTimeout(fallbackCloseTimer);
+        this.isSubmitting = false;
         const alert = await this.alertController.create({
           header: 'Submission Failed',
           message: 'Could not submit the report. Please try again.',
           buttons: ['OK']
         });
         await alert.present();
+      },
+      complete: () => {
+        clearTimeout(fallbackCloseTimer);
+        this.isSubmitting = false;
       }
     });
   }
