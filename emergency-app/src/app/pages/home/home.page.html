@@ -182,7 +182,7 @@
           <div class="card-content">
 
             <div class="card-header">
-              <h3>{{ alert.headline }}</h3>
+              <h3>{{ alert.headline | slice:0:50 }}</h3>
               <span class="severity-badge" [ngStyle]="{ 'background': getAlertSeverityColor(alert.severity) }">
                 {{ alert.severity }}
               </span>

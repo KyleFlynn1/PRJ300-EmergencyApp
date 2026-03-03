@@ -294,7 +294,7 @@ export class ReportModalComponent implements OnInit {
         this.isSubmitting = false;
         closeModalOnce({ ...formData, pending: true });
       }
-    }, 3500);
+    }, 7500);
 
     this.alertService.addAlert(formData).subscribe({
       next: (response) => {
