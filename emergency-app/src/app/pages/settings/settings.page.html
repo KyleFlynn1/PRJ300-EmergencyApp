@@ -1,12 +1,11 @@
-<header class="app-header">
+<ion-header [translucent]="false" class="app-header">
   <div class="header-spacer"></div>
   <div class="header-row">
     <h1>Settings</h1>
   </div>
-</header>
+</ion-header>
 
-<div class="settings-page">
-  <!-- Dark Light Theme-->
+<ion-content>
   <div class="section settings-card">
     <h2>Appearance</h2>
     <!--Dark and Light theme settings-->
@@ -38,4 +37,4 @@
     <button class="auth-button secondary" *ngIf="!(currentUser$ | async)" routerLink="/signup">Sign Up</button>
     <button class="auth-button danger" *ngIf="currentUser$ | async" (click)="onLogout()">Log Out</button>
   </div>
-</div>
+</ion-content>

@@ -204,18 +204,28 @@ ion-title {
 }
 
 // App Header
+ion-header.app-header {
+  --background: var(--primary-background-colour);
+  --color: var(--primary-title-colour);
+
+  .header-spacer {
+    height: 0;
+  }
+}
+
 .app-header {
   background: var(--primary-background-colour);
 
   .header-spacer {
-    height: 50px;
+    height: env(safe-area-inset-top, 24px);
+    min-height: 16px;
   }
 
   .header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 8px 24px;
 
     h1 {
       margin: 0;
