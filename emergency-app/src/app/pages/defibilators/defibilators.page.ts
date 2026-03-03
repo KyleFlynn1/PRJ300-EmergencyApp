@@ -42,6 +42,13 @@ export class DefibilatorsPage implements ViewWillEnter {
   async ionViewWillEnter() {
     this.isGuest = localStorage.getItem('guestMode') === 'true';
 
+    if (this.isGuest) {
+      this.defibLocations = [];
+      this.pins = [];
+      this.activeDefibsCount = 0;
+      return;
+    }
+
     this.defibService.getDefibs().subscribe(defibs => {
       this.defibLocations = defibs.sort((a, b) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()

@@ -51,6 +51,7 @@ export class MapPage implements ViewWillEnter {
   selectedAlert: any = null;
   reportModalLocation?: { lat: number; lng: number; address: string };
   currentTimestamp: string = new Date().toISOString();
+  isGuest: boolean = true;
 
   // Filters
   selectedType = 'all'; // if its a fire or missing person etc
@@ -64,6 +65,8 @@ export class MapPage implements ViewWillEnter {
   ) {}
 
   ionViewWillEnter() {
+    this.isGuest = localStorage.getItem('guestMode') === 'true';
+
     this.alertService.getAlerts().subscribe((alerts) => {
       this.activeAlerts = alerts.sort(
         (a, b) =>

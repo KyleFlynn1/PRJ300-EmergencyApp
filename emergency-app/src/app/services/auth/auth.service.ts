@@ -11,7 +11,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   
-  private apiUrl = environment.apiBaseUrl + '/api/v1'; // Express API URL
+  private apiUrl = `${environment.apiBaseUrl.replace(/\/+$/, '')}/api/v1`; // Express API URL
 
   constructor(private http: HttpClient) {
     this.checkAuthStatus();

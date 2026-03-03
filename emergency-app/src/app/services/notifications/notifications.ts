@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { environment } from 'src/environments/environment';
-import { timeout } from 'rxjs';
-import { fetchAuthSession } from '@aws-amplify/auth';
+import { firstValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +13,7 @@ export class NotificationsService {
   async saveTokenToDatabase(fcmToken: string, cognitoId: string, userLatitude: number, userLongitude: number) {
     // Use AuthService's authenticated method and await the Observable
     const payload = {
+      cognitoId,
       fcmToken,
       location: {
         type: "Point",
@@ -23,8 +21,8 @@ export class NotificationsService {
       }
     };
     try {
-      const obs = await this.authService.makeAuthenticatedRequest(`/users/cognito/me`, 'PUT', payload);
-      const result = await obs.toPromise();
+      const obs = await this.authService.makeAuthenticatedRequest(`/users/cognito/sync`, 'POST', payload);
+      const result = await firstValueFrom(obs);
       console.log('[NotificationsService] Backend PUT result:', result);
       return result;
     } catch (error) {

@@ -1,9 +1,10 @@
 import { inject, Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Report } from 'src/app/interfaces/report.interface';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import { environment } from 'src/environments/environment.prod';
 import { Weather } from 'src/app/interfaces/weather.interface';
@@ -15,13 +16,14 @@ export class Alert {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private ngZone = inject(NgZone);
+  private readonly baseApiUrl = environment.apiBaseUrl.replace(/\/+$/, '');
   private readonly apiUrls = [
     // To use backend with mobile device get the laptop or computer ip and replace localhost with that ip address
-    `${environment.apiBaseUrl}/api/v1/alert`,
+    `${this.baseApiUrl}/api/v1/alert`,
   ];
   private apiUrl = this.apiUrls[0];
 
-  private weatherApiUrl = `${environment.apiBaseUrl}/api/v1/weather`;
+  private weatherApiUrl = `${this.baseApiUrl}/api/v1/weather`;
 
   constructor() {
     // If primary fails, switch to fallback

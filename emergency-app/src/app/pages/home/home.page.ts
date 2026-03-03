@@ -69,10 +69,12 @@ export class HomePage implements ViewWillEnter {
       this.filterAlertsInRadius();
       console.log('Filtered alerts in area:', this.activeAlertsInArea);
     });
-    this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
-      // Only use for import status, not for displaying cards
-      console.log('Active weather alerts:', weatherAlerts);
-    });
+    if (!this.isGuest) {
+      this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
+        // Only use for import status, not for displaying cards
+        console.log('Active weather alerts:', weatherAlerts);
+      });
+    }
     this.alertService.getAllWeatherAlerts().subscribe(allWeatherAlerts => {
       this.activeWeatherAlerts = allWeatherAlerts;
       console.log('All weather alerts:', this.activeWeatherAlerts);

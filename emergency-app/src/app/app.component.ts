@@ -55,9 +55,13 @@ export class AppComponent implements OnInit {
 
   async sendTokenToBackend(token: string) {
     try {
+      if (localStorage.getItem('guestMode') === 'true') {
+        return;
+      }
+
       const cognitoId = await this.getCognitoId();
       if (!cognitoId) {
-        throw new Error('Cognito ID not found. User may not be authenticated.');
+        return;
       }
       const location = await this.getCurrentLocation();
       await this.notificationsService.saveTokenToDatabase(
@@ -105,11 +109,6 @@ export class AppComponent implements OnInit {
 
   async getCognitoId(): Promise<string | null> {
     try {
-      const user = await this.authService['currentUserSubject']?.getValue?.();
-      if (user && user.username) {
-        return user.username;
-      }
-      // If not in BehaviorSubject, fetch from AuthService
       const currentUser = await this.authService.getCurrentUser();
       return currentUser?.username || null;
     } catch (error) {
