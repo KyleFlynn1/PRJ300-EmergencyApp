@@ -1,24 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { IonApp, IonRouterOutlet, IonIcon, IonContent } from '@ionic/angular/standalone';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { NotificationsService } from 'src/app/services/notifications/notifications';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Geolocation } from '@capacitor/geolocation';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive, IonContent],
+  imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive, IonContent, CommonModule],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  isOffline = false;
+  private pingInterval: any;
 
   constructor(
     private notificationsService: NotificationsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private ngZone: NgZone
   ) {
     // Load saved theme preference, default to light if not set
     const savedTheme = localStorage.getItem('theme');
@@ -31,7 +36,11 @@ export class AppComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Ping backend immediately, then every 10 seconds
+    await this.pingBackend();
+    this.pingInterval = setInterval(() => this.pingBackend(), 10000);
+
     const isWeb = Capacitor.getPlatform() === 'web';
     if (!isWeb) {
       this.initPush();
@@ -124,5 +133,20 @@ export class AppComponent implements OnInit {
       lat: position.coords.latitude,
       lng: position.coords.longitude
     };
+  }
+
+  private async pingBackend() {
+    const url = `${environment.apiBaseUrl}/api/v1/alert`;
+    try {
+      const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(5000) });
+      const wasOffline = this.isOffline;
+      this.ngZone.run(() => { this.isOffline = !res.ok && res.status !== 401 && res.status !== 403; });
+    } catch (err) {
+      this.ngZone.run(() => { this.isOffline = true; });
+    }
+  }
+
+  async ngOnDestroy() {
+    if (this.pingInterval) clearInterval(this.pingInterval);
   }
 }

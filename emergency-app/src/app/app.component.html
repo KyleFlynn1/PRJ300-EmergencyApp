@@ -1,5 +1,11 @@
 <ion-app>
-  <!--Side Navigation Menu 
+  <!-- Offline banner -->
+  <div class="offline-banner" *ngIf="isOffline">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    No connection right now
+  </div>
+
+   <!--Side Navigation Menu 
   <ion-menu contentId="main-content" class="app-menu" side="start">
     <ion-header>
       <ion-toolbar class="menu-toolbar">
