@@ -57,13 +57,16 @@ export class MapPage implements ViewWillEnter {
   selectedStatus = 'all'; // if its active or inactive , active is within last 24hours
   selectedSeverityFilter: string = 'all'; // the type of severity like low  etc
   
+  isGuest: boolean = true;
 
   constructor(
     private alertService: Alert,
     private menuController: MenuController,
   ) {}
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    this.isGuest = localStorage.getItem('guestMode') === 'true';
+
     this.alertService.getAlerts().subscribe((alerts) => {
       this.activeAlerts = alerts.sort(
         (a, b) =>
@@ -135,12 +138,18 @@ export class MapPage implements ViewWillEnter {
   // Open and close report modal methods
 
   openReportModal() {
+    if (this.isGuest) {
+      return;
+    }
     this.showReportModal = true;
     this.reportModalLocation = undefined;
   }
 
   // Open modal with pin location (from map)
   openReportModalWithLocation(lat: number, lng: number, address: string) {
+    if (this.isGuest) {
+      return;
+    }
     this.reportModalLocation = { lat, lng, address };
     this.showReportModal = true;
   }

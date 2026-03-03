@@ -74,8 +74,15 @@ export class HomePage implements ViewWillEnter {
       console.log('Active weather alerts:', weatherAlerts);
     });
     this.alertService.getAllWeatherAlerts().subscribe(allWeatherAlerts => {
-      this.activeWeatherAlerts = allWeatherAlerts;
-      console.log('All weather alerts:', this.activeWeatherAlerts);
+      // Filter out expired weather alerts - only show alerts where expires date >= today
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      this.activeWeatherAlerts = allWeatherAlerts.filter(alert => {
+        if (!alert.expires) return true; // Show alerts with no expiry
+        const expiresDate = new Date(alert.expires);
+        return expiresDate >= todayStart;
+      });
+      console.log('Active (non-expired) weather alerts:', this.activeWeatherAlerts);
     });
   }
   // Get and set user location, with user-friendly error handling
