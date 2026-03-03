@@ -4,7 +4,17 @@
     <h1>Map</h1>
   </div>
 </ion-header>
+
 <ion-content [fullscreen]="true" [scrollY]="false">
+  <!-- Pull to refresh page-->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="crescent"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
 
   <div class="section action-buttons-section">
     <div class="report-container" *ngIf="!isGuest">

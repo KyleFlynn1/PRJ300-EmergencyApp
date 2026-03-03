@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, MenuController } from '@ionic/angular';
+import { IonicModule, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
@@ -73,6 +73,15 @@ export class AlertsPage implements ViewWillEnter {
       this.loadMoreAlerts();
     });
   }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      // Any calls to load data go here
+      this.ionViewWillEnter(); // Refresh data when pulling down
+      event.target.complete();
+    }, 2000);
+  }  
 
   // Functions for handling filter changes
   onFilterChange(event: any) {

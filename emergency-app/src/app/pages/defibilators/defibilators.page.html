@@ -6,6 +6,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Pull to refresh page-->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="crescent"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
   <!-- Add Defibrillator Button -->
   <div class="section action-buttons-section">
     <div class="report-container" *ngIf="!isGuest">

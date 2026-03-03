@@ -9,6 +9,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Pull to refresh page-->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="crescent"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
   <!--Current Status section -->
   <div class="section">
     <h2>Current Status</h2>

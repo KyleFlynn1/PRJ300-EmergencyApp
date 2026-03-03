@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { WeatherDetailModalComponent } from 'src/app/components/weather-detail-modal/weather-detail-modal.component';
-import { ModalController, MenuController } from '@ionic/angular';
+import { ModalController, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
@@ -165,6 +165,15 @@ export class HomePage implements ViewWillEnter {
       );
       return distance <= this.userRadiusDistance;
     });
+  }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      // Any calls to load data go here
+      this.ionViewWillEnter(); // Refresh data when pulling down
+      event.target.complete();
+    }, 2000);
   }
 
   // Open and close report modal methods

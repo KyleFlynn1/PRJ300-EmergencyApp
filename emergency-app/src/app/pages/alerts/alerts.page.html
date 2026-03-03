@@ -6,79 +6,88 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-<div class="section">
-  <!--Search bar with date icon-->
-  <div class="search-container">
-    <ion-icon name="search-outline"></ion-icon>
-    <input 
-      type="search" 
-      class="native-select" 
-      placeholder="Search for Alert"
-      [value]="searchTerm"
-      (input)="onSearchChange($event)" />
-  </div>
-  
-  <!--Filter Buttons-->
-  <div class="filter-buttons" style="display:flex;justify-content:center;gap:8px;margin:12px 0;">
-    <button class="filter-button filter-all" [class.selected]="selectedSeverityFilter === 'all'" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-info" [class.selected]="selectedSeverityFilter === 'info'" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-low" [class.selected]="selectedSeverityFilter === 'low'" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-moderate" [class.selected]="selectedSeverityFilter === 'moderate'" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-    <button class="filter-button filter-high" [class.selected]="selectedSeverityFilter === 'high'" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
-    <button class="filter-button filter-urgent" [class.selected]="selectedSeverityFilter === 'urgent'" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
-  </div>
-
-  <!-- Alerts list -->
-  <div class="alerts-list feed-list" (scroll)="onScroll($event)">
-    <!-- No alerts message -->
-    <div *ngIf="alerts.length === 0" class="no-alerts-message">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      <span>No alerts found</span>
+  <!-- Pull to refresh page-->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="crescent"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="section">
+    <!--Search bar with date icon-->
+    <div class="search-container">
+      <ion-icon name="search-outline"></ion-icon>
+      <input 
+        type="search" 
+        class="native-select" 
+        placeholder="Search for Alert"
+        [value]="searchTerm"
+        (input)="onSearchChange($event)" />
     </div>
     
-    <!-- Alerts cards -->
-    <div 
-      *ngFor="let alert of alerts" 
-      class="native-feed-card"
-      (click)="openAlertDetailModal(alert)"
-      [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
-      <div class="card-inner">
-        <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
-        <div class="card-content">
-          <div class="card-header">
-            <h3>{{ alert.category }}</h3>
-            <span class="severity-badge">{{ alert.severity }}</span>
+    <!--Filter Buttons-->
+    <div class="filter-buttons" style="display:flex;justify-content:center;gap:8px;margin:12px 0;">
+      <button class="filter-button filter-all" [class.selected]="selectedSeverityFilter === 'all'" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-info" [class.selected]="selectedSeverityFilter === 'info'" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-low" [class.selected]="selectedSeverityFilter === 'low'" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-moderate" [class.selected]="selectedSeverityFilter === 'moderate'" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-high" [class.selected]="selectedSeverityFilter === 'high'" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
+      <button class="filter-button filter-urgent" [class.selected]="selectedSeverityFilter === 'urgent'" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
+    </div>
+
+    <!-- Alerts list -->
+    <div class="alerts-list feed-list" (scroll)="onScroll($event)">
+      <!-- No alerts message -->
+      <div *ngIf="alerts.length === 0" class="no-alerts-message">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>No alerts found</span>
+      </div>
+      
+      <!-- Alerts cards -->
+      <div 
+        *ngFor="let alert of alerts" 
+        class="native-feed-card"
+        (click)="openAlertDetailModal(alert)"
+        [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+        <div class="card-inner">
+          <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
+          <div class="card-content">
+            <div class="card-header">
+              <h3>{{ alert.category }}</h3>
+              <span class="severity-badge">{{ alert.severity }}</span>
+            </div>
+            <div class="description-text">
+              <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
+            </div>
+            <p class="detail-text">
+              <span class="detail-icon">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ getDistanceString(alert) }}
+              </span>
+              <span class="detail-icon">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ getFormattedTimestamp(alert.timestamp) }}
+              </span>
+            </p>
           </div>
-          <div class="description-text">
-            <p>{{ alert.notes ? (alert.notes | slice:0:80) : 'No description' }}<span *ngIf="alert.notes && alert.notes.length > 80">...</span></p>
-          </div>
-          <p class="detail-text">
-            <span class="detail-icon">
-              <ion-icon name="location-outline"></ion-icon>
-              {{ getDistanceString(alert) }}
-            </span>
-            <span class="detail-icon">
-              <ion-icon name="time-outline"></ion-icon>
-              {{ getFormattedTimestamp(alert.timestamp) }}
-            </span>
-          </p>
         </div>
       </div>
     </div>
   </div>
-</div>
-</ion-content>
+  </ion-content>
 
-<!-- Alert Detail Modal (native overlay) -->
-<div class="native-modal-overlay" *ngIf="showAlertDetailModal">
-  <div class="native-modal-content" [style.border-left]="'6px solid ' + getAlertSeverityColor(selectedAlert?.severity)">
-    <div class="modal-header">
-      <button class="close-button" (click)="closeAlertDetailModal()">
-        <ion-icon name="close"></ion-icon>
-      </button>
-    </div>
-    <div class="modal-body">
-      <app-alert-detail-modal [alert]="selectedAlert" [isNativeModal]="true"></app-alert-detail-modal>
+  <!-- Alert Detail Modal (native overlay) -->
+  <div class="native-modal-overlay" *ngIf="showAlertDetailModal">
+    <div class="native-modal-content" [style.border-left]="'6px solid ' + getAlertSeverityColor(selectedAlert?.severity)">
+      <div class="modal-header">
+        <button class="close-button" (click)="closeAlertDetailModal()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-alert-detail-modal [alert]="selectedAlert" [isNativeModal]="true"></app-alert-detail-modal>
+      </div>
     </div>
   </div>
-</div>

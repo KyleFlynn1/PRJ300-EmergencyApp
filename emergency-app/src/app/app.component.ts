@@ -60,6 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
 
 
   async sendTokenToBackend(token: string) {

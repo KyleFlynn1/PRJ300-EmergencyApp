@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, MenuController } from '@ionic/angular';
+import { IonicModule, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { MapComponent } from 'src/app/components/map/map.component';
 import {
   getAlertSeverityColor,
@@ -134,6 +134,17 @@ export class MapPage implements ViewWillEnter {
       this.mapComponent.refreshPins();
     }
   }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      // Any calls to load data go here
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
+      event.target.complete();
+    }, 2000);
+  }  
 
   // Open and close report modal methods
 
