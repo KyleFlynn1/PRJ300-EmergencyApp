@@ -103,6 +103,8 @@
     --card-detail-text: #888;
     --card-badge-text: #aaa;
     --card-badge-background: rgba(255, 255, 255, 0.15);
+
+    --ion-text-color: var(--primary-text-colour);
   }
 }
 
@@ -131,6 +133,8 @@
   --card-detail-text: #888;
   --card-badge-text: #aaa;
   --card-badge-background: rgba(255, 255, 255, 0.15);
+
+  --ion-text-color: var(--primary-text-colour);
 }
 
 // Light mode class
@@ -160,6 +164,8 @@
   --card-detail-text: #868585;
   --card-badge-text: #777777;
   --card-badge-background: rgba(0, 0, 0, 0.15);
+
+  --ion-text-color: var(--primary-text-colour);
 }
 
 body,
@@ -1841,3 +1847,93 @@ ion-title {
   touch-action: pan-y;
 }
 
+// ─── Animations ─────────────────────────────────────────────────────────────
+
+// Skeleton card layout (ion-skeleton-text is Ionic built-in)
+.skeleton-card {
+  pointer-events: none;
+
+  .skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+}
+
+// Scroll shadow — shows a gradient shadow at top of list when there's content above
+.scroll-shadow-wrapper {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 18px;
+    background: linear-gradient(
+      to bottom,
+      var(--primary-background-colour) 0%,
+      transparent 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &.scrolled::before {
+    opacity: 1;
+  }
+}
+
+// Filter button selected state scale
+.filter-button {
+  &.selected {
+    transform: scale(1.12);
+    transition: transform 0.18s ease;
+  }
+}
+
+// Feed cards and buttons — use ion-ripple-effect (Ionic built-in)
+// position:relative + overflow:hidden contain the ripple; --color uses text-colour rgb so
+// it's visible in both light and dark themes (text is dark on light bg / light on dark bg)
+.native-feed-card,
+.native-report-button,
+.native-defib-button,
+.view-all-alerts-button,
+.filter-button,
+.nav-btn,
+.header-icon-btn {
+  position: relative;
+  overflow: hidden;
+
+  ion-ripple-effect {
+    --color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.18);
+  }
+}
+
+// Card entrance animation(triggers naturally once skeleton is replaced by real data)
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.native-feed-card {
+  animation: cardFadeIn 0.28s ease both;
+
+  // Light stagger for first 8 cards
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.045}s;
+    }
+  }
+}

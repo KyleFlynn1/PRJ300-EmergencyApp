@@ -39,6 +39,8 @@ export class AlertsPage implements ViewWillEnter {
   // Native alert detail modal state
   showAlertDetailModal: boolean = false;
   selectedAlert: any = null;
+  isLoading: boolean = true;
+  isListScrolled: boolean = false;
 
   // Pagination using infinite scroll ionic component
   pageSize: number = 20;
@@ -71,14 +73,15 @@ export class AlertsPage implements ViewWillEnter {
       this.currentPage = 0;
       this.alerts = [];
       this.applyFilters(); // Re-apply current filters (severity, time, search) after refresh
+      this.isLoading = false;
     });
   }
 
   // Refresh on pull down
   handleRefresh(event: RefresherCustomEvent) {
     setTimeout(() => {
-      // Any calls to load data go here
-      this.ionViewWillEnter(); // Refresh data when pulling down
+      this.isLoading = true;
+      this.ionViewWillEnter();
       event.target.complete();
     }, 2000);
   }  
@@ -195,6 +198,8 @@ export class AlertsPage implements ViewWillEnter {
   onScroll(event: any) {
     const element = event.target;
     const threshold = 100; // Load more when 100px from bottom
+
+    this.isListScrolled = element.scrollTop > 0;
 
     if (
       element.scrollHeight - element.scrollTop - element.clientHeight <

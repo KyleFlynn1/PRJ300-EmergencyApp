@@ -40,28 +40,44 @@
     
     <!--Filter Buttons-->
     <div class="filter-buttons" style="display:flex;justify-content:center;gap:8px;margin:12px 0;">
-      <button class="filter-button filter-all" [class.selected]="selectedSeverityFilter === 'all'" (click)="onFilterChange('all')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-      <button class="filter-button filter-info" [class.selected]="selectedSeverityFilter === 'info'" (click)="onFilterChange('info')"><ion-icon name="information-circle-outline"></ion-icon></button>
-      <button class="filter-button filter-low" [class.selected]="selectedSeverityFilter === 'low'" (click)="onFilterChange('low')"><ion-icon name="checkmark-circle-outline"></ion-icon></button>
-      <button class="filter-button filter-moderate" [class.selected]="selectedSeverityFilter === 'moderate'" (click)="onFilterChange('moderate')"><ion-icon name="alert-circle-outline"></ion-icon></button>
-      <button class="filter-button filter-high" [class.selected]="selectedSeverityFilter === 'high'" (click)="onFilterChange('high')"><ion-icon name="warning-outline"></ion-icon></button>
-      <button class="filter-button filter-urgent" [class.selected]="selectedSeverityFilter === 'urgent'" (click)="onFilterChange('urgent')"><ion-icon name="alarm-outline"></ion-icon></button>
+      <button class="filter-button filter-all ion-activatable" [class.selected]="selectedSeverityFilter === 'all'" (click)="onFilterChange('all')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="alert-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-info ion-activatable" [class.selected]="selectedSeverityFilter === 'info'" (click)="onFilterChange('info')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="information-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-low ion-activatable" [class.selected]="selectedSeverityFilter === 'low'" (click)="onFilterChange('low')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="checkmark-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-moderate ion-activatable" [class.selected]="selectedSeverityFilter === 'moderate'" (click)="onFilterChange('moderate')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="alert-circle-outline"></ion-icon></button>
+      <button class="filter-button filter-high ion-activatable" [class.selected]="selectedSeverityFilter === 'high'" (click)="onFilterChange('high')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="warning-outline"></ion-icon></button>
+      <button class="filter-button filter-urgent ion-activatable" [class.selected]="selectedSeverityFilter === 'urgent'" (click)="onFilterChange('urgent')"><ion-ripple-effect></ion-ripple-effect><ion-icon name="alarm-outline"></ion-icon></button>
     </div>
 
     <!-- Alerts list -->
+    <div class="scroll-shadow-wrapper" [class.scrolled]="isListScrolled">
     <div class="alerts-list feed-list" (scroll)="onScroll($event)">
+      <!-- Skeleton loading cards -->
+      <ng-container *ngIf="isLoading">
+        <div class="native-feed-card skeleton-card" *ngFor="let s of [1,2,3,4,5]">
+          <div class="card-inner">
+            <ion-skeleton-text animated class="skeleton-icon"></ion-skeleton-text>
+            <div class="card-content" style="flex:1">
+              <ion-skeleton-text animated style="width:50%;height:14px;border-radius:6px;margin-bottom:8px"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width:85%;height:11px;border-radius:6px;margin-bottom:6px"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width:65%;height:10px;border-radius:6px"></ion-skeleton-text>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
       <!-- No alerts message -->
-      <div *ngIf="alerts.length === 0" class="no-alerts-message">
+      <div *ngIf="!isLoading && alerts.length === 0" class="no-alerts-message">
         <ion-icon name="information-circle-outline"></ion-icon>
         <span>No alerts found</span>
       </div>
       
       <!-- Alerts cards -->
       <div 
-        *ngFor="let alert of alerts" 
-        class="native-feed-card"
+        *ngFor="let alert of alerts; let i = index"
+        class="native-feed-card ion-activatable"
         (click)="openAlertDetailModal(alert)"
         [ngStyle]="{ 'borderColor': getAlertSeverityColor(alert.severity) }">
+        <ion-ripple-effect></ion-ripple-effect>
         <div class="card-inner">
           <ion-icon [name]="getIcon(alert.category)" [style.background]="getAlertSeverityColor(alert.severity)" class="card-icon"></ion-icon>
           <div class="card-content">
@@ -86,6 +102,7 @@
         </div>
       </div>
     </div>
+    </div> <!-- end scroll-shadow-wrapper -->
   </div>
   </ion-content>
 

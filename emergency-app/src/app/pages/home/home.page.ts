@@ -44,6 +44,8 @@ export class HomePage implements ViewWillEnter {
   selectedAlert: any = null;
   selectedWeatherAlert: any = null;
   isGuest: boolean = true;
+  isLoading: boolean = true;
+  isWeatherLoading: boolean = true;
 
   constructor(
     private alertService: Alert,
@@ -67,6 +69,7 @@ export class HomePage implements ViewWillEnter {
       );
       this.activeAlertsCount = this.activeAlerts.length;
       this.filterAlertsInRadius();
+      this.isLoading = false;
       console.log('Filtered alerts in area:', this.activeAlertsInArea);
     });
     this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
@@ -82,6 +85,7 @@ export class HomePage implements ViewWillEnter {
         const expiresDate = new Date(alert.expires);
         return expiresDate >= todayStart;
       });
+      this.isWeatherLoading = false;
       console.log('Active (non-expired) weather alerts:', this.activeWeatherAlerts);
     });
   }
@@ -170,8 +174,9 @@ export class HomePage implements ViewWillEnter {
   // Refresh on pull down
   handleRefresh(event: RefresherCustomEvent) {
     setTimeout(() => {
-      // Any calls to load data go here
-      this.ionViewWillEnter(); // Refresh data when pulling down
+      this.isLoading = true;
+      this.isWeatherLoading = true;
+      this.ionViewWillEnter();
       event.target.complete();
     }, 2000);
   }
