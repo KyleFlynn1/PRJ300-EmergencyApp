@@ -16,15 +16,26 @@
     </ion-refresher-content>
   </ion-refresher>
   <div class="section">
-    <!--Search bar with date icon-->
-    <div class="search-container">
-      <ion-icon name="search-outline"></ion-icon>
-      <input 
-        type="search" 
-        class="native-select" 
-        placeholder="Search for Alert"
-        [value]="searchTerm"
-        (input)="onSearchChange($event)" />
+    <!--Search bar with time filter-->
+    <div class="search-row">
+      <div class="search-container">
+        <ion-icon name="search-outline"></ion-icon>
+        <input 
+          type="search" 
+          class="native-select" 
+          placeholder="Search for Alert"
+          [value]="searchTerm"
+          (input)="onSearchChange($event)" />
+      </div>
+      <div class="time-filter-container">
+        <select [(ngModel)]="selectedTimeFilter" (change)="applyFilters()" class="styled-type-select">
+          <option value="all">All</option>
+          <option value="24h">24 Hours</option>
+          <option value="48h">48 Hours</option>
+          <option value="72h">72 Hours</option>
+          <option value="7d">7 Days</option>
+        </select>
+      </div>
     </div>
     
     <!--Filter Buttons-->

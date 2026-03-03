@@ -34,6 +34,7 @@ export class AlertsPage implements ViewWillEnter {
   // Filtering state stored here
   selectedSeverityFilter: string = 'all';
   searchTerm: string = '';
+  selectedTimeFilter: string = 'all';
 
   // Native alert detail modal state
   showAlertDetailModal: boolean = false;
@@ -66,11 +67,10 @@ export class AlertsPage implements ViewWillEnter {
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
       this.allAlerts = alerts;
-      this.filteredAlerts = alerts;
       this.infiniteScrollDisabled = false;
       this.currentPage = 0;
       this.alerts = [];
-      this.loadMoreAlerts();
+      this.applyFilters(); // Re-apply current filters (severity, time, search) after refresh
     });
   }
 
@@ -119,6 +119,27 @@ export class AlertsPage implements ViewWillEnter {
           alert.severity.toLowerCase() ===
           this.selectedSeverityFilter.toLowerCase(),
       );
+    }
+
+    if(this.selectedTimeFilter !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter((alert) => {
+        const alertTime = new Date(alert.timestamp);
+        const hoursDiff = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+        if(this.selectedTimeFilter === '24h') {
+          return hoursDiff <= 24;
+        }
+        if(this.selectedTimeFilter === '48h') {
+          return hoursDiff <= 24 * 2;
+        }
+        if(this.selectedTimeFilter === '72h') {
+          return hoursDiff <= 24 * 3;
+        }
+        if(this.selectedTimeFilter === 'last7Days') {
+          return hoursDiff <= 24 * 7;
+        }
+        return true;
+      });
     }
 
     // Apply search filter
