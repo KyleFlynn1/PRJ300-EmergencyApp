@@ -11,7 +11,8 @@ import { Clipboard } from '@capacitor/clipboard';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import XYZ from 'ol/source/XYZ';
+import { environment } from 'src/environments/environment.prod';
 import { fromLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
@@ -19,6 +20,8 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
 
+const TILE_LIGHT = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
+const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 
 @Component({
   selector: 'app-alert-detail-modal',
@@ -27,7 +30,10 @@ import { Icon as OLIcon, Style } from 'ol/style';
   imports: [IonicModule, CommonModule, RouterModule, ReportModalComponent],
   standalone: true,
 })
+
 export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
+
+
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
@@ -38,6 +44,8 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   
   // OpenLayers map instance
   map?: Map;
+  tileSource?: XYZ;
+  themeObserver?: MutationObserver;
 
   //  inject services required
   constructor(
@@ -68,14 +76,19 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
     const lon = this.alert?.location?.lng ?? -8.0;
     const lat = this.alert?.location?.lat ?? 53.4;
 
-    const tileLayer = new TileLayer({ source: new OSM() });
+    const isDark = document.body.classList.contains('dark');
+    this.tileSource = new XYZ({
+      url: isDark ? TILE_DARK : TILE_LIGHT,
+      attributions: '\u00a9 <a href="https://stadiamaps.com/">Stadia Maps</a> \u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      maxZoom: 20,
+      tilePixelRatio: 2
+    });
+    const tileLayer = new TileLayer({ source: this.tileSource });
 
     // Create marker for the alert location
     const feature = new Feature({
       geometry: new Point(fromLonLat([lon, lat]))
     });
-
-
     // Use the same SVG pin style as the main map
     const color = getAlertSeverityColor(this.alert?.severity);
     const svgUrl = getCircleAlertSVG(color);
@@ -90,7 +103,6 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
         })
       })
     );
-
     const markerLayer = new VectorLayer({
       source: new VectorSource({ features: [feature] })
     });
@@ -103,6 +115,13 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
         zoom: 15 // Zoomed in for alert detail
       })
     });
+
+    // Watch for theme class changes and swap tile URL
+    this.themeObserver = new MutationObserver(() => {
+      const dark = document.body.classList.contains('dark');
+      this.tileSource?.setUrl(dark ? TILE_DARK : TILE_LIGHT);
+    });
+    this.themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   // COPY or share alert details to clipboradd

@@ -1,10 +1,10 @@
 import { Component, AfterViewInit, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
-import { IonicModule, ModalController } from "@ionic/angular";
+import { IonicModule } from "@ionic/angular";
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import XYZ from 'ol/source/XYZ';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
@@ -12,8 +12,12 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon, Style, Circle as CircleStyle, RegularShape, Fill, Stroke } from 'ol/style';
 import { getAlertSeverityColor, getCircleAlertSVG } from 'src/app/utils/modalUtil';
-import { Alert } from 'src/app/services/alerts/alert';
 import { Circle as OlCircle } from 'ol/geom';
+import { environment } from 'src/environments/environment.prod';
+
+
+const TILE_LIGHT = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
+const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 
 @Component({
   selector: 'app-map-component',
@@ -30,8 +34,11 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
         this.map.setTarget(undefined);
         this.map = undefined;
       }
+    this.themeObserver?.disconnect();
     }
   map: Map | undefined;
+  tileSource: XYZ | undefined;
+  themeObserver: MutationObserver | undefined;
 
   // Emit selected alert to parent (no window events needed)
   @Output() alertSelected = new EventEmitter<any>();
@@ -51,9 +58,7 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
   droppedPin?: { lon: number; lat: number; address?: string };
 
   constructor(
-    private alertService: Alert,
     private geolocationService: GeolocationService,
-    private modalController: ModalController
   ) {}
 
 
@@ -215,7 +220,16 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
       target: targetElement,
       layers: [
         new TileLayer({
-          source: new OSM(),
+          source: (() => {
+                    const isDark = document.body.classList.contains('dark');
+            this.tileSource = new XYZ({
+              url: isDark ? TILE_DARK : TILE_LIGHT,
+              attributions: '\u00a9 <a href="https://stadiamaps.com/">Stadia Maps</a> \u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+              maxZoom: 20,
+              tilePixelRatio: 2
+            });
+            return this.tileSource;
+          })()
         }),
       ],
       view: new View({
@@ -223,6 +237,13 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
         zoom: 13,
       }),
     });
+
+    // Watch for theme class changes on <html> and swap tile URL
+    this.themeObserver = new MutationObserver(() => {
+      const dark = document.body.classList.contains('dark');
+      this.tileSource?.setUrl(dark ? TILE_DARK : TILE_LIGHT);
+    });
+    this.themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     const map = this.map;
     if (!map) return;

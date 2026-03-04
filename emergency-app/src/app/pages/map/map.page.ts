@@ -81,6 +81,9 @@ export class MapPage implements ViewWillEnter {
           title: alert.category || 'Alert',
           data: alert,
         }));
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
     });
   }
 
