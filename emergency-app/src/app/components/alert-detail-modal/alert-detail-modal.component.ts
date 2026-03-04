@@ -41,6 +41,8 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;
   @Input() alert?: Report;
+
+  isGuest: boolean = localStorage.getItem('guestMode') === 'true';
   
   // OpenLayers map instance
   map?: Map;

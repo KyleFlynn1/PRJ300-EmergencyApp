@@ -164,14 +164,17 @@ async forgotPasswordSubmit(email: string, code: string, newPassword: string) {
   }
 
   // Returns the current Cognito user 
-  async getCurrentUser(): Promise<any> {
+    async getCurrentUser(): Promise<any> {
     let user = this.currentUserSubject.getValue();
-    if (user) {
+    
+    // Validate it's actually a user object, not a signIn response
+    if (user && user.userId) {
       localStorage.removeItem('guestMode');
       return user;
     }
+
     try {
-      user = await getCurrentUser();
+      user = await getCurrentUser(); // Amplify's getCurrentUser
       localStorage.removeItem('guestMode');
       this.currentUserSubject.next(user);
       return user;

@@ -115,13 +115,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async getCognitoId(): Promise<string | null> {
     try {
-      const user = await this.authService['currentUserSubject']?.getValue?.();
-      if (user && user.username) {
-        return user.username;
-      }
-      // If not in BehaviorSubject, fetch from AuthService
       const currentUser = await this.authService.getCurrentUser();
-      return currentUser?.username || null;
+console.log('Full user object:', JSON.stringify(currentUser));
+      return currentUser?.userId || currentUser?.username || null;
     } catch (error) {
       console.error('Error getting Cognito ID:', error);
       return null;
