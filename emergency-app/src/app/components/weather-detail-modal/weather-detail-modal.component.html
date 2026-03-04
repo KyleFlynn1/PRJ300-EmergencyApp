@@ -63,14 +63,13 @@
       </div>
     </div>
 
-    <div class="detail-section" *ngIf="weather?.author || weather?.pubdate">
+    <div class="detail-section" *ngIf="weather?.author || weather?.pubDate">
       <div class="info-row">
         <ion-icon name="calendar-outline"></ion-icon>
         <div class="info-content">
           <p class="label">Issued</p>
           <p class="value">
-            <span *ngIf="weather?.author"><ion-icon name="person-outline"></ion-icon> {{ weather?.author }}</span>
-            <span *ngIf="weather?.pubdate">{{ weather?.pubdate | date:'EEE d MMM, HH:mm' }}</span>
+            <span *ngIf="weather?.pubDate">{{ weather?.pubDate | date:'d MMM, HH:mm' }}</span>
           </p>
         </div>
       </div>

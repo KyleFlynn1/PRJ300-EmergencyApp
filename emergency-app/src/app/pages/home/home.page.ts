@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { WeatherDetailModalComponent } from 'src/app/components/weather-detail-modal/weather-detail-modal.component';
-import { ModalController, MenuController } from '@ionic/angular';
+import { ModalController, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
@@ -44,6 +44,8 @@ export class HomePage implements ViewWillEnter {
   selectedAlert: any = null;
   selectedWeatherAlert: any = null;
   isGuest: boolean = true;
+  isLoading: boolean = true;
+  isWeatherLoading: boolean = true;
 
   constructor(
     private alertService: Alert,
@@ -67,6 +69,7 @@ export class HomePage implements ViewWillEnter {
       );
       this.activeAlertsCount = this.activeAlerts.length;
       this.filterAlertsInRadius();
+      this.isLoading = false;
       console.log('Filtered alerts in area:', this.activeAlertsInArea);
     });
     this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
@@ -82,6 +85,7 @@ export class HomePage implements ViewWillEnter {
         const expiresDate = new Date(alert.expires);
         return expiresDate >= todayStart;
       });
+      this.isWeatherLoading = false;
       console.log('Active (non-expired) weather alerts:', this.activeWeatherAlerts);
     });
   }
@@ -165,6 +169,16 @@ export class HomePage implements ViewWillEnter {
       );
       return distance <= this.userRadiusDistance;
     });
+  }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      this.isLoading = true;
+      this.isWeatherLoading = true;
+      this.ionViewWillEnter();
+      event.target.complete();
+    }, 2000);
   }
 
   // Open and close report modal methods

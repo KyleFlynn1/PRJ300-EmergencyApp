@@ -51,7 +51,7 @@ export class WeatherDetailModalComponent  implements OnInit {
       `Certainty: ${weather?.certainty || 'N/A'}\n` +
       (weather?.areaDesc ? `Area: ${weather.areaDesc}\n` : '') +
       (weather?.author ? `Author: ${weather.author}\n` : '') +
-      (weather?.pubdate ? `Issued: ${(new Date(weather.pubdate)).toLocaleString()}\n` : '') +
+      (weather?.pubDate ? `Issued: ${(new Date(weather.pubDate)).toLocaleString()}\n` : '') +
       (weather?.guid ? `Official Alert: ${weather.guid}` : '');
 
     await Clipboard.write({

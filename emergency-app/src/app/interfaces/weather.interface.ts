@@ -6,7 +6,7 @@ export interface Weather {
     author: string;
     category: string;
     guid: string;
-    pubdate: string;
+    pubDate: string;
     event: string;
     headline: string;
     urgency: string;

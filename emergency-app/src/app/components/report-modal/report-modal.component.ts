@@ -31,6 +31,11 @@ export class ReportModalComponent implements OnInit {
   showAlert = false;
   isSubmitting = false;
 
+  // Address autocomplete
+  addressSuggestions: { lat: number; lng: number; address: string }[] = [];
+  isLoadingSuggestions = false;
+  private addressDebounce: any = null;
+
   // FormGroup for the report form
   reportForm!: FormGroup;
 
@@ -149,6 +154,33 @@ export class ReportModalComponent implements OnInit {
     } catch (error) {
       return false;
     }
+  }
+
+  // Triggered on every keystroke in the custom address input
+  onAddressInput(value: string) {
+    clearTimeout(this.addressDebounce);
+    if (!value || value.trim().length < 3) {
+      this.addressSuggestions = [];
+      return;
+    }
+    this.isLoadingSuggestions = true;
+    this.addressDebounce = setTimeout(async () => {
+      this.addressSuggestions = await this.geolocationService.searchAddressSuggestions(value.trim());
+      this.isLoadingSuggestions = false;
+    }, 400);
+  }
+
+  // Called when user picks a suggestion from the dropdown
+  selectAddressSuggestion(suggestion: { lat: number; lng: number; address: string }) {
+    this.reportForm.patchValue({ customAddress: suggestion.address });
+    this.addressSuggestions = [];
+    this.isLoadingSuggestions = false;
+    clearTimeout(this.addressDebounce);
+  }
+
+  clearAddressSuggestions() {
+    // Small delay so a tap on a suggestion fires before the list disappears
+    setTimeout(() => { this.addressSuggestions = []; }, 200);
   }
 
   // Close modal

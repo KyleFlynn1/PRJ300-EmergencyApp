@@ -83,11 +83,24 @@
       <!-- Custom Address Input (shown only if override is checked) -->
       <div class="form-group" *ngIf="overrideLocation?.value">
         <label>Custom Address</label>
-        <input 
-          type="text" 
+        <input
+          type="text"
           formControlName="customAddress"
           class="native-select"
-          placeholder="Enter custom address" />
+          placeholder="Type to search..."
+          autocomplete="off"
+          (input)="onAddressInput($any($event.target).value)"
+          (blur)="clearAddressSuggestions()" />
+        <div class="address-suggestions" *ngIf="isLoadingSuggestions || addressSuggestions.length > 0">
+          <div *ngIf="isLoadingSuggestions" class="suggestion-loading">Searching...</div>
+          <div
+            *ngFor="let s of addressSuggestions"
+            class="suggestion-item"
+            (mousedown)="selectAddressSuggestion(s)">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{ s.address }}</span>
+          </div>
+        </div>
       </div>
 
       <div class="form-actions">

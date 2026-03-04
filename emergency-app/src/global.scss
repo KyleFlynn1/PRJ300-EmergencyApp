@@ -73,6 +73,8 @@
   --card-detail-text: #999;
   --card-badge-text: #777;
   --card-badge-background: rgba(0, 0, 0, 0.15);
+
+  --ion-text-color: var(--primary-text-colour);
 }
 
 // Dark mode if device sttings prefer dark
@@ -101,6 +103,8 @@
     --card-detail-text: #888;
     --card-badge-text: #aaa;
     --card-badge-background: rgba(255, 255, 255, 0.15);
+
+    --ion-text-color: var(--primary-text-colour);
   }
 }
 
@@ -129,6 +133,8 @@
   --card-detail-text: #888;
   --card-badge-text: #aaa;
   --card-badge-background: rgba(255, 255, 255, 0.15);
+
+  --ion-text-color: var(--primary-text-colour);
 }
 
 // Light mode class
@@ -158,6 +164,8 @@
   --card-detail-text: #868585;
   --card-badge-text: #777777;
   --card-badge-background: rgba(0, 0, 0, 0.15);
+
+  --ion-text-color: var(--primary-text-colour);
 }
 
 body,
@@ -196,18 +204,28 @@ ion-title {
 }
 
 // App Header
+ion-header.app-header {
+  --background: var(--primary-background-colour);
+  --color: var(--primary-title-colour);
+
+  .header-spacer {
+    height: 0;
+  }
+}
+
 .app-header {
   background: var(--primary-background-colour);
 
   .header-spacer {
-    height: 50px;
+    height: env(safe-area-inset-top, 24px);
+    min-height: 16px;
   }
 
   .header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 8px 24px;
 
     h1 {
       margin: 0;
@@ -343,12 +361,20 @@ ion-title {
   }
 }
 
+/* Search row - search on left, filter on right */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 /* Search */
 .search-container {
-  margin-bottom: 16px;
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
 
   ion-icon {
     position: absolute;
@@ -362,21 +388,43 @@ ion-title {
     width: 100%;
     padding: 12px 16px 12px 44px;
     border-radius: 12px;
-    border: 1px solid #e0e0e0;
-    background: #f8f8f8;
-    color: #333333;
+    border: 1px solid var(--card-detail-text);
+    background: var(--card-background);
+    color: var(--primary-text-colour);
     font-size: 15px;
     font-weight: 400;
     transition: all 0.2s ease;
 
     &::placeholder {
-      color: #999999;
+      color: var(--card-detail-text);
     }
 
     &:focus {
       outline: none;
-      background: #ffffff;
-      border-color: #cccccc;
+      border-color: var(--primary-button-colour);
+    }
+  }
+}
+
+.time-filter-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  .styled-type-select {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--card-detail-text);
+    background: var(--card-background);
+    color: var(--primary-text-colour);
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-button-colour);
     }
   }
 }
@@ -1808,3 +1856,138 @@ ion-title {
   cursor: grab;
   touch-action: pan-y;
 }
+
+// ─── Animations ─────────────────────────────────────────────────────────────
+
+// Skeleton card layout (ion-skeleton-text is Ionic built-in)
+.skeleton-card {
+  pointer-events: none;
+
+  .skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+}
+
+// Scroll shadow — shows a gradient shadow at top of list when there's content above
+.scroll-shadow-wrapper {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 18px;
+    background: linear-gradient(
+      to bottom,
+      var(--primary-background-colour) 0%,
+      transparent 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &.scrolled::before {
+    opacity: 1;
+  }
+}
+
+// Filter button selected state scale
+.filter-button {
+  &.selected {
+    transform: scale(1.12);
+    transition: transform 0.18s ease;
+  }
+}
+
+.address-suggestions {
+  margin-top: 4px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card-background);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-loading {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--card-detail-text);
+  text-align: center;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  touch-action: manipulation;
+
+  ion-icon {
+    font-size: 17px;
+    color: var(--card-detail-text);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--card-title-text);
+    word-break: break-word;
+  }
+
+}
+
+
+// Feed cards and buttons — use ion-ripple-effect (Ionic built-in)
+// position:relative + overflow:hidden contain the ripple; --color uses text-colour rgb so
+// it's visible in both light and dark themes (text is dark on light bg / light on dark bg)
+.native-feed-card,
+.native-report-button,
+.native-defib-button,
+.view-all-alerts-button,
+.filter-button,
+.nav-btn,
+.header-icon-btn {
+  position: relative;
+  overflow: hidden;
+
+  ion-ripple-effect {
+    --color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.18);
+  }
+}
+
+// Card entrance animation(triggers naturally once skeleton is replaced by real data)
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.native-feed-card {
+  animation: cardFadeIn 0.28s ease both;
+
+  // Light stagger for first 8 cards
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.045}s;
+    }
+  }
+}
+

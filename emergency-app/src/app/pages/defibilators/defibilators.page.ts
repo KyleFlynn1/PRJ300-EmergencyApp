@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, MenuController } from '@ionic/angular';
+import { IonicModule, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { AddDefibModalComponent } from 'src/app/components/add-defib-modal/add-defib-modal.component';
 import { DefibService } from 'src/app/services/defib/defib';
 import { MapComponent } from 'src/app/components/map/map.component';
@@ -98,6 +98,17 @@ export class DefibilatorsPage implements ViewWillEnter {
       this.mapComponent.refreshPins();
     }
   }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      // Any calls to load data go here
+      if (this.mapComponent) {
+        this.mapComponent.refreshPins();
+      }
+      event.target.complete();
+    }, 2000);
+  }  
 
   
   // Open and close add defibrillator modal

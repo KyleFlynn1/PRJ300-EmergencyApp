@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, MenuController } from '@ionic/angular';
+import { IonicModule, MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
@@ -34,10 +34,13 @@ export class AlertsPage implements ViewWillEnter {
   // Filtering state stored here
   selectedSeverityFilter: string = 'all';
   searchTerm: string = '';
+  selectedTimeFilter: string = 'all';
 
   // Native alert detail modal state
   showAlertDetailModal: boolean = false;
   selectedAlert: any = null;
+  isLoading: boolean = true;
+  isListScrolled: boolean = false;
 
   // Pagination using infinite scroll ionic component
   pageSize: number = 20;
@@ -66,13 +69,22 @@ export class AlertsPage implements ViewWillEnter {
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
       this.allAlerts = alerts;
-      this.filteredAlerts = alerts;
       this.infiniteScrollDisabled = false;
       this.currentPage = 0;
       this.alerts = [];
-      this.loadMoreAlerts();
+      this.applyFilters(); // Re-apply current filters (severity, time, search) after refresh
+      this.isLoading = false;
     });
   }
+
+  // Refresh on pull down
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      this.isLoading = true;
+      this.ionViewWillEnter();
+      event.target.complete();
+    }, 2000);
+  }  
 
   // Functions for handling filter changes
   onFilterChange(event: any) {
@@ -110,6 +122,27 @@ export class AlertsPage implements ViewWillEnter {
           alert.severity.toLowerCase() ===
           this.selectedSeverityFilter.toLowerCase(),
       );
+    }
+
+    if(this.selectedTimeFilter !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter((alert) => {
+        const alertTime = new Date(alert.timestamp);
+        const hoursDiff = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
+        if(this.selectedTimeFilter === '24h') {
+          return hoursDiff <= 24;
+        }
+        if(this.selectedTimeFilter === '48h') {
+          return hoursDiff <= 24 * 2;
+        }
+        if(this.selectedTimeFilter === '72h') {
+          return hoursDiff <= 24 * 3;
+        }
+        if(this.selectedTimeFilter === 'last7Days') {
+          return hoursDiff <= 24 * 7;
+        }
+        return true;
+      });
     }
 
     // Apply search filter
@@ -165,6 +198,8 @@ export class AlertsPage implements ViewWillEnter {
   onScroll(event: any) {
     const element = event.target;
     const threshold = 100; // Load more when 100px from bottom
+
+    this.isListScrolled = element.scrollTop > 0;
 
     if (
       element.scrollHeight - element.scrollTop - element.clientHeight <
