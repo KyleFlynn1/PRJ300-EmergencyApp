@@ -10,39 +10,33 @@ import { CapacitorHttp } from '@capacitor/core';
 })
 export class GeolocationService {
   
-  // Geocode address to lat/lng using Nominatim
+  // Geocode address to lat/lng using Nominatim — returns first result only
   async geocodeAddress(address: string): Promise<{ lat: number, lng: number, address: string } | null> {
+    const results = await this.searchAddressSuggestions(address, 1);
+    return results.length > 0 ? results[0] : null;
+  }
+
+  // Search address and return up to `limit` suggestions
+  async searchAddressSuggestions(query: string, limit = 5): Promise<{ lat: number, lng: number, address: string }[]> {
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=${limit}&q=${encodeURIComponent(query)}`;
       let response: any;
       if (Capacitor.getPlatform() !== 'web') {
-        response = await CapacitorHttp.get({
-          url: url,
-          headers: {
-            'User-Agent': 'PRJ300EmergencyApp/1.0'
-          }
-        });
-        response = response.data;
+        const res = await CapacitorHttp.get({ url, headers: { 'User-Agent': 'PRJ300EmergencyApp/1.0' } });
+        response = res.data;
       } else {
-        const headers = new HttpHeaders({
-          'User-Agent': 'PRJ300EmergencyApp/1.0'
-        });
         response = await firstValueFrom(
-          this.http.get(url, { headers })
+          this.http.get(url, { headers: new HttpHeaders({ 'User-Agent': 'PRJ300EmergencyApp/1.0' }) })
         );
       }
-      if (Array.isArray(response) && response.length > 0) {
-        const result = response[0];
-        return {
-          lat: parseFloat(result.lat),
-          lng: parseFloat(result.lon),
-          address: result.display_name
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error('Error geocoding address:', error);
-      return null;
+      if (!Array.isArray(response)) return [];
+      return response.map((r: any) => ({
+        lat: parseFloat(r.lat),
+        lng: parseFloat(r.lon),
+        address: r.display_name
+      }));
+    } catch {
+      return [];
     }
   }
 

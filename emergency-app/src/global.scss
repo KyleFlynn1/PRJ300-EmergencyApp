@@ -1907,6 +1907,49 @@ ion-header.app-header {
   }
 }
 
+.address-suggestions {
+  margin-top: 4px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card-background);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-loading {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--card-detail-text);
+  text-align: center;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  touch-action: manipulation;
+
+  ion-icon {
+    font-size: 17px;
+    color: var(--card-detail-text);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--card-title-text);
+    word-break: break-word;
+  }
+
+}
+
+
 // Feed cards and buttons — use ion-ripple-effect (Ionic built-in)
 // position:relative + overflow:hidden contain the ripple; --color uses text-colour rgb so
 // it's visible in both light and dark themes (text is dark on light bg / light on dark bg)
@@ -1947,3 +1990,4 @@ ion-header.app-header {
     }
   }
 }
+
