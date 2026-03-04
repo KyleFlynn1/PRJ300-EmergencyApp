@@ -138,7 +138,7 @@ export class AlertsPage implements ViewWillEnter {
         if(this.selectedTimeFilter === '72h') {
           return hoursDiff <= 24 * 3;
         }
-        if(this.selectedTimeFilter === 'last7Days') {
+        if(this.selectedTimeFilter === '7d') {
           return hoursDiff <= 24 * 7;
         }
         return true;

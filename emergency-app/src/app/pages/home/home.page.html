@@ -234,7 +234,7 @@
             </div>
 
             <div class="description-text">
-              <p>{{ alert.description ? (alert.description | slice:0:50) : 'No description' }}<span *ngIf="alert.description && alert.description.length > 80">...</span></p>
+              <p>{{ alert.description ? (alert.description | slice:0:40) : 'No description' }}<span *ngIf="alert.description && alert.description.length > 40">...</span></p>
             </div>
 
             <p class="detail-text">
