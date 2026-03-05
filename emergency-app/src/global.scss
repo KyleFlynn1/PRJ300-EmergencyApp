@@ -217,7 +217,7 @@ ion-header.app-header {
   background: var(--primary-background-colour);
 
   .header-spacer {
-    height: env(safe-area-inset-top, 24px);
+    padding-top: env(safe-area-inset-top);
     min-height: 16px;
   }
 

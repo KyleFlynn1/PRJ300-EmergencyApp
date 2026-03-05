@@ -44,7 +44,8 @@ export class ReportModalComponent implements OnInit {
     category: 'Other',
     timestamp: new Date().toISOString(),
     location: {},
-    notes: ''
+    notes: '',
+    photoUrl: '',
   };
 
   // Severirty and Category options to fill report form options inputs
@@ -84,7 +85,8 @@ export class ReportModalComponent implements OnInit {
       severity: ['', Validators.required],
       notes: ['', Validators.maxLength(200)],
       overrideLocation: [false],
-      customAddress: ['']
+      customAddress: [''],
+      photoUrl: ['']
     });
     if (this.alert) {
       this.reportForm.patchValue({
@@ -263,6 +265,8 @@ export class ReportModalComponent implements OnInit {
     // New report
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
+    // Ensure photoUrl is set from photoBase64 if present
+    formData.photoUrl = this.photoBase64 || this.reportForm.value.photoUrl || '';
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       // Try geocoding custom address
       try {

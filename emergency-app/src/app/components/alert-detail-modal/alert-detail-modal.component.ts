@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { Alert } from 'src/app/services/alerts/alert';
@@ -31,7 +31,20 @@ const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{
   standalone: true,
 })
 
-export class AlertDetailModalComponent  implements OnInit, AfterViewInit {
+export class AlertDetailModalComponent  implements OnInit, AfterViewInit, OnDestroy {
+  ngOnDestroy() {
+    // Disconnect MutationObserver if exists
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+      this.themeObserver = undefined;
+    }
+    // Dispose OpenLayers map if exists
+    if (this.map) {
+      this.map.setTarget(undefined);
+      // OpenLayers 6+ does not have a dispose method, setTarget(undefined) is recommended
+      this.map = undefined;
+    }
+  }
 
 
   // Call utility functions
