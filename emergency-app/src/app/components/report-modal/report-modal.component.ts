@@ -265,8 +265,8 @@ export class ReportModalComponent implements OnInit {
     // New report
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
-    // Ensure photoUrl is set from photoBase64 if present
-    formData.photoUrl = this.photoBase64 || this.reportForm.value.photoUrl || '';
+    // Match defib modal: set photoUrl to photoBase64 or undefined
+    formData.photoUrl = this.photoBase64 || undefined;
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       // Try geocoding custom address
       try {
