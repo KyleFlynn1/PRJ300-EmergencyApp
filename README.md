@@ -187,6 +187,10 @@ iOS requires privacy usage descriptions in `ios/App/App/Info.plist`. These are a
 Without these keys the app will crash on iOS when requesting the relevant permission.
 
 ---
+## Architecture Diagram
+
+<img src="screenshots/architecture_diagram.png" width="600" />
+
 
 ## Project Structure
 
