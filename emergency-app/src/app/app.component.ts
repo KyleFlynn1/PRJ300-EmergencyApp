@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
   imports: [IonApp, IonRouterOutlet, IonIcon, RouterLink, RouterLinkActive, IonContent, CommonModule],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  // Variable to track if the app is offline for showing offline banner to let the user know
   isOffline = false;
   private pingInterval: any;
 
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private ngZone: NgZone
   ) {
+
     // Load saved theme preference, default to light if not set
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === null || savedTheme === 'dark') {
@@ -41,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
     await this.pingBackend();
     this.pingInterval = setInterval(() => this.pingBackend(), 10000);
 
+    // Set a test FCM token to make sure its saving correctly in backend as token is only gave on a mobile device
     const isWeb = Capacitor.getPlatform() === 'web';
     if (!isWeb) {
       this.initPush();
@@ -60,9 +63,8 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
-
+  // Send the fcm token to backend for user to be saved and allow notifcations
   async sendTokenToBackend(token: string) {
     try {
       const cognitoId = await this.getCognitoId();
@@ -76,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
         location?.lat || 0,
         location?.lng || 0
       );
-      console.log('FCM token and location sent to backend!');
+      //console.log('FCM token and location sent to backend!');
     } catch (error) {
       console.error('Error sending metadata to backend:', error);
     }
@@ -93,23 +95,23 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // 3. Get the FCM token (send this to your backend)
     PushNotifications.addListener('registration', (token) => {
-      console.log('FCM Token:', token.value);
+      //console.log('FCM Token:', token.value);
       this.sendTokenToBackend(token.value);
     });
 
     //Handle errors
     PushNotifications.addListener('registrationError', (err) => {
-      console.error('Registration error:', err);
+      //console.error('Registration error:', err);
     });
 
     //Notification received while app is open
     PushNotifications.addListener('pushNotificationReceived', (notification) => {
-      console.log('Notification received:', notification);
+      //console.log('Notification received:', notification);
     });
 
     // User tapped a notification
     PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
-      console.log('Notification tapped:', action);
+      //console.log('Notification tapped:', action);
     });
   }
 
@@ -128,6 +130,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  // get a users current location using the device
   async getCurrentLocation() {
     const position = await Geolocation.getCurrentPosition();
     return {
@@ -136,17 +139,16 @@ export class AppComponent implements OnInit, OnDestroy {
     };
   }
 
+  // Ping backend to see if the api connects and get rid of the offline abnner
   private async pingBackend() {
     const url = `${environment.apiBaseUrl}/api/v1/alert`;
     try {
       const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(5000) });
-      const wasOffline = this.isOffline;
       this.ngZone.run(() => { this.isOffline = !res.ok && res.status !== 401 && res.status !== 403; });
     } catch (err) {
       this.ngZone.run(() => { this.isOffline = true; });
     }
   }
-
   async ngOnDestroy() {
     if (this.pingInterval) clearInterval(this.pingInterval);
   }

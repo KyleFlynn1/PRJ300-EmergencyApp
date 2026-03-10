@@ -10,8 +10,9 @@ import { Weather } from 'src/app/interfaces/weather.interface';
 @Injectable({
   providedIn: 'root',
 })
-export class Alert {
 
+// Alert service to connect to api to get and post alerts and weather data
+export class Alert {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private ngZone = inject(NgZone);
@@ -20,7 +21,6 @@ export class Alert {
     `${environment.apiBaseUrl}/api/v1/alert`,
   ];
   private apiUrl = this.apiUrls[0];
-
   private weatherApiUrl = `${environment.apiBaseUrl}/api/v1/weather`;
 
   constructor() {
@@ -29,6 +29,8 @@ export class Alert {
       error: () => (this.apiUrl = this.apiUrls[1]),
     });
   }
+
+  // Alerts saved locally to prevent instant filtering and less delay
   private alerts: Report[] = [];
   private alertsSubject = new BehaviorSubject<Report[]>(this.alerts);
 
@@ -50,22 +52,25 @@ export class Alert {
     });
   }
 
-
-
+  // Post request to ping backend to get weather data from met eireann and store in database
   getWeatherAlerts(): Observable<Weather[]> {
     const headers = { 'X-API-Key': "blahblah" };
     return this.http.post<Weather[]>(`${this.weatherApiUrl}/import`, { headers });
   }
 
+  // Get all saved weather alerts from database
   getAllWeatherAlerts(): Observable<Weather[]> {
     return this.http.get<Weather[]>(this.weatherApiUrl);
   }
 
+  // get all reports
   getAlerts(): Observable<Report[]> {
     return this.withAuthHeaders().pipe(
       switchMap((headers) => this.http.get<Report[]>(this.apiUrl, { headers }))
     );
   }
+
+  // Get a report by its id
   getAlertById(id: string): Observable<Report> {
     const url = `${this.apiUrl}/${id}`;
     return this.withAuthHeaders().pipe(
@@ -73,7 +78,7 @@ export class Alert {
     );
   }
 
-
+  // Post request for adding a alert
   addAlert(report: Report): Observable<Report> {
   return this.withAuthHeaders().pipe(
     switchMap((headers) => this.http.post<Report>(this.apiUrl, report, { headers })),
@@ -83,6 +88,8 @@ export class Alert {
     })
     );
   }
+
+  // Update request for updating alerts
   updateAlert(id: string, report: Report): Observable<Report> {
     const url = `${this.apiUrl}/${id}`;
     return this.withAuthHeaders().pipe(
@@ -95,6 +102,8 @@ export class Alert {
       })
     );
   }
+
+  // Delete alerts
   deleteAlert(id: string): Observable<void> {
     const url = `${this.apiUrl}/${id}`;
     return this.withAuthHeaders().pipe(

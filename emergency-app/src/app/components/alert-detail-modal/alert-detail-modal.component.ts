@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
@@ -7,12 +7,13 @@ import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils
 import { RouterModule } from '@angular/router';
 import {ReportModalComponent} from '../report-modal/report-modal.component';
 import { Clipboard } from '@capacitor/clipboard';
+import { environment } from 'src/environments/environment.prod';
 
+// Open layer imports for maps
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-import { environment } from 'src/environments/environment.prod';
 import { fromLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
@@ -20,6 +21,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
 
+// Custom STADIA map tile designs
 const TILE_LIGHT = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 
@@ -31,25 +33,12 @@ const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{
   standalone: true,
 })
 
+// Modal for showing a more detailed view of an alert with a map zoomed in view on that specific alert
 export class AlertDetailModalComponent  implements OnInit, AfterViewInit, OnDestroy {
-  ngOnDestroy() {
-    // Disconnect MutationObserver if exists
-    if (this.themeObserver) {
-      this.themeObserver.disconnect();
-      this.themeObserver = undefined;
-    }
-    // Dispose OpenLayers map if exists
-    if (this.map) {
-      this.map.setTarget(undefined);
-      // OpenLayers 6+ does not have a dispose method, setTarget(undefined) is recommended
-      this.map = undefined;
-    }
-  }
-
-
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+
   // Control to  show update form or detail view
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;
@@ -75,6 +64,21 @@ export class AlertDetailModalComponent  implements OnInit, AfterViewInit, OnDest
   ngAfterViewInit() {
     // Initialize map after view is ready
     setTimeout(() => this.initMap(), 100);
+  }
+
+  // Clean up once modal is closed to prevent bad perforamncce and errors
+  ngOnDestroy() {
+    // Disconnect MutationObserver if exists
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+      this.themeObserver = undefined;
+    }
+    // Dispose OpenLayers map if exists
+    if (this.map) {
+      this.map.setTarget(undefined);
+      // OpenLayers 6+ does not have a dispose method, setTarget(undefined) is recommended
+      this.map = undefined;
+    }
   }
 
   // Initialize the map with OpenLayers

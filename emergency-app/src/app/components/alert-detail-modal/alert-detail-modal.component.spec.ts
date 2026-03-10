@@ -26,4 +26,24 @@ describe('AlertDetailModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Unit tests
+  // Display alert details correctly
+  it('should display alert details correctly', () => {
+    const mockAlert: import('src/app/interfaces/report.interface').Report = {
+      _id: '1',
+      severity: 'High',
+      category: 'Test Category',
+      notes: 'This is a test alert.',
+      location: { lat: 40.7128, lng: -74.0060, address: 'New York' },
+      timestamp: new Date().toISOString(),
+    };
+    component.alert = mockAlert;
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.alert-title').textContent).toContain('Test Alert');
+    expect(compiled.querySelector('.alert-description').textContent).toContain('This is a test alert.');
+    expect(compiled.querySelector('.alert-type').textContent).toContain('Test Type');
+  });
 });

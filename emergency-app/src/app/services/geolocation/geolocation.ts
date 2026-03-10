@@ -9,17 +9,21 @@ import { CapacitorHttp } from '@capacitor/core';
   providedIn: 'root',
 })
 export class GeolocationService {
-  
+  // Nominatim API base URL for geocoding and reverse geocoding
+  private readonly url = "https://nominatim.openstreetmap.org";
+
+  constructor(private http: HttpClient) {}
+
   // Geocode address to lat/lng using Nominatim — returns first result only
   async geocodeAddress(address: string): Promise<{ lat: number, lng: number, address: string } | null> {
     const results = await this.searchAddressSuggestions(address, 1);
     return results.length > 0 ? results[0] : null;
   }
 
-  // Search address and return up to `limit` suggestions
+  // Search address and return up to `limit` suggestions returns array based on popularity
   async searchAddressSuggestions(query: string, limit = 5): Promise<{ lat: number, lng: number, address: string }[]> {
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=${limit}&q=${encodeURIComponent(query)}`;
+      const url = `${this.url}/search?format=json&limit=${limit}&q=${encodeURIComponent(query)}`;
       let response: any;
       if (Capacitor.getPlatform() !== 'web') {
         const res = await CapacitorHttp.get({ url, headers: { 'User-Agent': 'PRJ300EmergencyApp/1.0' } });
@@ -40,13 +44,10 @@ export class GeolocationService {
     }
   }
 
-  private readonly url = "https://nominatim.openstreetmap.org/reverse";
-
-  constructor(private http: HttpClient) {}
-
+  // Get a string address from the lat nad lng using api
   async reverseGeoloc(lat: number, lng: number): Promise<string> {
     try {
-      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+      const url = `${this.url}/reverse?format=json&lat=${lat}&lon=${lng}`;
       
       // Use Capacitor HTTP on native platforms to bypass CORS
       if (Capacitor.getPlatform() !== 'web') {
@@ -70,8 +71,10 @@ export class GeolocationService {
         if (addr.postcode) parts.push(addr.postcode);
         if (addr.county) parts.push(addr.county);
         
+        // put together the different fields/parts got from the api into a single address string
         return parts.length > 0 ? parts.join(', ') : data.display_name;
       } else {
+
         // Use Angular HTTP on web
         const headers = new HttpHeaders({
           'User-Agent': 'PRJ300EmergencyApp/1.0'
@@ -84,7 +87,7 @@ export class GeolocationService {
         };
         
         const response: any = await firstValueFrom(
-          this.http.get(this.url, { headers, params })
+          this.http.get(this.url + '/reverse', { headers, params })
         );
         
         if (!response || !response.address) {
@@ -107,6 +110,7 @@ export class GeolocationService {
     }
   }
 
+  // Using capacitor geolocation plugin to get the current position of the user with permission handling and error handling for both web and native platforms
   async getCurrentLocation(): Promise<Position | null> {
     try {
       if (Capacitor.getPlatform() === 'web') {

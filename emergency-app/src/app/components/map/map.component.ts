@@ -1,6 +1,10 @@
 import { Component, AfterViewInit, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { IonicModule } from "@ionic/angular";
+import { getAlertSeverityColor, getCircleAlertSVG } from 'src/app/utils/modalUtil';
+import { environment } from 'src/environments/environment.prod';
+
+// Open layer imports for maps
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -10,12 +14,11 @@ import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import { Icon, Style, Circle as CircleStyle, RegularShape, Fill, Stroke } from 'ol/style';
-import { getAlertSeverityColor, getCircleAlertSVG } from 'src/app/utils/modalUtil';
+import { Icon, Style, Fill, Stroke } from 'ol/style';
 import { Circle as OlCircle } from 'ol/geom';
-import { environment } from 'src/environments/environment.prod';
 
 
+// STADIA Maps style for tiles
 const TILE_LIGHT = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 
@@ -26,6 +29,7 @@ const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{
   imports: [IonicModule],
 })
 
+// Map component using OpenLayers for map rendering and geolocation for user location. Shows pins for alerts and defibs, with single click to open details and long press to drop a pin for reporting an alert with the location filled in.
 export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
     @ViewChild('mapContainer', { static: true }) mapContainer?: ElementRef<HTMLDivElement>;
 
@@ -60,7 +64,6 @@ export class MapComponent  implements AfterViewInit, OnChanges, OnInit {
   constructor(
     private geolocationService: GeolocationService,
   ) {}
-
 
   ngOnInit() {  
     const savedRadius = localStorage.getItem('alertRadius');

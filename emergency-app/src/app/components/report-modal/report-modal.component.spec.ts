@@ -31,4 +31,18 @@ describe('ReportModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Unit tests
+  // Test the form validation works
+  describe('Form Validation', () => {
+    it('should be invalid when empty', () => {
+      expect(component.reportForm.valid).toBeFalse();
+    });
+
+    it('should be valid with required fields', () => {
+      component.reportForm.controls['type'].setValue('Fire');
+      component.reportForm.controls['description'].setValue('There is a fire in the building.');
+      expect(component.reportForm.valid).toBeTrue();
+    });
+  });
 });

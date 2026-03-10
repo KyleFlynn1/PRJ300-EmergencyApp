@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from 'src/app/components/report-modal/report-modal.component';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import { WeatherDetailModalComponent } from 'src/app/components/weather-detail-modal/weather-detail-modal.component';
-import { ModalController, MenuController, RefresherCustomEvent } from '@ionic/angular';
+import { MenuController, RefresherCustomEvent } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
 import { getAlertSeverityColor, getIcon, getFormattedTimestamp } from 'src/app/utils/modalUtil';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 import { ViewWillEnter } from '@ionic/angular';
 
@@ -19,6 +19,8 @@ import { ViewWillEnter } from '@ionic/angular';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ReportModalComponent, AlertDetailModalComponent, WeatherDetailModalComponent, RouterLink]
 })
+
+// Main page/dashbaod which shows the feed and weather alerts along with the buttons to make reports
 export class HomePage implements ViewWillEnter {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
@@ -34,6 +36,7 @@ export class HomePage implements ViewWillEnter {
   // User location, set from geolocation service
   userLat?: number;
   userLng?: number;
+
   // Radius around user location to show alerts on home page
   userRadiusDistance : number = 50; // in km
 
@@ -72,10 +75,12 @@ export class HomePage implements ViewWillEnter {
       this.isLoading = false;
       console.log('Filtered alerts in area:', this.activeAlertsInArea);
     });
-    this.alertService.getWeatherAlerts().subscribe(weatherAlerts => {
-      // Only use for import status, not for displaying cards
-      console.log('Active weather alerts:', weatherAlerts);
-    });
+
+    // Get weather alerts from backend from the service
+    this.alertService.getWeatherAlerts().subscribe(
+      // This is a post request that pings met eireann api in backend for up to date alerts 
+    );
+    // This is the get request for all the weather alerts in backend
     this.alertService.getAllWeatherAlerts().subscribe(allWeatherAlerts => {
       // Filter out expired weather alerts - only show alerts where expires date >= today
       const now = new Date();
@@ -86,9 +91,10 @@ export class HomePage implements ViewWillEnter {
         return expiresDate >= todayStart;
       });
       this.isWeatherLoading = false;
-      console.log('Active (non-expired) weather alerts:', this.activeWeatherAlerts);
+      //console.log('Active (non-expired) weather alerts:', this.activeWeatherAlerts);
     });
   }
+
   // Get and set user location, with user-friendly error handling
   private async getAndSetUserLocation(): Promise<boolean> {
     try {
@@ -96,7 +102,7 @@ export class HomePage implements ViewWillEnter {
       if (position) {
         this.userLat = position.coords.latitude;
         this.userLng = position.coords.longitude;
-        console.log('User location:', this.userLat, this.userLng);
+        //console.log('User location:', this.userLat, this.userLng);
         return true;
       } else {
         this.userLat = undefined;
@@ -124,21 +130,6 @@ export class HomePage implements ViewWillEnter {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
   }
-
-  // Getter for weather alerts
-  get weatherAlerts() {
-    // Show weather alerts from allAlerts, only filter by timestamp
-    const now = new Date();
-    return this.activeWeatherAlerts
-      ?.filter(a => a.category === 'Weather Warning' &&
-        (() => {
-          const alertTime = new Date(a.timestamp);
-          const hoursDifference = (now.getTime() - alertTime.getTime()) / (1000 * 60 * 60);
-          return hoursDifference <= 24;
-        })()
-      ) || [];
-  }
-
 
   // Filter alerts within radius and last 24 hours
   private filterAlertsInRadius() {
@@ -194,10 +185,10 @@ export class HomePage implements ViewWillEnter {
   }
 
   // Handle report modal close event
-  handleReportClose(date: any) {
+  handleReportClose(data: any) {
     this.closeReportModal();
-    if (date) {
-      console.log('Report submitted with date:', date);
+    if (data) {
+      //console.log('Report submitted with date:', data);
       this.alertService.getAlerts().subscribe({
         next: (alerts) => {
           this.activeAlerts = alerts.sort((a, b) => 

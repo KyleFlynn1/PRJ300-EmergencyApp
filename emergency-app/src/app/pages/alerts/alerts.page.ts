@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, MenuController, RefresherCustomEvent } from '@ionic/angular';
+import { IonicModule, RefresherCustomEvent } from '@ionic/angular';
 import { Alert } from 'src/app/services/alerts/alert';
-import { ModalController } from '@ionic/angular';
 import { AlertDetailModalComponent } from 'src/app/components/alert-detail-modal/alert-detail-modal.component';
 import {
   getAlertSeverityColor,
@@ -20,6 +19,8 @@ import { ViewWillEnter } from '@ionic/angular';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, AlertDetailModalComponent],
 })
+
+// Page to show all alerts in a list and be filtered through
 export class AlertsPage implements ViewWillEnter {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
@@ -53,7 +54,6 @@ export class AlertsPage implements ViewWillEnter {
 
   constructor(
     private alertService: Alert,
-    private menuController: MenuController,
     private geolocationService: GeolocationService,
   ) {}
 
@@ -107,13 +107,13 @@ export class AlertsPage implements ViewWillEnter {
   // Apply filters to alerts based on severity and search term
   applyFilters() {
     let filtered = this.allAlerts;
-    console.log(
+    /*console.log(
       'All alerts:',
       this.allAlerts.map((a) => ({
         category: a.category,
         timestamp: a.timestamp,
       })),
-    );
+    );*/
 
     // Apply severity filter
     if (this.selectedSeverityFilter !== 'all') {
