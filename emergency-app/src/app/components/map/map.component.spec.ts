@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MapComponent } from './map.component';
+import { GeolocationService } from 'src/app/services/geolocation/geolocation';
 
 describe('MapComponent', () => {
   let component: MapComponent;
@@ -8,8 +10,10 @@ describe('MapComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MapComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), HttpClientTestingModule, MapComponent],
+      providers: [
+        { provide: GeolocationService, useValue: { getCurrentLocation: () => Promise.resolve(null), watchPosition: () => {}, clearWatch: () => {} } }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MapComponent);

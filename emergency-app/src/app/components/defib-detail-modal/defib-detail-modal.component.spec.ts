@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DefibDetailModalComponent } from './defib-detail-modal.component';
+import { DefibService } from 'src/app/services/defib/defib';
 
 describe('DefibDetailModalComponent', () => {
   let component: DefibDetailModalComponent;
@@ -9,8 +11,11 @@ describe('DefibDetailModalComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DefibDetailModalComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), HttpClientTestingModule, DefibDetailModalComponent],
+      providers: [
+        { provide: ModalController, useValue: { dismiss: () => Promise.resolve() } },
+        { provide: DefibService, useValue: {} }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(DefibDetailModalComponent);
