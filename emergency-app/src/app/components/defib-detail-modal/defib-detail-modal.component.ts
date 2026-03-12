@@ -1,27 +1,29 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { Report } from 'src/app/interfaces/report.interface';
 import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils/modalUtil';
 import { RouterModule } from '@angular/router';
 import { AddDefibModalComponent } from '../add-defib-modal/add-defib-modal.component';
+import { environment } from 'src/environments/environment.prod';
+import { DefibService } from 'src/app/services/defib/defib';
+import { Defib } from 'src/app/interfaces/defib.interface';
 
+// Open layer imports for maps
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-import { environment } from 'src/environments/environment.prod';
 import { fromLonLat } from 'ol/proj';
 import { Feature } from 'ol';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import { Icon as OLIcon, Style } from 'ol/style';
-import { DefibService } from 'src/app/services/defib/defib';
-import { Defib } from 'src/app/interfaces/defib.interface';
 
+// STADIA Maps style for tiles
 const TILE_LIGHT = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
 const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=' + environment.stadiaMapAPIKey;
+
 @Component({
   selector: 'app-defib-detail-modal',
   templateUrl: './defib-detail-modal.component.html',
@@ -29,10 +31,12 @@ const TILE_DARK  = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{
     imports: [IonicModule, CommonModule, RouterModule, AddDefibModalComponent],
   standalone: true,
 })
+
 export class DefibDetailModalComponent  implements OnInit, AfterViewInit {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+  
   // Control to  show update form or detail view
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;

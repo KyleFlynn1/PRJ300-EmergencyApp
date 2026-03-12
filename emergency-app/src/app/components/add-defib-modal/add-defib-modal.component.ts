@@ -26,10 +26,14 @@ export class AddDefibModalComponent implements OnInit {
   userLat?: number;
   userLng?: number;
   userAddress?: string;
+
+  // Base64 string for photo to be sent to backend
   photoBase64?: string;
+
   // Using Angular forms for form handling and validation
   defibForm!: FormGroup;
 
+  // Neccessary services injected via constructor
   constructor(
     private fb: FormBuilder,
     private geolocationService: GeolocationService,
@@ -38,6 +42,7 @@ export class AddDefibModalComponent implements OnInit {
     private defibService: DefibService
   ) { }
 
+  // On init, set up the form and get user location if permissions allowed and other variables initialized. 
   async ngOnInit() {
     this.showAlert = true;
     // Initialize form with validation - only working status is required
@@ -52,9 +57,25 @@ export class AddDefibModalComponent implements OnInit {
       this.userLat = this.location.lat;
       this.userLng = this.location.lng;
       this.userAddress = this.location.address;
+    } else if (this.defib && this.defib.location) {
+      this.userLat = this.defib.location.lat;
+      this.userLng = this.defib.location.lng;
+      this.userAddress = this.defib.location.address;
     } else {
       // Fallback to device location
       await this.getAndSetUserLocation();
+    }
+
+    // If editing an existing defib, patch form values and load photo
+    if (this.defib) {
+      this.defibForm.patchValue({
+        working: this.defib.working,
+        accessInstructions: this.defib.accessInstructions || ''
+      });
+      if (this.defib.photoUrl) {
+        this.photoBase64 = this.defib.photoUrl;
+        this.photoPreview = this.defib.photoUrl;
+      }
     }
 
     // If a photo was already taken (unlikely on init), set preview
@@ -67,6 +88,7 @@ export class AddDefibModalComponent implements OnInit {
   // Photo logic for form
   photoPreview?: string;
 
+  // Handle adding a photo - uses photo service to take photo and convert to base64 for backend
   async onAddPhoto() {
     await this.photoService.addNewToGallery();
     if (this.photoService.photos.length > 0) {
@@ -78,10 +100,12 @@ export class AddDefibModalComponent implements OnInit {
     }
   }
 
+  // Retake photo just calls the add photo function again and replace the previous photo with the new one
   retakePhoto() {
     this.onAddPhoto();
   }
 
+  // Remove photo clears the photo from the form and resets the preview and base64 variable
   removePhoto() {
     this.photoService.photos.shift();
     this.setPhotoPreview(undefined);
@@ -89,7 +113,8 @@ export class AddDefibModalComponent implements OnInit {
     this.defibForm.patchValue({ photoUrl: '' });
   }
 
-  private setPhotoPreview(path?: string) {
+  // Set photo preview for the form  once a photo has been taken
+  setPhotoPreview(path?: string) {
     this.photoPreview = path;
   }
 
@@ -126,19 +151,7 @@ export class AddDefibModalComponent implements OnInit {
     }
   }
 
-  private async toBase64(path?: string): Promise<string | undefined> {
-    if (!path) return undefined;
-    if (path.startsWith('data:image/')) return path;
-    const res = await fetch(path);
-    const blob = await res.blob();
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
+  // Form submission logic - validates form, checks for location, constructs defib object, and sends to backend via defib service
   async submitDefib() {
     if (this.defibForm.invalid) {
       Object.keys(this.defibForm.controls).forEach(key => {
@@ -159,15 +172,33 @@ export class AddDefibModalComponent implements OnInit {
 
     const defibData: Defib = {
       working: this.defibForm.value.working,
-      timestamp: new Date().toISOString(),
+      timestamp: this.defib ? this.defib.timestamp : new Date().toISOString(),
       location: { 
         lat: this.userLat,
         lng: this.userLng,
         address: this.userAddress || 'Address not available'
       },
-      photoUrl: this.photoBase64 || undefined,
+      photoUrl: this.photoBase64 || (this.defib?.photoUrl) || undefined,
       accessInstructions: this.defibForm.value.accessInstructions || undefined
     };
+
+    // If editing an existing defib, update instead of add
+    if (this.defib && this.defib._id) {
+      this.defibService.updateDefib(this.defib._id, defibData).subscribe({
+        next: () => {
+          this.closeModal.emit(defibData);
+        },
+        error: async () => {
+          const alert = await this.alertController.create({
+            header: 'Update Failed',
+            message: 'Could not update defibrillator. Please try again.',
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
+      });
+      return;
+    }
 
     this.defibService.addDefib(defibData).subscribe({
       next: () => {
@@ -186,6 +217,7 @@ export class AddDefibModalComponent implements OnInit {
 
   
 
+  // Cancel just closes the modal without sending any data back
   cancel() {
     this.closeModal.emit(null);
   }

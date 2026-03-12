@@ -8,17 +8,20 @@ import { Capacitor } from '@capacitor/core';
 @Injectable({
   providedIn: 'root',
 })
+
+// Photo service using Capacitor device photo api
 export class PhotoService {
+  // Variables for storing photos in memory and local storage
   public photos: UserPhoto[] = [];
-
   private PHOTO_STORAGE: string = 'photos';
-
   private platform: Platform;
 
+  // Get the device platform to determine how to handle photos and storage
   constructor(platform: Platform) {
     this.platform = platform;
   }
 
+  // Add a photo to local storage
   public async addNewToGallery() {
     // Take a photo as base64
     const capturedPhoto = await Camera.getPhoto({
@@ -36,6 +39,7 @@ export class PhotoService {
       base64: base64Data
     });
 
+    // Saving it using capacitor version of localstorage preferneces
     Preferences.set({
       key: this.PHOTO_STORAGE,
       value: JSON.stringify(this.photos),
@@ -83,7 +87,6 @@ export class PhotoService {
       };
     }
   }
-
 
   private convertBlobToBase64(blob: Blob) {
     return new Promise((resolve, reject) => {

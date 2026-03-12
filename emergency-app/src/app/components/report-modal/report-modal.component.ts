@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, input, effect, NgZone } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular/core';
 import { ModalController, IonicModule, AlertController } from '@ionic/angular';
 import { Report } from 'src/app/interfaces/report.interface';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { Alert } from 'src/app/services/alerts/alert';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GeolocationService } from 'src/app/services/geolocation/geolocation';
-import { Capacitor } from '@capacitor/core';
 import { PhotoService } from 'src/app/services/photos/photo.service';
 
 @Component({
@@ -25,7 +24,10 @@ export class ReportModalComponent implements OnInit {
   userLat?: number;
   userLng?: number;
   userAddress?: string;
+
+  // Photo base64 string to be sent to backend if photo took
   photoBase64?: string;
+  photoPreview?: string;
 
   // Boolean to see if the popup ionic alert is showing or not
   showAlert = false;
@@ -34,7 +36,7 @@ export class ReportModalComponent implements OnInit {
   // Address autocomplete
   addressSuggestions: { lat: number; lng: number; address: string }[] = [];
   isLoadingSuggestions = false;
-  private addressDebounce: any = null;
+  private addressDebounce: any = null;  // delay before getting array from api to prevent it at everyy keystroke
 
   // FormGroup for the report form
   reportForm!: FormGroup;
@@ -78,6 +80,8 @@ export class ReportModalComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
+
+  // On init show the form and get user location for the form 
   async ngOnInit() {
     this.showAlert = true;
     this.reportForm = this.fb.group({
@@ -102,14 +106,17 @@ export class ReportModalComponent implements OnInit {
       } else {
         await this.getAndSetUserLocation();
       }
+      // Load existing photo for preview when editing
+      if (this.alert.photoUrl) {
+        this.photoBase64 = this.alert.photoUrl;
+        this.photoPreview = this.alert.photoUrl;
+      }
     } else {
       await this.getAndSetUserLocation();
     }
   }
 
-    // Photo logic for form
-  photoPreview?: string;
-
+  // Photo logic for form
   async onAddPhoto() {
     await this.photoService.addNewToGallery();
     if (this.photoService.photos.length > 0) {
@@ -193,6 +200,8 @@ export class ReportModalComponent implements OnInit {
       this.modalController.dismiss(null, 'cancel');
     }
   }
+
+  // Update alert with new data from form and close modal if success or show error popup
   updateAlert(id: string, updatedData: Report) {
     this.alertService.updateAlert(id, updatedData).subscribe({
       next: (response) => {
@@ -226,10 +235,8 @@ export class ReportModalComponent implements OnInit {
       await alert.present();
       return;
     }
-    const currentAlert = this.alert;
 
     let location: any = {};
-
     // If editing an alert, preserve original lat/lng unless geocoding succeeds
     if (this.alert && this.alert._id) {
       location = { ...this.alert.location };
@@ -257,16 +264,18 @@ export class ReportModalComponent implements OnInit {
         severity: this.reportForm.value.severity,
         notes: this.reportForm.value.notes,
         timestamp: this.alert.timestamp, // Keep original timestamp
-        location
+        location,
+        photoUrl: this.photoBase64 || (this.alert?.photoUrl) || undefined
       };
       this.updateAlert(this.alert._id, updatedData);
       return;
     }
+
     // New report
     const formData: Report = this.reportForm.value;
     formData.timestamp = new Date().toISOString();
-    // Ensure photoUrl is set from photoBase64 if present
-    formData.photoUrl = this.photoBase64 || this.reportForm.value.photoUrl || '';
+    // Match defib modal: set photoUrl to photoBase64 or undefined
+    formData.photoUrl = this.photoBase64 || undefined;
     if (this.reportForm.value.overrideLocation && this.reportForm.value.customAddress) {
       // Try geocoding custom address
       try {

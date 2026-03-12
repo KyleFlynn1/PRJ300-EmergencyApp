@@ -1,9 +1,8 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { Alert } from 'src/app/services/alerts/alert';
 import { Weather } from 'src/app/interfaces/weather.interface';
-import { getAlertSeverityColor, getCircleAlertSVG, getIcon } from 'src/app/utils/modalUtil';
+import { getAlertSeverityColor, getIcon } from 'src/app/utils/modalUtil';
 import { Clipboard } from '@capacitor/clipboard';
 import { RouterModule } from '@angular/router';
 
@@ -14,10 +13,11 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class WeatherDetailModalComponent  implements OnInit {
+export class WeatherDetailModalComponent  {
   // Call utility functions
   getAlertSeverityColor = getAlertSeverityColor;
   getIcon = getIcon;
+
   // Control to  show update form or detail view
   showform: boolean = false;
   @Input() isNativeModal : boolean = false;
@@ -26,17 +26,9 @@ export class WeatherDetailModalComponent  implements OnInit {
   //  inject services required
   constructor(
     private modalController: ModalController,
-    private alertService: Alert
   ) {}
-
-  // Log the weather received and details to make sure its working correct
-  ngOnInit() {
-    console.log('WeatherDetailModal received weather:', this.weather);
-  }
-
-
+  
   // COPY or share alert details to clipboradd
-
   copyAlertDetails = async (weather: Weather | undefined) => {
     if (!weather) {
       return;
