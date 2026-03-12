@@ -42,8 +42,8 @@ describe('AlertDetailModalComponent', () => {
     fixture.detectChanges();
     
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.alert-title').textContent).toContain('Test Alert');
-    expect(compiled.querySelector('.alert-description').textContent).toContain('This is a test alert.');
-    expect(compiled.querySelector('.alert-type').textContent).toContain('Test Type');
+    expect(compiled.querySelector('.detail-header h1').textContent).toContain('Test Category');
+    expect(compiled.querySelector('.description').textContent).toContain('This is a test alert.');
+    expect(compiled.querySelector('.severity-badge').textContent).toContain('High');
   });
 });

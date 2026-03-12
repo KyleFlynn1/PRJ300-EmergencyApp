@@ -106,6 +106,11 @@ export class ReportModalComponent implements OnInit {
       } else {
         await this.getAndSetUserLocation();
       }
+      // Load existing photo for preview when editing
+      if (this.alert.photoUrl) {
+        this.photoBase64 = this.alert.photoUrl;
+        this.photoPreview = this.alert.photoUrl;
+      }
     } else {
       await this.getAndSetUserLocation();
     }
@@ -259,7 +264,8 @@ export class ReportModalComponent implements OnInit {
         severity: this.reportForm.value.severity,
         notes: this.reportForm.value.notes,
         timestamp: this.alert.timestamp, // Keep original timestamp
-        location
+        location,
+        photoUrl: this.photoBase64 || (this.alert?.photoUrl) || undefined
       };
       this.updateAlert(this.alert._id, updatedData);
       return;

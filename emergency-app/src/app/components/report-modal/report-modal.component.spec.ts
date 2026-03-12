@@ -40,8 +40,8 @@ describe('ReportModalComponent', () => {
     });
 
     it('should be valid with required fields', () => {
-      component.reportForm.controls['type'].setValue('Fire');
-      component.reportForm.controls['description'].setValue('There is a fire in the building.');
+      component.reportForm.controls['category'].setValue('Fire');
+      component.reportForm.controls['severity'].setValue('High');
       expect(component.reportForm.valid).toBeTrue();
     });
   });

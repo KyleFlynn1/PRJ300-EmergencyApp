@@ -4,7 +4,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DefibDetailModalComponent } from './defib-detail-modal.component';
 import { DefibService } from 'src/app/services/defib/defib';
-import { timestamp } from 'rxjs/internal/operators/timestamp';
 
 describe('DefibDetailModalComponent', () => {
   let component: DefibDetailModalComponent;
@@ -42,8 +41,8 @@ describe('DefibDetailModalComponent', () => {
     fixture.detectChanges();
     
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.defib-title').textContent).toContain('Test Defib');
-    expect(compiled.querySelector('.defib-description').textContent).toContain('This is a test defib.');
-    expect(compiled.querySelector('.defib-type').textContent).toContain('Test Type');
+    expect(compiled.querySelector('.description').textContent).toContain('Test Defib');
+    expect(compiled.querySelector('.active-badge').textContent).toContain('Working');
+    expect(compiled.querySelector('.info-content .value').textContent).toContain('New York');
   });
 });

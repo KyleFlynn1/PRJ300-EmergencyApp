@@ -57,9 +57,25 @@ export class AddDefibModalComponent implements OnInit {
       this.userLat = this.location.lat;
       this.userLng = this.location.lng;
       this.userAddress = this.location.address;
+    } else if (this.defib && this.defib.location) {
+      this.userLat = this.defib.location.lat;
+      this.userLng = this.defib.location.lng;
+      this.userAddress = this.defib.location.address;
     } else {
       // Fallback to device location
       await this.getAndSetUserLocation();
+    }
+
+    // If editing an existing defib, patch form values and load photo
+    if (this.defib) {
+      this.defibForm.patchValue({
+        working: this.defib.working,
+        accessInstructions: this.defib.accessInstructions || ''
+      });
+      if (this.defib.photoUrl) {
+        this.photoBase64 = this.defib.photoUrl;
+        this.photoPreview = this.defib.photoUrl;
+      }
     }
 
     // If a photo was already taken (unlikely on init), set preview
@@ -156,15 +172,33 @@ export class AddDefibModalComponent implements OnInit {
 
     const defibData: Defib = {
       working: this.defibForm.value.working,
-      timestamp: new Date().toISOString(),
+      timestamp: this.defib ? this.defib.timestamp : new Date().toISOString(),
       location: { 
         lat: this.userLat,
         lng: this.userLng,
         address: this.userAddress || 'Address not available'
       },
-      photoUrl: this.photoBase64 || undefined,
+      photoUrl: this.photoBase64 || (this.defib?.photoUrl) || undefined,
       accessInstructions: this.defibForm.value.accessInstructions || undefined
     };
+
+    // If editing an existing defib, update instead of add
+    if (this.defib && this.defib._id) {
+      this.defibService.updateDefib(this.defib._id, defibData).subscribe({
+        next: () => {
+          this.closeModal.emit(defibData);
+        },
+        error: async () => {
+          const alert = await this.alertController.create({
+            header: 'Update Failed',
+            message: 'Could not update defibrillator. Please try again.',
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
+      });
+      return;
+    }
 
     this.defibService.addDefib(defibData).subscribe({
       next: () => {

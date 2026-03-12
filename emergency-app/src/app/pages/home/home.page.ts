@@ -73,7 +73,7 @@ export class HomePage implements ViewWillEnter {
       this.activeAlertsCount = this.activeAlerts.length;
       this.filterAlertsInRadius();
       this.isLoading = false;
-      console.log('Filtered alerts in area:', this.activeAlertsInArea);
+      //console.log('Filtered alerts in area:', this.activeAlertsInArea);
     });
 
     // Get weather alerts from backend from the service
